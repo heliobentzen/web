@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 04 – DOM e Eventos | JavaScript</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --azul: #0d6efd; --verde: #198754; --vermelho: #dc3545; --radius: 8px; }
+    body { font-family: system-ui, sans-serif; background: #f8f9fa; color: #212529; padding: 1.5rem; }
+    :focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; border-radius: 3px; }
+
+    h1 { font-size: 1.75rem; margin-bottom: 0.5rem; color: #1a1a2e; }
+    h2 { font-size: 1.1rem; color: var(--azul); margin-bottom: 0.75rem; border-bottom: 2px solid var(--azul); padding-bottom: 0.35rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+    .card { background: white; border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    .btn { padding: 0.45rem 1rem; border: none; border-radius: 5px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.15s, transform 0.1s; margin: 0.25rem; }
+    .btn:active { transform: scale(0.97); }
+    .btn-azul  { background: var(--azul); color: white; }
+    .btn-verde { background: var(--verde); color: white; }
+    .btn-verm  { background: var(--vermelho); color: white; }
+    .btn-cinza { background: #6c757d; color: white; }
+
+    /* ── 1. Manipulação básica ── */
+    #area-demo { min-height: 60px; border: 2px dashed #ccc; border-radius: var(--radius); padding: 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+    #cor-output { font-family: monospace; font-size: 0.85rem; margin-top: 0.5rem; color: #666; }
+
+    /* ── 2. Lista (Event Delegation) ── */
+    #lista-itens { list-style: none; margin: 0.75rem 0; }
+    #lista-itens li {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.6rem 0.75rem; border-radius: 5px; margin-bottom: 0.35rem;
+      background: #f8f9fa; border: 1px solid #dee2e6;
+    }
+    #lista-itens li.concluido .item-texto { text-decoration: line-through; opacity: 0.6; }
+    .item-texto { flex: 1; }
+    .item-acoes button { padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-left: 0.25rem; border: none; border-radius: 3px; cursor: pointer; }
+    .btn-concluir { background: var(--verde); color: white; }
+    .btn-remover  { background: var(--vermelho); color: white; }
+
+    /* ── 3. Formulário com validação ── */
+    #form-live label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; margin-top: 0.75rem; }
+    #form-live input { width: 100%; padding: 0.5rem; border: 2px solid #ced4da; border-radius: 5px; font-size: 0.9rem; transition: border-color 0.2s; }
+    #form-live input:focus { border-color: var(--azul); outline: none; }
+    #form-live input.valido { border-color: var(--verde); }
+    #form-live input.invalido { border-color: var(--vermelho); }
+    .feedback { font-size: 0.75rem; margin-top: 0.2rem; height: 1em; }
+    .feedback.ok  { color: var(--verde); }
+    .feedback.err { color: var(--vermelho); }
+    #resultado-form { display: none; padding: 0.75rem; background: #d1e7dd; border-radius: var(--radius); margin-top: 0.75rem; font-size: 0.85rem; }
+
+    /* ── 4. Arrastar (drag & drop) ── */
+    .drag-container { display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap; }
+    .drag-item {
+      padding: 0.75rem 1rem; background: var(--azul); color: white;
+      border-radius: 5px; cursor: grab; font-size: 0.875rem; user-select: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .drag-item:active { cursor: grabbing; }
+    .drag-item.dragging { opacity: 0.4; transform: scale(0.95); }
+    .drop-zone {
+      border: 2px dashed #adb5bd; border-radius: var(--radius); min-height: 80px;
+      padding: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem;
+      align-items: flex-start; align-content: flex-start; transition: border-color 0.2s, background 0.2s;
+    }
+    .drop-zone.drag-over { border-color: var(--azul); background: #e7f3ff; }
+
+    /* ── 5. Eventos de teclado ── */
+    #tecla-display {
+      min-height: 80px; border: 2px dashed #ccc; border-radius: var(--radius);
+      padding: 1rem; margin: 0.75rem 0; font-family: monospace; font-size: 0.875rem;
+      overflow-y: auto; max-height: 150px;
+    }
+    #tecla-display p { margin: 0.1rem 0; }
+
+    /* ── 6. Scroll e Intersection ── */
+    #scroll-container { height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: var(--radius); padding: 1rem; margin: 0.75rem 0; font-size: 0.875rem; }
+    .scroll-progress { height: 4px; background: #dee2e6; border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem; }
+    .scroll-progress-bar { height: 100%; background: var(--azul); width: 0; transition: width 0.1s; border-radius: 2px; }
+    .lazy-item { padding: 0.5rem; border-bottom: 1px solid #eee; color: #666; transition: background 0.3s; }
+    .lazy-item.visivel { background: #e7f3ff; color: #333; font-weight: 600; }
+
+    /* ── Log ── */
+    #log { background: #1e1e1e; color: #4ec9b0; padding: 0.75rem; border-radius: var(--radius); font-family: monospace; font-size: 0.8rem; max-height: 120px; overflow-y: auto; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+
+  <h1>Prática 04 – DOM e Eventos</h1>
+  <p style="color:#666; margin-bottom:0.5rem;">Todos os exemplos são interativos. Abra o console (<kbd>F12</kbd>) para mais detalhes.</p>
+
+  <div class="grid">
+
+    <!-- ═══════════════════════════════════
+         1. MANIPULAÇÃO BÁSICA DO DOM
+    ═══════════════════════════════════ -->
+    <div class="card">
+      <h2>1. Manipulação do DOM</h2>
+
+      <div id="area-demo">
+        <p>Conteúdo original. Clique nos botões para modificar.</p>
+      </div>
+
+      <button class="btn btn-azul" onclick="adicionarElemento()">➕ Adicionar &lt;p&gt;</button>
+      <button class="btn btn-verde" onclick="alterarTexto()">✏️ Alterar texto</button>
+      <button class="btn btn-verm" onclick="limparArea()">🗑️ Limpar</button>
+      <button class="btn btn-cinza" onclick="alterarCorAleatoria()">🎨 Cor aleatória</button>
+
+      <p id="cor-output"></p>
+
+      <script>
+        let contador = 0
+
+        function adicionarElemento() {
+          contador++
+          const el = document.createElement('p')
+          el.innerHTML = `<strong>#${contador}</strong> Parágrafo criado em ${new Date().toLocaleTimeString()}`
+          el.style.color = `hsl(${Math.random()*360},70%,40%)`
+          document.getElementById('area-demo').appendChild(el)
+        }
+
+        function alterarTexto() {
+          const area = document.getElementById('area-demo')
+          area.firstElementChild.textContent = `Texto alterado às ${new Date().toLocaleTimeString()}`
+        }
+
+        function limparArea() {
+          const area = document.getElementById('area-demo')
+          area.innerHTML = '<p>Área limpa.</p>'
+          area.style.borderColor = ''
+          area.style.background = ''
+          contador = 0
+        }
+
+        function alterarCorAleatoria() {
+          const area = document.getElementById('area-demo')
+          const cor = `hsl(${Math.random()*360},70%,95%)`
+          const corBorda = `hsl(${Math.random()*360},70%,50%)`
+          area.style.background = cor
+          area.style.borderColor = corBorda
+          document.getElementById('cor-output').textContent = `background: ${cor}`
+        }
+      </script>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         2. EVENT DELEGATION
+    ═══════════════════════════════════ -->
+    <div class="card">
+      <h2>2. Event Delegation</h2>
+      <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem;">
+        Um único listener no elemento pai gerencia todos os itens.
+      </p>
+
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+        <input id="novo-item" type="text" placeholder="Novo item..." style="flex:1;padding:0.4rem 0.6rem;border:1px solid #ced4da;border-radius:5px;font-size:0.875rem;">
+        <button class="btn btn-azul" onclick="adicionarItem()">Adicionar</button>
+      </div>
+
+      <ul id="lista-itens" aria-label="Lista de tarefas">
+        <li data-id="1"><span class="item-texto">Estudar HTML</span><span class="item-acoes"><button class="btn-concluir" aria-label="Concluir">✓</button><button class="btn-remover" aria-label="Remover">✕</button></span></li>
+        <li data-id="2"><span class="item-texto">Praticar CSS</span><span class="item-acoes"><button class="btn-concluir" aria-label="Concluir">✓</button><button class="btn-remover" aria-label="Remover">✕</button></span></li>
+        <li data-id="3"><span class="item-texto">Aprender JavaScript</span><span class="item-acoes"><button class="btn-concluir" aria-label="Concluir">✓</button><button class="btn-remover" aria-label="Remover">✕</button></span></li>
+      </ul>
+
+      <script>
+        let idCounter = 4
+
+        // EVENT DELEGATION: um listener para toda a lista
+        document.getElementById('lista-itens').addEventListener('click', function(e) {
+          const li = e.target.closest('li')
+          if (!li) return
+
+          if (e.target.classList.contains('btn-concluir')) {
+            li.classList.toggle('concluido')
+            e.target.textContent = li.classList.contains('concluido') ? '↩' : '✓'
+          } else if (e.target.classList.contains('btn-remover')) {
+            li.style.animation = 'none'
+            li.style.opacity = '0'
+            li.style.transform = 'translateX(20px)'
+            li.style.transition = 'all 0.2s'
+            setTimeout(() => li.remove(), 200)
+          }
+        })
+
+        document.getElementById('novo-item').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') adicionarItem()
+        })
+
+        function adicionarItem() {
+          const input = document.getElementById('novo-item')
+          const texto = input.value.trim()
+          if (!texto) return
+
+          const li = document.createElement('li')
+          li.dataset.id = idCounter++
+          li.innerHTML = `
+            <span class="item-texto">${texto.replace(/</g,'&lt;')}</span>
+            <span class="item-acoes">
+              <button class="btn-concluir" aria-label="Concluir">✓</button>
+              <button class="btn-remover" aria-label="Remover">✕</button>
+            </span>
+          `
+          document.getElementById('lista-itens').appendChild(li)
+          input.value = ''
+          input.focus()
+        }
+      </script>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         3. FORMULÁRIO COM VALIDAÇÃO AO VIVO
+    ═══════════════════════════════════ -->
+    <div class="card">
+      <h2>3. Validação ao Vivo</h2>
+      <form id="form-live" novalidate onsubmit="submitForm(event)">
+
+        <label for="fl-nome">Nome</label>
+        <input type="text" id="fl-nome" placeholder="Mínimo 3 caracteres" autocomplete="name">
+        <p class="feedback" id="fb-nome"></p>
+
+        <label for="fl-email">E-mail</label>
+        <input type="email" id="fl-email" placeholder="nome@dominio.com" autocomplete="email">
+        <p class="feedback" id="fb-email"></p>
+
+        <label for="fl-senha">Senha</label>
+        <input type="password" id="fl-senha" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+        <p class="feedback" id="fb-senha"></p>
+
+        <button type="submit" class="btn btn-azul" style="margin-top:0.75rem;width:100%;">Enviar</button>
+      </form>
+      <div id="resultado-form">✅ Formulário enviado com sucesso!</div>
+
+      <script>
+        function validar(input, regra, msg) {
+          const ok = regra(input.value)
+          const fb = document.getElementById(`fb-${input.id.replace('fl-','').replace('-','')}`) ||
+                     document.getElementById(`fb-${input.id.split('-')[1]}`)
+          input.classList.toggle('valido', ok)
+          input.classList.toggle('invalido', !ok && input.value !== '')
+          if (fb) {
+            fb.textContent = ok ? '✓ Válido' : (input.value ? `✗ ${msg}` : '')
+            fb.className = `feedback ${ok ? 'ok' : (input.value ? 'err' : '')}`
+          }
+          return ok
+        }
+
+        document.getElementById('fl-nome').addEventListener('input', function() {
+          validar(this, v => v.trim().length >= 3, 'Mínimo 3 caracteres')
+        })
+        document.getElementById('fl-email').addEventListener('input', function() {
+          validar(this, v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), 'E-mail inválido')
+        })
+        document.getElementById('fl-senha').addEventListener('input', function() {
+          validar(this, v => v.length >= 8, 'Mínimo 8 caracteres')
+        })
+
+        function submitForm(e) {
+          e.preventDefault()
+          const nomeOk  = validar(document.getElementById('fl-nome'),  v => v.trim().length >= 3, 'Mínimo 3 caracteres')
+          const emailOk = validar(document.getElementById('fl-email'), v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), 'E-mail inválido')
+          const senhaOk = validar(document.getElementById('fl-senha'), v => v.length >= 8, 'Mínimo 8 caracteres')
+
+          if (nomeOk && emailOk && senhaOk) {
+            document.getElementById('resultado-form').style.display = 'block'
+          }
+        }
+      </script>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         4. DRAG & DROP
+    ═══════════════════════════════════ -->
+    <div class="card">
+      <h2>4. Drag & Drop (API nativa)</h2>
+
+      <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem;">Arraste os chips para a área de destino:</p>
+
+      <div class="drag-container" id="drag-origem">
+        <div class="drag-item" draggable="true" data-label="HTML">🌐 HTML</div>
+        <div class="drag-item" draggable="true" data-label="CSS">🎨 CSS</div>
+        <div class="drag-item" draggable="true" data-label="JavaScript">⚡ JS</div>
+        <div class="drag-item" draggable="true" data-label="React">⚛️ React</div>
+      </div>
+
+      <div class="drop-zone" id="drop-zona" aria-label="Área de destino">
+        <span style="color:#aaa;font-size:0.85rem;align-self:center;width:100%;text-align:center;">
+          Solte aqui
+        </span>
+      </div>
+
+      <button class="btn btn-cinza" style="margin-top:0.5rem;" onclick="resetDrag()">↩ Resetar</button>
+
+      <script>
+        let arrastando = null
+
+        document.querySelectorAll('.drag-item').forEach(item => {
+          item.addEventListener('dragstart', (e) => {
+            arrastando = item
+            item.classList.add('dragging')
+            e.dataTransfer.effectAllowed = 'move'
+            e.dataTransfer.setData('text/plain', item.dataset.label)
+          })
+
+          item.addEventListener('dragend', () => {
+            item.classList.remove('dragging')
+            arrastando = null
+          })
+        })
+
+        const zona = document.getElementById('drop-zona')
+
+        zona.addEventListener('dragover', (e) => {
+          e.preventDefault()
+          e.dataTransfer.dropEffect = 'move'
+          zona.classList.add('drag-over')
+        })
+
+        zona.addEventListener('dragleave', () => zona.classList.remove('drag-over'))
+
+        zona.addEventListener('drop', (e) => {
+          e.preventDefault()
+          zona.classList.remove('drag-over')
+          if (arrastando) {
+            // Remover placeholder
+            const placeholder = zona.querySelector('span')
+            if (placeholder) placeholder.remove()
+            zona.appendChild(arrastando)
+          }
+        })
+
+        function resetDrag() {
+          const origem = document.getElementById('drag-origem')
+          document.querySelectorAll('.drag-item').forEach(item => origem.appendChild(item))
+          zona.innerHTML = '<span style="color:#aaa;font-size:0.85rem;align-self:center;width:100%;text-align:center;">Solte aqui</span>'
+        }
+      </script>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         5. EVENTOS DE TECLADO
+    ═══════════════════════════════════ -->
+    <div class="card">
+      <h2>5. Eventos de Teclado</h2>
+      <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem;">Clique na área abaixo e pressione teclas:</p>
+
+      <div
+        id="tecla-display"
+        tabindex="0"
+        role="region"
+        aria-label="Área de captura de teclado"
+        aria-live="polite"
+      >
+        <p style="color:#aaa;">Clique aqui e pressione teclas...</p>
+      </div>
+
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="btn btn-cinza" onclick="limparTeclas()">Limpar</button>
+        <span id="combo-display" style="font-family:monospace;font-size:0.85rem;padding:0.45rem 0.75rem;background:#f8f9fa;border-radius:5px;border:1px solid #dee2e6;flex:1;text-align:center;"></span>
+      </div>
+
+      <script>
+        const teclaDisplay = document.getElementById('tecla-display')
+        const comboDisplay = document.getElementById('combo-display')
+
+        teclaDisplay.addEventListener('keydown', (e) => {
+          // Prevenir comportamentos padrão problemáticos
+          if (e.key === 'Tab') return
+
+          const modificadores = []
+          if (e.ctrlKey || e.metaKey) modificadores.push('Ctrl')
+          if (e.altKey)    modificadores.push('Alt')
+          if (e.shiftKey && !['Shift'].includes(e.key)) modificadores.push('Shift')
+
+          const tecla = e.key === ' ' ? 'Space' : e.key
+          const combo = [...modificadores, tecla].join(' + ')
+          comboDisplay.textContent = combo
+
+          const p = document.createElement('p')
+          p.innerHTML = `<span style="color:#9cdcfe;">${combo}</span> <span style="color:#808080;">(code: ${e.code})</span>`
+
+          const placeholder = teclaDisplay.querySelector('p[style]')
+          if (placeholder) placeholder.remove()
+
+          teclaDisplay.insertBefore(p, teclaDisplay.firstChild)
+          if (teclaDisplay.children.length > 10) teclaDisplay.lastChild.remove()
+        })
+
+        function limparTeclas() {
+          teclaDisplay.innerHTML = '<p style="color:#aaa;">Clique aqui e pressione teclas...</p>'
+          comboDisplay.textContent = ''
+        }
+      </script>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         6. SCROLL E EVENTOS DA JANELA
+    ═══════════════════════════════════ -->
+    <div class="card">
+      <h2>6. Scroll e Resize</h2>
+
+      <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem;">Scroll no container abaixo:</p>
+      <div class="scroll-progress"><div class="scroll-progress-bar" id="scroll-bar"></div></div>
+
+      <div id="scroll-container">
+        <div class="lazy-item">📄 Item 1 – role aqui para ver mais</div>
+        <div class="lazy-item">📄 Item 2 – conteúdo simples</div>
+        <div class="lazy-item">📄 Item 3 – mais texto</div>
+        <div class="lazy-item">📄 Item 4 – continuando</div>
+        <div class="lazy-item">📄 Item 5 – quase lá</div>
+        <div class="lazy-item">📄 Item 6 – chegando ao fim</div>
+        <div class="lazy-item">📄 Item 7 – penúltimo</div>
+        <div class="lazy-item">📄 Item 8 – ✅ você chegou ao final!</div>
+      </div>
+
+      <p style="font-size:0.85rem;margin-top:0.75rem;">Dimensões da janela:</p>
+      <code id="janela-info" style="font-size:0.8rem;color:#666;display:block;"></code>
+
+      <script>
+        const scrollContainer = document.getElementById('scroll-container')
+        const scrollBar = document.getElementById('scroll-bar')
+        const janelaInfo = document.getElementById('janela-info')
+        const lazyItems = document.querySelectorAll('.lazy-item')
+
+        scrollContainer.addEventListener('scroll', function() {
+          const pct = this.scrollTop / (this.scrollHeight - this.clientHeight) * 100
+          scrollBar.style.width = pct + '%'
+
+          // Highlight de itens visíveis
+          lazyItems.forEach(item => {
+            const rect = item.getBoundingClientRect()
+            const containerRect = scrollContainer.getBoundingClientRect()
+            const visivel = rect.top >= containerRect.top && rect.bottom <= containerRect.bottom
+            item.classList.toggle('visivel', visivel)
+          })
+        })
+
+        function atualizarJanela() {
+          janelaInfo.textContent = `${window.innerWidth}px × ${window.innerHeight}px`
+        }
+        atualizarJanela()
+        window.addEventListener('resize', atualizarJanela)
+      </script>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         7. LOG DE EVENTOS GLOBAIS
+    ═══════════════════════════════════ -->
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>7. Log de Eventos da Página</h2>
+      <p style="font-size:0.85rem;color:#666;margin-bottom:0.75rem;">
+        Eventos globais capturados em tempo real:
+      </p>
+      <div id="log">Aguardando eventos...</div>
+      <button class="btn btn-cinza" style="margin-top:0.5rem;" onclick="document.getElementById('log').textContent='Log limpo\n'">Limpar log</button>
+
+      <script>
+        const log = document.getElementById('log')
+        function logEvento(msg) {
+          const time = new Date().toLocaleTimeString('pt-BR', { fractionalSecondDigits: 3 })
+          log.textContent = `[${time}] ${msg}\n` + log.textContent
+        }
+
+        // DOMContentLoaded já disparou (script dentro do body)
+        logEvento('Página carregada (DOMContentLoaded + load)')
+
+        // Click com coordenadas
+        document.addEventListener('click', (e) => {
+          logEvento(`click em <${e.target.tagName.toLowerCase()}> (${Math.round(e.clientX)},${Math.round(e.clientY)})`)
+        })
+
+        // Foco / Blur
+        document.addEventListener('focusin', (e) => {
+          if (!['BODY','HTML'].includes(e.target.tagName)) {
+            logEvento(`focusin → <${e.target.tagName.toLowerCase()}>${e.target.id ? '#'+e.target.id : ''}`)
+          }
+        })
+
+        // Online / Offline
+        window.addEventListener('online',  () => logEvento('🟢 Conexão: online'))
+        window.addEventListener('offline', () => logEvento('🔴 Conexão: offline'))
+
+        // Resize (throttled)
+        let resizeTimer
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer)
+          resizeTimer = setTimeout(() => {
+            logEvento(`resize: ${window.innerWidth}×${window.innerHeight}px`)
+          }, 200)
+        })
+
+        // Custom Event
+        const evento = new CustomEvent('pagina:pronta', { detail: { modulo: '05-javascript' } })
+        document.dispatchEvent(evento)
+        document.addEventListener('pagina:pronta', (e) => {
+          logEvento(`CustomEvent 'pagina:pronta': módulo=${e.detail.modulo}`)
+        })
+      </script>
+    </div>
+
+  </div>
+
+</body>
+</html>

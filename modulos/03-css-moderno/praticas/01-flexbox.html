@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 01 – Flexbox | CSS Moderno</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --azul: #0d6efd;
+      --verde: #198754;
+      --laranja: #fd7e14;
+      --roxo: #6f42c1;
+      --cinza: #6c757d;
+      --fundo: #f8f9fa;
+      --borda: #dee2e6;
+      --radius: 8px;
+      --sombra: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    body { font-family: system-ui, sans-serif; background: var(--fundo); color: #212529; padding: 2rem 1rem; }
+
+    h1 { text-align: center; color: #1a1a2e; margin-bottom: 0.5rem; }
+    .subtitulo { text-align: center; color: var(--cinza); margin-bottom: 3rem; }
+
+    .secao { margin-bottom: 4rem; }
+    .secao-titulo {
+      font-size: 1.25rem;
+      color: var(--azul);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--azul);
+    }
+
+    /* ── Caixa de demo ── */
+    .demo {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--sombra);
+      margin-bottom: 1rem;
+      min-height: 100px;
+    }
+
+    /* ── Itens de exemplo ── */
+    .item {
+      background: var(--azul);
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .item:nth-child(2) { background: var(--verde); }
+    .item:nth-child(3) { background: var(--laranja); }
+    .item:nth-child(4) { background: var(--roxo); }
+    .item:nth-child(5) { background: var(--cinza); }
+    .item:nth-child(6) { background: #c0392b; }
+
+    /* ── Label de código ── */
+    .codigo {
+      background: #1e1e1e;
+      color: #9cdcfe;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      overflow-x: auto;
+    }
+    .codigo span.prop { color: #9cdcfe; }
+    .codigo span.val { color: #ce9178; }
+
+    /* ── Controles interativos ── */
+    .controles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .controles label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #495057;
+    }
+    .controles select {
+      padding: 0.3rem 0.5rem;
+      border: 1px solid var(--borda);
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* ══════════════════════════════════
+       SEÇÃO 1: JUSTIFY-CONTENT
+    ══════════════════════════════════ */
+    #demo-justify { display: flex; gap: 1rem; transition: all 0.3s; }
+
+    /* ══════════════════════════════════
+       SEÇÃO 2: ALIGN-ITEMS
+    ══════════════════════════════════ */
+    #demo-align { display: flex; gap: 1rem; height: 150px; transition: all 0.3s; }
+    #demo-align .item { flex: 0 0 auto; }
+    #demo-align .item:nth-child(1) { height: 60px; }
+    #demo-align .item:nth-child(2) { height: 90px; }
+    #demo-align .item:nth-child(3) { height: 50px; }
+
+    /* ══════════════════════════════════
+       SEÇÃO 3: FLEX-DIRECTION
+    ══════════════════════════════════ */
+    #demo-direction { display: flex; gap: 1rem; transition: all 0.3s; }
+
+    /* ══════════════════════════════════
+       SEÇÃO 4: FLEX-GROW / SHRINK / BASIS
+    ══════════════════════════════════ */
+    #demo-grow { display: flex; gap: 1rem; }
+    #demo-grow .item-grow0 { flex: 0 0 auto; }
+    #demo-grow .item-grow1 { flex: 1; }
+    #demo-grow .item-grow2 { flex: 2; }
+    #demo-grow .item-grow3 { flex: 3; }
+
+    /* ══════════════════════════════════
+       SEÇÃO 5: WRAP
+    ══════════════════════════════════ */
+    #demo-wrap { display: flex; flex-wrap: wrap; gap: 1rem; transition: all 0.3s; }
+    #demo-wrap .item { flex: 0 0 200px; }
+
+    /* ══════════════════════════════════
+       SEÇÃO 6: LAYOUTS REAIS
+    ══════════════════════════════════ */
+
+    /* Navbar */
+    .navbar-demo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: #1a1a2e;
+      color: white;
+      border-radius: var(--radius);
+    }
+    .navbar-demo .logo { font-weight: 700; font-size: 1.2rem; color: #e94560; }
+    .navbar-demo nav { display: flex; gap: 1.5rem; }
+    .navbar-demo nav a { color: #ccc; text-decoration: none; font-size: 0.9rem; }
+    .navbar-demo nav a:hover { color: white; }
+    .navbar-demo .btn {
+      background: var(--azul);
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+
+    /* Cards responsivos */
+    .cards-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .card-item {
+      flex: 1 1 200px;
+      background: white;
+      border: 1px solid var(--borda);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .card-item h3 { color: #333; font-size: 1rem; }
+    .card-item p { color: #666; font-size: 0.85rem; flex: 1; }
+    .card-item a {
+      display: inline-block;
+      background: var(--azul);
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    /* Centralização perfeita */
+    .centralizado-demo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: var(--radius);
+    }
+    .centralizado-demo .caixa {
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: var(--radius);
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Layout de página */
+    .pagina-demo {
+      display: flex;
+      flex-direction: column;
+      min-height: 300px;
+      border: 1px solid var(--borda);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .pagina-demo .cabecalho {
+      background: #1a1a2e;
+      color: white;
+      padding: 1rem 1.5rem;
+    }
+    .pagina-demo .corpo {
+      display: flex;
+      flex: 1;
+    }
+    .pagina-demo .sidebar {
+      background: #f0f2f5;
+      width: 200px;
+      padding: 1rem;
+      font-size: 0.85rem;
+      border-right: 1px solid var(--borda);
+    }
+    .pagina-demo .conteudo-principal {
+      flex: 1;
+      padding: 1rem 1.5rem;
+    }
+    .pagina-demo .rodape {
+      background: #1a1a2e;
+      color: #aaa;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--azul);
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.2em 0.6em;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Prática 01 – Flexbox</h1>
+  <p class="subtitulo">Demonstrações interativas de todos os conceitos de Flexbox</p>
+
+  <!-- ══════════════════════
+       1. JUSTIFY-CONTENT
+  ══════════════════════ -->
+  <div class="secao">
+    <h2 class="secao-titulo">1. justify-content – alinhamento no eixo principal</h2>
+
+    <div class="controles">
+      <label>
+        justify-content:
+        <select onchange="document.getElementById('demo-justify').style.justifyContent = this.value">
+          <option>flex-start</option>
+          <option>flex-end</option>
+          <option>center</option>
+          <option selected>space-between</option>
+          <option>space-around</option>
+          <option>space-evenly</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="demo" id="demo-justify" style="justify-content: space-between;">
+      <div class="item">1</div>
+      <div class="item">2</div>
+      <div class="item">3</div>
+    </div>
+
+    <div class="codigo">display: flex; justify-content: <span class="val" id="label-justify">space-between</span>;</div>
+  </div>
+
+  <!-- ══════════════════════
+       2. ALIGN-ITEMS
+  ══════════════════════ -->
+  <div class="secao">
+    <h2 class="secao-titulo">2. align-items – alinhamento no eixo cruzado</h2>
+
+    <div class="controles">
+      <label>
+        align-items:
+        <select onchange="document.getElementById('demo-align').style.alignItems = this.value; document.getElementById('label-align').textContent = this.value">
+          <option>flex-start</option>
+          <option>flex-end</option>
+          <option>center</option>
+          <option selected>stretch</option>
+          <option>baseline</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="demo" id="demo-align" style="align-items: stretch;">
+      <div class="item" style="height:60px;">A (60px)</div>
+      <div class="item" style="height:90px;">B (90px)</div>
+      <div class="item" style="height:50px;">C (50px)</div>
+    </div>
+
+    <div class="codigo">display: flex; align-items: <span class="val" id="label-align">stretch</span>; height: 150px;</div>
+  </div>
+
+  <!-- ══════════════════════
+       3. FLEX-DIRECTION
+  ══════════════════════ -->
+  <div class="secao">
+    <h2 class="secao-titulo">3. flex-direction – direção do eixo principal</h2>
+
+    <div class="controles">
+      <label>
+        flex-direction:
+        <select onchange="document.getElementById('demo-direction').style.flexDirection = this.value; document.getElementById('label-direction').textContent = this.value">
+          <option selected>row</option>
+          <option>row-reverse</option>
+          <option>column</option>
+          <option>column-reverse</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="demo" id="demo-direction" style="flex-direction: row;">
+      <div class="item">1</div>
+      <div class="item">2</div>
+      <div class="item">3</div>
+    </div>
+
+    <div class="codigo">display: flex; flex-direction: <span class="val" id="label-direction">row</span>;</div>
+  </div>
+
+  <!-- ══════════════════════
+       4. FLEX-GROW
+  ══════════════════════ -->
+  <div class="secao">
+    <h2 class="secao-titulo">4. flex-grow – crescimento proporcional dos itens</h2>
+
+    <div class="demo" id="demo-grow">
+      <div class="item item-grow0">grow: 0</div>
+      <div class="item item-grow1">grow: 1</div>
+      <div class="item item-grow2">grow: 2</div>
+      <div class="item item-grow3">grow: 3</div>
+    </div>
+
+    <div class="codigo">
+      .item-a { flex-grow: 0; } /* não cresce */<br>
+      .item-b { flex-grow: 1; } /* cresce 1 parte */<br>
+      .item-c { flex-grow: 2; } /* cresce 2 partes */<br>
+      .item-d { flex-grow: 3; } /* cresce 3 partes */
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       5. FLEX-WRAP
+  ══════════════════════ -->
+  <div class="secao">
+    <h2 class="secao-titulo">5. flex-wrap – quebra de linha</h2>
+
+    <div class="controles">
+      <label>
+        flex-wrap:
+        <select onchange="document.getElementById('demo-wrap').style.flexWrap = this.value; document.getElementById('label-wrap').textContent = this.value">
+          <option>nowrap</option>
+          <option selected>wrap</option>
+          <option>wrap-reverse</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="demo" id="demo-wrap" style="flex-wrap: wrap;">
+      <div class="item" style="flex: 0 0 200px;">Item A</div>
+      <div class="item" style="flex: 0 0 200px;">Item B</div>
+      <div class="item" style="flex: 0 0 200px;">Item C</div>
+      <div class="item" style="flex: 0 0 200px;">Item D</div>
+      <div class="item" style="flex: 0 0 200px;">Item E</div>
+    </div>
+
+    <div class="codigo">display: flex; flex-wrap: <span class="val" id="label-wrap">wrap</span>; gap: 1rem;</div>
+  </div>
+
+  <!-- ══════════════════════
+       6. LAYOUTS REAIS
+  ══════════════════════ -->
+  <div class="secao">
+    <h2 class="secao-titulo">6. Layouts Reais com Flexbox</h2>
+
+    <h3 style="margin-bottom:0.75rem; color:#495057;">Navbar <span class="badge">display: flex</span></h3>
+    <div class="demo" style="padding:0; overflow:hidden;">
+      <nav class="navbar-demo">
+        <a href="#" class="logo">TechBlog</a>
+        <nav>
+          <a href="#">Home</a>
+          <a href="#">Tutoriais</a>
+          <a href="#">Sobre</a>
+        </nav>
+        <a href="#" class="btn">Login</a>
+      </nav>
+    </div>
+
+    <br>
+
+    <h3 style="margin-bottom:0.75rem; color:#495057;">Cards Responsivos <span class="badge">flex: 1 1 200px</span></h3>
+    <div class="demo">
+      <div class="cards-demo">
+        <div class="card-item">
+          <h3>HTML Semântico</h3>
+          <p>Aprenda a estruturar páginas com as tags corretas para SEO e acessibilidade.</p>
+          <a href="#">Ler mais</a>
+        </div>
+        <div class="card-item">
+          <h3>CSS Moderno</h3>
+          <p>Flexbox, Grid, variáveis e design responsivo mobile-first.</p>
+          <a href="#">Ler mais</a>
+        </div>
+        <div class="card-item">
+          <h3>JavaScript ES2024</h3>
+          <p>Novidades da linguagem e padrões modernos de desenvolvimento.</p>
+          <a href="#">Ler mais</a>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <h3 style="margin-bottom:0.75rem; color:#495057;">Centralização Perfeita <span class="badge">justify-content + align-items</span></h3>
+    <div class="demo" style="padding:0; overflow:hidden;">
+      <div class="centralizado-demo">
+        <div class="caixa">
+          <p style="font-size:1.2rem; font-weight:700; color:#1a1a2e;">Centralizado!</p>
+          <p style="color:#666; font-size:0.9rem;">display: flex; justify-content: center; align-items: center;</p>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <h3 style="margin-bottom:0.75rem; color:#495057;">Layout de Página <span class="badge">flex-direction: column</span></h3>
+    <div class="demo" style="padding:0; overflow:hidden;">
+      <div class="pagina-demo">
+        <header class="cabecalho">🌐 Cabeçalho (flex-shrink: 0)</header>
+        <div class="corpo">
+          <aside class="sidebar">
+            <p><strong>Sidebar</strong></p>
+            <ul style="padding-left:1rem; margin-top:0.5rem; font-size:0.8rem; line-height:2;">
+              <li>Link 1</li>
+              <li>Link 2</li>
+              <li>Link 3</li>
+            </ul>
+          </aside>
+          <main class="conteudo-principal">
+            <p style="color:#495057;"><strong>Conteúdo Principal</strong> (flex: 1 – ocupa o espaço restante)</p>
+            <p style="color:#666; font-size:0.9rem; margin-top:0.5rem;">
+              Este layout usa <code>flex-direction: column</code> no container da página
+              e <code>flex: 1</code> no corpo para ocupar o espaço restante.
+            </p>
+          </main>
+        </div>
+        <footer class="rodape">Rodapé (flex-shrink: 0)</footer>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Atualiza label do justify-content
+    document.querySelector('[onchange*="demo-justify"]').addEventListener('change', function() {
+      document.getElementById('label-justify').textContent = this.value
+    })
+  </script>
+</body>
+</html>

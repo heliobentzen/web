@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 03 – Responsivo Mobile First | CSS Moderno</title>
+
+  <!--
+    ╔═══════════════════════════════════════════════════════╗
+    ║           DEMONSTRAÇÃO: DESIGN RESPONSIVO             ║
+    ║                   MOBILE FIRST                        ║
+    ║                                                       ║
+    ║  Redimensione a janela ou use o modo responsivo       ║
+    ║  do DevTools (F12 > Ctrl+Shift+M) para ver            ║
+    ║  o layout se adaptar em:                              ║
+    ║  • Mobile   (< 768px)                                 ║
+    ║  • Tablet   (≥ 768px)                                 ║
+    ║  • Desktop  (≥ 1024px)                                ║
+    ╚═══════════════════════════════════════════════════════╝
+  -->
+
+  <style>
+    /* ══════════════════════════════════════════════════
+       RESET E VARIÁVEIS
+    ══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cor-primaria: #0d6efd;
+      --cor-secundaria: #6c757d;
+      --cor-fundo: #f8f9fa;
+      --cor-texto: #212529;
+      --cor-header: #1a1a2e;
+      --fonte: system-ui, -apple-system, sans-serif;
+      --espaco: 1rem;
+      --radius: 8px;
+      --sombra: 0 2px 8px rgba(0,0,0,0.1);
+      --transicao: 0.3s ease;
+
+      /* Breakpoints documentados como variáveis (apenas para referência; não funcionam em media queries) */
+      /* --bp-sm: 576px; --bp-md: 768px; --bp-lg: 1024px; --bp-xl: 1280px; */
+    }
+
+    /* ══════════════════════════════════════════════════
+       BASE: MOBILE (< 768px)
+       Primeiro escrevemos os estilos para telas pequenas
+    ══════════════════════════════════════════════════ */
+
+    html {
+      font-size: 16px; /* base para cálculos rem */
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--fonte);
+      color: var(--cor-texto);
+      background: var(--cor-fundo);
+      line-height: 1.6;
+    }
+
+    /* ── Skip link (acessibilidade) ── */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: var(--espaco);
+      background: var(--cor-primaria);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      transition: top var(--transicao);
+      z-index: 10000;
+    }
+    .skip-link:focus { top: var(--espaco); }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--cor-header);
+      color: white;
+      padding: var(--espaco);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #e94560;
+      text-decoration: none;
+    }
+
+    /* Botão hambúrguer (visível em mobile) */
+    .menu-toggle {
+      background: none;
+      border: 2px solid rgba(255,255,255,0.4);
+      color: white;
+      padding: 0.4rem 0.7rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    /* Navegação: oculta por padrão em mobile */
+    .nav-principal {
+      display: none;
+      padding-top: 1rem;
+    }
+    .nav-principal.aberta { display: block; }
+    .nav-principal ul { list-style: none; }
+    .nav-principal li { border-top: 1px solid rgba(255,255,255,0.1); }
+    .nav-principal a {
+      display: block;
+      padding: 0.75rem 0;
+      color: #ccc;
+      text-decoration: none;
+      transition: color var(--transicao);
+    }
+    .nav-principal a:hover { color: white; }
+    .nav-principal a[aria-current="page"] { color: white; font-weight: 600; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: white;
+      padding: 3rem var(--espaco);
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 5vw, 3.5rem);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: rgba(255,255,255,0.8);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .hero-botoes {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.75rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+    .btn-primario { background: var(--cor-primaria); color: white; }
+    .btn-outline { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.5); }
+
+    /* ── Main layout ── */
+    .container { width: 100%; padding: 0 var(--espaco); margin: 0 auto; }
+
+    main { padding: 2rem 0; }
+
+    /* Grid de cards: 1 coluna em mobile */
+    .grid-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--sombra);
+      transition: transform var(--transicao), box-shadow var(--transicao);
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .card-header {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+    .card-header.html { background: linear-gradient(135deg, #e44d26, #f16529); }
+    .card-header.css  { background: linear-gradient(135deg, #264de4, #2965f1); }
+    .card-header.js   { background: linear-gradient(135deg, #323330, #f7df1e); }
+    .card-header.node { background: linear-gradient(135deg, #339933, #5cb85c); }
+    .card-header.react { background: linear-gradient(135deg, #20232a, #61dafb); }
+    .card-header.vite  { background: linear-gradient(135deg, #646cff, #ff9a00); }
+    .card-body { padding: 1.25rem; }
+    .card-body h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .card-body p { font-size: 0.875rem; color: #666; line-height: 1.5; }
+    .card-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+    .tag {
+      background: #e7f3ff;
+      color: var(--cor-primaria);
+      font-size: 0.75rem;
+      padding: 0.2em 0.6em;
+      border-radius: 999px;
+    }
+
+    /* ── Seção de features ── */
+    .features { padding: 2rem var(--espaco); background: white; }
+    .features h2 { text-align: center; font-size: 1.5rem; margin-bottom: 2rem; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .feature {
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      background: var(--cor-fundo);
+      border-left: 4px solid var(--cor-primaria);
+    }
+    .feature-icone { font-size: 2rem; margin-bottom: 0.75rem; }
+    .feature h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .feature p { font-size: 0.875rem; color: #666; }
+
+    /* ── Sidebar e conteúdo ── */
+    .layout-com-sidebar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 2rem var(--espaco);
+    }
+
+    .artigo h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+    .artigo p { margin-bottom: 1rem; color: #444; }
+
+    .sidebar-widget {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--sombra);
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-widget h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 1rem; color: #333; }
+
+    /* ── Tabela responsiva ── */
+    .tabela-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 500px; font-size: 0.9rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #dee2e6; }
+    th { background: var(--cor-header); color: white; }
+    tr:nth-child(even) { background: #f8f9fa; }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: var(--cor-header);
+      color: #aaa;
+      padding: 2rem var(--espaco);
+      font-size: 0.875rem;
+    }
+    .footer-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+    .footer-col h3 { color: white; font-size: 0.95rem; margin-bottom: 1rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 0.5rem; }
+    .footer-col a { color: #aaa; text-decoration: none; }
+    .footer-col a:hover { color: white; }
+    .footer-bottom {
+      text-align: center;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ── Indicador de breakpoint ── */
+    .breakpoint-indicator {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      font-family: monospace;
+      z-index: 9999;
+    }
+
+    /* ══════════════════════════════════════════════════
+       TABLET (≥ 768px)
+    ══════════════════════════════════════════════════ */
+    @media (min-width: 768px) {
+
+      /* Header: mostrar nav inline */
+      .menu-toggle { display: none; }
+      .nav-principal {
+        display: flex !important;
+        padding-top: 0;
+        align-items: center;
+      }
+      .nav-principal ul { display: flex; gap: 2rem; }
+      .nav-principal li { border-top: none; }
+      .nav-principal a { padding: 0; }
+
+      .header-inner { gap: 2rem; }
+
+      /* Container com largura máxima */
+      .container { max-width: 1280px; }
+
+      /* Hero: botões em linha */
+      .hero { padding: 5rem var(--espaco); }
+      .hero-botoes { flex-direction: row; justify-content: center; }
+
+      /* Grid: 2 colunas */
+      .grid-cards { grid-template-columns: repeat(2, 1fr); }
+
+      /* Features: 2 colunas */
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* Layout com sidebar */
+      .layout-com-sidebar {
+        grid-template-columns: 1fr 280px;
+      }
+
+      /* Footer: 2 colunas */
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ══════════════════════════════════════════════════
+       DESKTOP (≥ 1024px)
+    ══════════════════════════════════════════════════ */
+    @media (min-width: 1024px) {
+
+      /* Grid: 3 colunas */
+      .grid-cards { grid-template-columns: repeat(3, 1fr); }
+
+      /* Features: 4 colunas */
+      .features-grid { grid-template-columns: repeat(4, 1fr); }
+
+      /* Footer: 4 colunas */
+      .footer-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* ══════════════════════════════════════════════════
+       PREFERÊNCIAS DE SISTEMA
+    ══════════════════════════════════════════════════ */
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --cor-fundo: #0d1117;
+        --cor-texto: #e6edf3;
+      }
+      .card { background: #161b22; }
+      .card-body p { color: #8b949e; }
+      .sidebar-widget { background: #161b22; }
+      .sidebar-widget h3 { color: #e6edf3; }
+      .artigo p { color: #8b949e; }
+      .features { background: #161b22; }
+      .feature { background: #0d1117; }
+      .feature p { color: #8b949e; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link para acessibilidade -->
+  <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
+
+  <!-- Indicador de breakpoint atual -->
+  <div class="breakpoint-indicator" id="bp-indicator">📱 Mobile</div>
+
+  <!-- ══════════════════════════
+       HEADER
+  ══════════════════════════ -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="logo" aria-label="TechBlog - Ir para a página inicial">TechBlog</a>
+
+        <!-- Botão hambúrguer (mobile) -->
+        <button
+          class="menu-toggle"
+          aria-controls="nav-principal"
+          aria-expanded="false"
+          aria-label="Abrir/fechar menu"
+          id="menu-toggle"
+        >☰</button>
+
+        <!-- Navegação principal -->
+        <nav
+          class="nav-principal"
+          id="nav-principal"
+          aria-label="Navegação principal"
+        >
+          <ul>
+            <li><a href="/" aria-current="page">Home</a></li>
+            <li><a href="/tutoriais">Tutoriais</a></li>
+            <li><a href="/sobre">Sobre</a></li>
+            <li><a href="/contato">Contato</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════
+       HERO
+  ══════════════════════════ -->
+  <section class="hero" aria-labelledby="hero-titulo">
+    <h1 id="hero-titulo">
+      Aprenda Desenvolvimento Web<br>
+      <span style="color: #e94560;">do Zero ao Mercado</span>
+    </h1>
+    <p>Conteúdo prático e atualizado sobre HTML, CSS, JavaScript e ecossistema front-end moderno.</p>
+    <div class="hero-botoes">
+      <a href="#tutoriais" class="btn btn-primario">Começar agora</a>
+      <a href="#sobre" class="btn btn-outline">Saiba mais</a>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════
+       MAIN
+  ══════════════════════════ -->
+  <main id="conteudo-principal">
+
+    <!-- Seção de cards -->
+    <section aria-labelledby="tutoriais-titulo" style="padding: 3rem 0;">
+      <div class="container">
+        <h2 id="tutoriais-titulo" style="text-align:center; font-size:1.75rem; margin-bottom:2rem;">
+          Trilha de Aprendizagem
+        </h2>
+
+        <div class="grid-cards">
+          <article class="card">
+            <div class="card-header html">🌐</div>
+            <div class="card-body">
+              <h3>HTML Semântico</h3>
+              <p>Estruture páginas com semântica correta para SEO e acessibilidade.</p>
+              <div class="card-tags">
+                <span class="tag">Iniciante</span>
+                <span class="tag">SEO</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header css">🎨</div>
+            <div class="card-body">
+              <h3>CSS Moderno</h3>
+              <p>Flexbox, Grid, variáveis e design responsivo Mobile First.</p>
+              <div class="card-tags">
+                <span class="tag">Iniciante</span>
+                <span class="tag">Layout</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header js">⚡</div>
+            <div class="card-body">
+              <h3>JavaScript ES2024</h3>
+              <p>Programação moderna com as últimas funcionalidades da linguagem.</p>
+              <div class="card-tags">
+                <span class="tag">Intermediário</span>
+                <span class="tag">DOM</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header node">🟢</div>
+            <div class="card-body">
+              <h3>Node.js e NPM</h3>
+              <p>Ecossistema JavaScript para back-end e ferramentas de build.</p>
+              <div class="card-tags">
+                <span class="tag">Intermediário</span>
+                <span class="tag">Backend</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header react">⚛️</div>
+            <div class="card-body">
+              <h3>React</h3>
+              <p>Biblioteca para construção de interfaces reativas e componentizadas.</p>
+              <div class="card-tags">
+                <span class="tag">Avançado</span>
+                <span class="tag">Framework</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header vite">⚡</div>
+            <div class="card-body">
+              <h3>Vite + Build Tools</h3>
+              <p>Ferramentas modernas de empacotamento e desenvolvimento.</p>
+              <div class="card-tags">
+                <span class="tag">Avançado</span>
+                <span class="tag">Tooling</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" aria-labelledby="features-titulo">
+      <h2 id="features-titulo">Por que aprender com a gente?</h2>
+      <div class="container">
+        <div class="features-grid">
+          <div class="feature">
+            <div class="feature-icone">📚</div>
+            <h3>Conteúdo Atualizado</h3>
+            <p>Sempre alinhado com as últimas especificações e práticas do mercado.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icone">🛠️</div>
+            <h3>Prático</h3>
+            <p>Exercícios reais que você pode executar diretamente no navegador.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icone">♿</div>
+            <h3>Acessível</h3>
+            <p>Todo o conteúdo segue as diretrizes WCAG 2.2 de acessibilidade.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icone">📱</div>
+            <h3>Mobile First</h3>
+            <p>Design pensado para funcionar perfeitamente em qualquer dispositivo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layout com sidebar -->
+    <div class="container">
+      <div class="layout-com-sidebar">
+
+        <article class="artigo">
+          <h2>Breakpoints Utilizados nesta Página</h2>
+          <p>Esta página demonstra a abordagem <strong>Mobile First</strong>: os estilos base são escritos para mobile, e media queries adicionam estilos para telas maiores.</p>
+
+          <div class="tabela-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Breakpoint</th>
+                  <th>Largura mínima</th>
+                  <th>Grid de cards</th>
+                  <th>Navegação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>📱 Mobile</td>
+                  <td>0px</td>
+                  <td>1 coluna</td>
+                  <td>Menu hambúrguer</td>
+                </tr>
+                <tr>
+                  <td>📟 Tablet</td>
+                  <td>768px</td>
+                  <td>2 colunas</td>
+                  <td>Nav horizontal</td>
+                </tr>
+                <tr>
+                  <td>🖥️ Desktop</td>
+                  <td>1024px</td>
+                  <td>3 colunas</td>
+                  <td>Nav horizontal</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <aside aria-label="Widgets da sidebar">
+          <div class="sidebar-widget">
+            <h3>📌 Dica do Dia</h3>
+            <p style="font-size:0.875rem; color:#666; line-height:1.5;">
+              Use <code>clamp()</code> para tamanhos de fonte responsivos
+              sem precisar de media queries:
+              <br><br>
+              <code style="background:#f0f2f5; padding:0.2em 0.4em; border-radius:4px;">
+                font-size: clamp(1rem, 2.5vw, 2rem);
+              </code>
+            </p>
+          </div>
+          <div class="sidebar-widget">
+            <h3>🔗 Links Úteis</h3>
+            <ul style="list-style:none; font-size:0.875rem; line-height:2;">
+              <li><a href="https://caniuse.com" target="_blank" rel="noopener noreferrer" style="color:var(--cor-primaria);">Can I Use</a></li>
+              <li><a href="https://developer.mozilla.org" target="_blank" rel="noopener noreferrer" style="color:var(--cor-primaria);">MDN Web Docs</a></li>
+              <li><a href="https://web.dev" target="_blank" rel="noopener noreferrer" style="color:var(--cor-primaria);">web.dev</a></li>
+            </ul>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════════
+       FOOTER
+  ══════════════════════════ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>TechBlog</h3>
+          <p>Conteúdo de desenvolvimento web moderno e atualizado.</p>
+        </div>
+        <div class="footer-col">
+          <h3>Conteúdo</h3>
+          <ul>
+            <li><a href="#">HTML</a></li>
+            <li><a href="#">CSS</a></li>
+            <li><a href="#">JavaScript</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Comunidade</h3>
+          <ul>
+            <li><a href="#">GitHub</a></li>
+            <li><a href="#">Discord</a></li>
+            <li><a href="#">Newsletter</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="#">Privacidade</a></li>
+            <li><a href="#">Termos</a></li>
+            <li><a href="#">Acessibilidade</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 TechBlog. Desenvolvido com HTML, CSS e ❤️</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Menu hambúrguer ──
+    const toggle = document.getElementById('menu-toggle')
+    const nav = document.getElementById('nav-principal')
+
+    toggle.addEventListener('click', () => {
+      const aberta = nav.classList.toggle('aberta')
+      toggle.setAttribute('aria-expanded', aberta)
+      toggle.textContent = aberta ? '✕' : '☰'
+    })
+
+    // Fechar menu ao clicar em um link
+    nav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('aberta')
+        toggle.setAttribute('aria-expanded', 'false')
+        toggle.textContent = '☰'
+      })
+    })
+
+    // ── Indicador de breakpoint ──
+    function atualizarBreakpoint() {
+      const w = window.innerWidth
+      const el = document.getElementById('bp-indicator')
+      if (w < 768) {
+        el.textContent = `📱 Mobile (${w}px)`
+      } else if (w < 1024) {
+        el.textContent = `📟 Tablet (${w}px)`
+      } else {
+        el.textContent = `🖥️ Desktop (${w}px)`
+      }
+    }
+
+    atualizarBreakpoint()
+    window.addEventListener('resize', atualizarBreakpoint)
+  </script>
+</body>
+</html>

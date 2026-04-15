@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO básico -->
+  <title>Prática 01 – Estrutura Semântica | Desenvolvimento Web</title>
+  <meta name="description" content="Exemplo de página HTML com estrutura semântica completa usando header, nav, main, article, section, aside e footer.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Prática 01 – Estrutura Semântica HTML">
+  <meta property="og:description" content="Página de exemplo com HTML semântico.">
+
+  <!-- Dados Estruturados -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Prática 01 – Estrutura Semântica",
+    "description": "Exemplo de estrutura semântica HTML5",
+    "educationalUse": "practice"
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      color: #212529;
+      background: #f8f9fa;
+    }
+
+    /* ── Cabeçalho ── */
+    .site-header {
+      background: #1a1a2e;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; color: #e94560; text-decoration: none; }
+
+    /* ── Navegação ── */
+    .nav-principal ul { list-style: none; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .nav-principal a { color: #ccc; text-decoration: none; transition: color 0.2s; }
+    .nav-principal a:hover,
+    .nav-principal a[aria-current="page"] { color: white; }
+
+    /* ── Layout principal ── */
+    .layout {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      grid-template-areas:
+        "main aside";
+      gap: 2rem;
+    }
+    @media (max-width: 768px) {
+      .layout {
+        grid-template-columns: 1fr;
+        grid-template-areas: "main" "aside";
+      }
+    }
+
+    main { grid-area: main; }
+    aside { grid-area: aside; }
+
+    /* ── Artigo ── */
+    article {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    article header { margin-bottom: 1.5rem; }
+    article h1 { font-size: 2rem; color: #1a1a2e; margin-bottom: 0.5rem; }
+    article h2 { font-size: 1.4rem; color: #333; margin: 1.5rem 0 0.75rem; }
+    article p { margin-bottom: 1rem; }
+    .article-meta { color: #666; font-size: 0.9rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .tag {
+      background: #e7f3ff;
+      color: #0d6efd;
+      padding: 0.2em 0.6em;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      text-decoration: none;
+    }
+
+    /* ── Seção ── */
+    section {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    section h2 { font-size: 1.4rem; color: #1a1a2e; margin-bottom: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem; }
+
+    /* ── Lista de posts ── */
+    .posts-list { list-style: none; }
+    .posts-list li { border-bottom: 1px solid #e9ecef; padding: 1rem 0; }
+    .posts-list li:last-child { border-bottom: none; }
+    .posts-list a { color: #0d6efd; text-decoration: none; font-weight: 500; }
+    .posts-list a:hover { text-decoration: underline; }
+    .posts-list time { color: #666; font-size: 0.85rem; display: block; margin-top: 0.25rem; }
+
+    /* ── Aside ── */
+    .widget {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .widget h2 { font-size: 1.1rem; color: #1a1a2e; margin-bottom: 1rem; }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: #1a1a2e;
+      color: #aaa;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .site-footer a { color: #e94560; text-decoration: none; }
+
+    /* ── Blockquote ── */
+    blockquote {
+      border-left: 4px solid #e94560;
+      margin: 1.5rem 0;
+      padding: 1rem 1.5rem;
+      background: #fff5f5;
+      border-radius: 0 4px 4px 0;
+    }
+    blockquote p { margin: 0; font-style: italic; }
+    blockquote footer { color: #666; font-size: 0.9rem; margin-top: 0.5rem; }
+
+    /* ── Anotações de semântica ── */
+    [data-semantica]::after {
+      content: attr(data-semantica);
+      display: inline-block;
+      background: #ffd700;
+      color: #333;
+      font-size: 0.65rem;
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      margin-left: 0.5em;
+      vertical-align: middle;
+      font-style: normal;
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================
+       HEADER: cabeçalho do site com logo e navegação
+  ======================================================= -->
+  <header class="site-header" data-semantica="&lt;header&gt;">
+
+    <a href="/" class="logo" aria-label="Ir para a página inicial do TechBlog">
+      Tech<span style="color:#fff">Blog</span>
+    </a>
+
+    <!-- NAV: bloco de navegação principal -->
+    <nav class="nav-principal" aria-label="Navegação principal" data-semantica="&lt;nav&gt;">
+      <ul>
+        <li><a href="/" aria-current="page">Home</a></li>
+        <li><a href="/tutoriais">Tutoriais</a></li>
+        <li><a href="/sobre">Sobre</a></li>
+        <li><a href="/contato">Contato</a></li>
+      </ul>
+    </nav>
+
+  </header>
+
+  <!-- ======================================================
+       MAIN: conteúdo principal único da página
+  ======================================================= -->
+  <div class="layout">
+
+    <main data-semantica="&lt;main&gt;">
+
+      <!-- ARTICLE: conteúdo autônomo e redistribuível -->
+      <article data-semantica="&lt;article&gt;">
+
+        <header>
+          <h1>HTML Semântico: Por que Importa?</h1>
+          <div class="article-meta">
+            <span>Por <address style="display:inline"><a href="/autor/joao" rel="author">João Silva</a></address></span>
+            <time datetime="2024-01-15">15 jan. 2024</time>
+            <span>
+              <a href="/tags/html" class="tag">HTML</a>
+              <a href="/tags/seo" class="tag">SEO</a>
+              <a href="/tags/acessibilidade" class="tag">Acessibilidade</a>
+            </span>
+          </div>
+        </header>
+
+        <p>
+          O <strong>HTML semântico</strong> vai além de simplesmente estruturar visualmente uma página.
+          Ao usar as tags corretas, você comunica o <em>significado</em> do conteúdo tanto para
+          navegadores quanto para tecnologias assistivas e mecanismos de busca.
+        </p>
+
+        <h2>Por que usar elementos semânticos?</h2>
+
+        <p>Existem três grandes beneficiários do HTML semântico:</p>
+
+        <ol>
+          <li><strong>Acessibilidade:</strong> leitores de tela usam a estrutura do HTML para navegar pela página</li>
+          <li><strong>SEO:</strong> buscadores entendem melhor a relevância do conteúdo</li>
+          <li><strong>Manutenibilidade:</strong> código mais legível e organizado</li>
+        </ol>
+
+        <h2>A diferença entre <code>&lt;div&gt;</code> e elementos semânticos</h2>
+
+        <blockquote cite="https://html.spec.whatwg.org/">
+          <p>Autores são encorajados a usar elementos que descrevem melhor o conteúdo,
+          em vez de usar o elemento <code>div</code> para tudo.</p>
+          <footer>— <cite>HTML Living Standard, WHATWG</cite></footer>
+        </blockquote>
+
+        <p>
+          Um <abbr title="Screen Reader">leitor de tela</abbr> que encontra um
+          <code>&lt;nav&gt;</code> sabe que aquele bloco é uma navegação e pode
+          anunciá-lo ao usuário. Um <code>&lt;div class="nav"&gt;</code> não
+          transmite essa informação automaticamente.
+        </p>
+
+        <h2>Estrutura de uma página típica</h2>
+
+        <p>
+          A estrutura mais comum de uma página HTML5 semântica inclui:
+          <mark>header, nav, main, article ou section, aside e footer</mark>.
+          Cada elemento tem um papel claro na hierarquia do documento.
+        </p>
+
+        <figure>
+          <pre style="background:#1e1e1e; color:#d4d4d4; padding:1rem; border-radius:8px; font-size:0.85em; overflow-x:auto;">
+&lt;body&gt;
+  &lt;header&gt;...&lt;/header&gt;
+  &lt;nav&gt;...&lt;/nav&gt;
+  &lt;main&gt;
+    &lt;article&gt;...&lt;/article&gt;
+    &lt;section&gt;...&lt;/section&gt;
+  &lt;/main&gt;
+  &lt;aside&gt;...&lt;/aside&gt;
+  &lt;footer&gt;...&lt;/footer&gt;
+&lt;/body&gt;</pre>
+          <figcaption>Estrutura semântica padrão de uma página HTML5</figcaption>
+        </figure>
+
+        <footer style="border-top: 1px solid #dee2e6; padding-top: 1rem; margin-top: 2rem; color: #666; font-size: 0.9rem;">
+          <p>Última atualização: <time datetime="2024-01-20">20 de janeiro de 2024</time></p>
+        </footer>
+
+      </article>
+
+      <!-- SECTION: seção temática com título -->
+      <section data-semantica="&lt;section&gt;">
+        <h2>Últimos Artigos</h2>
+        <ul class="posts-list">
+          <li>
+            <a href="/css-grid">CSS Grid: Layout bidimensional completo</a>
+            <time datetime="2024-01-10">10 jan. 2024</time>
+          </li>
+          <li>
+            <a href="/flexbox">Flexbox: Guia completo com exemplos</a>
+            <time datetime="2024-01-05">5 jan. 2024</time>
+          </li>
+          <li>
+            <a href="/javascript-moderno">JavaScript Moderno: ES2024</a>
+            <time datetime="2023-12-28">28 dez. 2023</time>
+          </li>
+        </ul>
+      </section>
+
+    </main>
+
+    <!-- ASIDE: conteúdo complementar (sidebar) -->
+    <aside data-semantica="&lt;aside&gt;">
+
+      <div class="widget">
+        <h2>Sobre o Blog</h2>
+        <p>Conteúdo sobre desenvolvimento web moderno, com foco em boas práticas e padrões abertos.</p>
+      </div>
+
+      <div class="widget">
+        <h2>Categorias</h2>
+        <ul>
+          <li><a href="/html">HTML (12)</a></li>
+          <li><a href="/css">CSS (18)</a></li>
+          <li><a href="/javascript">JavaScript (24)</a></li>
+          <li><a href="/acessibilidade">Acessibilidade (8)</a></li>
+        </ul>
+      </div>
+
+      <div class="widget">
+        <h2>Tags Populares</h2>
+        <nav aria-label="Nuvem de tags">
+          <a href="/tags/html" class="tag">HTML5</a>
+          <a href="/tags/css" class="tag">CSS3</a>
+          <a href="/tags/js" class="tag">JavaScript</a>
+          <a href="/tags/a11y" class="tag">a11y</a>
+          <a href="/tags/seo" class="tag">SEO</a>
+          <a href="/tags/react" class="tag">React</a>
+        </nav>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- FOOTER: rodapé do site -->
+  <footer class="site-footer" data-semantica="&lt;footer&gt;">
+    <p>
+      &copy; 2024 TechBlog. Feito com ❤️ e HTML semântico.
+      <a href="/privacidade">Política de Privacidade</a> ·
+      <a href="/acessibilidade">Declaração de Acessibilidade</a>
+    </p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 02 – CSS Grid | CSS Moderno</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --azul: #0d6efd; --verde: #198754; --laranja: #fd7e14;
+      --roxo: #6f42c1; --vermelho: #dc3545; --ciano: #0dcaf0;
+      --radius: 8px; --sombra: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    body { font-family: system-ui, sans-serif; background: #f8f9fa; color: #212529; padding: 2rem 1rem; }
+    h1 { text-align: center; color: #1a1a2e; margin-bottom: 0.5rem; }
+    .subtitulo { text-align: center; color: #6c757d; margin-bottom: 3rem; }
+    .secao { margin-bottom: 4rem; }
+    .secao-titulo { font-size: 1.25rem; color: var(--azul); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--azul); }
+    .demo { background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--sombra); }
+    .codigo {
+      background: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 0.8rem;
+      padding: 1rem 1.25rem; border-radius: var(--radius); margin: 0.75rem 0; overflow-x: auto; line-height: 1.7;
+    }
+    .codigo .c { color: #6a9955; } /* comment */
+    .codigo .p { color: #9cdcfe; } /* property */
+    .codigo .v { color: #ce9178; } /* value */
+    .codigo .k { color: #c586c0; } /* keyword */
+
+    /* Células do grid */
+    .celula {
+      background: var(--azul);
+      color: white;
+      padding: 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .celula:nth-child(2) { background: var(--verde); }
+    .celula:nth-child(3) { background: var(--laranja); }
+    .celula:nth-child(4) { background: var(--roxo); }
+    .celula:nth-child(5) { background: var(--vermelho); }
+    .celula:nth-child(6) { background: var(--ciano); color: #333; }
+    .celula:nth-child(7) { background: #343a40; }
+    .celula:nth-child(8) { background: #e83e8c; }
+    .celula:nth-child(9) { background: #20c997; color: #333; }
+
+    /* ══ 1. COLUNAS E LINHAS ══ */
+    .grid-basico {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    /* ══ 2. UNIDADES ══ */
+    .grid-unidades {
+      display: grid;
+      grid-template-columns: 150px 2fr 1fr;
+      gap: 1rem;
+    }
+
+    /* ══ 3. AUTO-FIT / MINMAX ══ */
+    .grid-responsivo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ══ 4. SPAN DE COLUNAS/LINHAS ══ */
+    .grid-span {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 100px);
+      gap: 1rem;
+    }
+    .grid-span .celula:nth-child(1) { grid-column: span 2; }   /* ocupa 2 colunas */
+    .grid-span .celula:nth-child(2) { grid-row: span 2; }      /* ocupa 2 linhas */
+    .grid-span .celula:nth-child(4) { grid-column: 1 / -1; }   /* ocupa toda a largura */
+
+    /* ══ 5. ÁREAS NOMEADAS ══ */
+    .grid-areas {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      grid-template-rows: 60px 1fr 50px;
+      grid-template-areas:
+        "header header"
+        "sidebar main"
+        "footer footer";
+      gap: 1rem;
+      min-height: 300px;
+    }
+    .area-header  { grid-area: header;  background: #1a1a2e; }
+    .area-sidebar { grid-area: sidebar; background: var(--roxo); }
+    .area-main    { grid-area: main;    background: var(--azul); font-size: 0.85rem; padding: 1.5rem; text-align: left; }
+    .area-footer  { grid-area: footer;  background: #333; }
+
+    /* ══ 6. JUSTIFY / ALIGN ══ */
+    .grid-alinhamento {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 1rem;
+      justify-content: center;  /* alinha o grid horizontalmente */
+      justify-items: center;    /* alinha itens horizontalmente dentro das células */
+    }
+    .grid-alinhamento .celula { width: 70px; }
+
+    /* ══ 7. LAYOUT MAGAZINE ══ */
+    .grid-magazine {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: 200px 200px;
+      gap: 0.75rem;
+    }
+    .grid-magazine .destaque {
+      grid-column: span 3;
+      grid-row: span 2;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: white;
+    }
+    .grid-magazine .destaque h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .grid-magazine .destaque p { font-size: 0.85rem; opacity: 0.9; }
+    .grid-magazine .mini {
+      border-radius: var(--radius);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: white;
+      font-size: 0.85rem;
+    }
+    .grid-magazine .mini:nth-child(2) { background: linear-gradient(135deg, #f093fb, #f5576c); grid-column: span 3; }
+    .grid-magazine .mini:nth-child(3) { background: linear-gradient(135deg, #4facfe, #00f2fe); color: #333; }
+    .grid-magazine .mini:nth-child(4) { background: linear-gradient(135deg, #43e97b, #38f9d7); color: #333; }
+    .grid-magazine .mini:nth-child(5) { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+    /* ══ 8. GRID DE CARDS ══ */
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--sombra);
+      display: flex;
+      flex-direction: column;
+    }
+    .card-thumb { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+    .card-thumb.html { background: linear-gradient(135deg, #e44d26, #f16529); }
+    .card-thumb.css  { background: linear-gradient(135deg, #264de4, #2965f1); }
+    .card-thumb.js   { background: linear-gradient(135deg, #323330, #f7df1e); }
+    .card-corpo { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .card-corpo h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .card-corpo p { font-size: 0.85rem; color: #666; flex: 1; }
+    .card-corpo a {
+      display: block; margin-top: 1rem; padding: 0.5rem; text-align: center;
+      background: var(--azul); color: white; border-radius: 4px; text-decoration: none; font-size: 0.85rem;
+    }
+
+    /* Responsivo */
+    @media (max-width: 600px) {
+      .grid-magazine { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .grid-magazine .destaque { grid-column: span 2; }
+      .grid-magazine .mini:nth-child(2) { grid-column: span 2; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Prática 02 – CSS Grid</h1>
+  <p class="subtitulo">Exemplos práticos de layouts com CSS Grid</p>
+
+  <!-- ══ 1. BÁSICO ══ -->
+  <div class="secao">
+    <h2 class="secao-titulo">1. Grid Básico – repeat(3, 1fr)</h2>
+    <div class="demo">
+      <div class="grid-basico">
+        <div class="celula">1</div>
+        <div class="celula">2</div>
+        <div class="celula">3</div>
+        <div class="celula">4</div>
+        <div class="celula">5</div>
+        <div class="celula">6</div>
+      </div>
+    </div>
+    <div class="codigo">
+      <span class="p">grid-template-columns</span>: <span class="v">repeat(3, 1fr)</span>; <span class="c">/* 3 colunas de tamanho igual */</span>
+    </div>
+  </div>
+
+  <!-- ══ 2. UNIDADES MISTAS ══ -->
+  <div class="secao">
+    <h2 class="secao-titulo">2. Unidades Mistas – px, fr</h2>
+    <div class="demo">
+      <div class="grid-unidades">
+        <div class="celula">150px</div>
+        <div class="celula">2fr</div>
+        <div class="celula">1fr</div>
+      </div>
+    </div>
+    <div class="codigo">
+      <span class="p">grid-template-columns</span>: <span class="v">150px 2fr 1fr</span>;
+      <span class="c">/* 150px fixo | 2 partes | 1 parte */</span>
+    </div>
+  </div>
+
+  <!-- ══ 3. AUTO-FIT + MINMAX ══ -->
+  <div class="secao">
+    <h2 class="secao-titulo">3. Grid Responsivo – auto-fit + minmax</h2>
+    <p style="color:#666; font-size:0.9rem; margin-bottom:1rem;">Redimensione a janela para ver o grid se adaptar automaticamente!</p>
+    <div class="demo">
+      <div class="grid-responsivo">
+        <div class="celula">Card A</div>
+        <div class="celula">Card B</div>
+        <div class="celula">Card C</div>
+        <div class="celula">Card D</div>
+        <div class="celula">Card E</div>
+        <div class="celula">Card F</div>
+      </div>
+    </div>
+    <div class="codigo">
+      <span class="p">grid-template-columns</span>: <span class="v">repeat(auto-fit, minmax(180px, 1fr))</span>;
+      <br><span class="c">/* auto-fit: colunas criadas automaticamente, colapsam se vazias */</span>
+      <br><span class="c">/* minmax(180px, 1fr): mínimo 180px, máximo 1 fração do espaço */</span>
+    </div>
+  </div>
+
+  <!-- ══ 4. SPAN ══ -->
+  <div class="secao">
+    <h2 class="secao-titulo">4. Posicionamento com span e grid-column/row</h2>
+    <div class="demo">
+      <div class="grid-span">
+        <div class="celula">span 2 colunas</div>
+        <div class="celula">span 2 linhas</div>
+        <div class="celula">Normal</div>
+        <div class="celula" style="grid-column: 1 / -1; background: #1a1a2e;">grid-column: 1 / -1 (largura total)</div>
+        <div class="celula">Normal</div>
+        <div class="celula">Normal</div>
+      </div>
+    </div>
+    <div class="codigo">
+      .a { <span class="p">grid-column</span>: <span class="v">span 2</span>; } <span class="c">/* ocupa 2 colunas */</span><br>
+      .b { <span class="p">grid-row</span>: <span class="v">span 2</span>; }    <span class="c">/* ocupa 2 linhas */</span><br>
+      .c { <span class="p">grid-column</span>: <span class="v">1 / -1</span>; } <span class="c">/* da linha 1 até a última */</span>
+    </div>
+  </div>
+
+  <!-- ══ 5. ÁREAS NOMEADAS ══ -->
+  <div class="secao">
+    <h2 class="secao-titulo">5. Áreas Nomeadas – grid-template-areas</h2>
+    <div class="demo">
+      <div class="grid-areas">
+        <div class="celula area-header">Header</div>
+        <div class="celula area-sidebar">Sidebar</div>
+        <div class="area-main" style="color:white; align-items:flex-start; justify-content:flex-start;">
+          <p><strong>Main Content</strong></p>
+          <p style="margin-top:0.5rem; opacity:0.9; line-height:1.6;">
+            As áreas nomeadas tornam o layout muito legível.<br>
+            Você pode ver a estrutura diretamente no CSS!
+          </p>
+        </div>
+        <div class="celula area-footer">Footer</div>
+      </div>
+    </div>
+    <div class="codigo">
+      <span class="p">grid-template-areas</span>:<br>
+      &nbsp; <span class="v">"header  header"</span><br>
+      &nbsp; <span class="v">"sidebar main  "</span><br>
+      &nbsp; <span class="v">"footer  footer"</span>;<br><br>
+      .header  { <span class="p">grid-area</span>: <span class="v">header</span>;  }<br>
+      .sidebar { <span class="p">grid-area</span>: <span class="v">sidebar</span>; }<br>
+      .main    { <span class="p">grid-area</span>: <span class="v">main</span>;    }<br>
+      .footer  { <span class="p">grid-area</span>: <span class="v">footer</span>;  }
+    </div>
+  </div>
+
+  <!-- ══ 6. LAYOUT MAGAZINE ══ -->
+  <div class="secao">
+    <h2 class="secao-titulo">6. Layout Magazine – Posicionamento Criativo</h2>
+    <div class="demo" style="padding:0; overflow:hidden; border-radius: var(--radius);">
+      <div class="grid-magazine">
+        <div class="destaque">
+          <h2>Destaque Principal</h2>
+          <p>grid-column: span 3; grid-row: span 2</p>
+        </div>
+        <div class="mini">
+          <p style="font-weight:600;">Notícia Secundária</p>
+          <p style="font-size:0.75rem; margin-top:0.25rem;">grid-column: span 3</p>
+        </div>
+        <div class="mini"><p style="font-weight:600;">Card 3</p></div>
+        <div class="mini"><p style="font-weight:600;">Card 4</p></div>
+        <div class="mini"><p style="font-weight:600;">Card 5</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 7. CARDS REAIS ══ -->
+  <div class="secao">
+    <h2 class="secao-titulo">7. Grid de Cards Reais</h2>
+    <div class="demo">
+      <div class="grid-cards">
+        <div class="card">
+          <div class="card-thumb html">🌐</div>
+          <div class="card-corpo">
+            <h3>HTML5</h3>
+            <p>A linguagem de marcação que estrutura toda a web.</p>
+            <a href="#">Estudar</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-thumb css">🎨</div>
+          <div class="card-corpo">
+            <h3>CSS3</h3>
+            <p>Estilização e layout com Flexbox, Grid e muito mais.</p>
+            <a href="#">Estudar</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-thumb js">⚡</div>
+          <div class="card-corpo">
+            <h3>JavaScript</h3>
+            <p>A linguagem de programação nativa dos navegadores.</p>
+            <a href="#">Estudar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="codigo">
+      <span class="p">grid-template-columns</span>: <span class="v">repeat(auto-fill, minmax(240px, 1fr))</span>;
+      <span class="c">/* auto-fill com minmax para responsividade perfeita */</span>
+    </div>
+  </div>
+
+</body>
+</html>
