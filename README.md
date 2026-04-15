@@ -11,7 +11,7 @@ Disciplina completa de Desenvolvimento Web com foco em práticas modernas de mer
 | [03 – CSS Moderno](modulos/03-css-moderno/README.md) | Flexbox, CSS Grid, variáveis e Design Responsivo (Mobile First) |
 | [04 – Acessibilidade Web](modulos/04-acessibilidade/README.md) | WCAG, ARIA e boas práticas de inclusão digital |
 | [05 – JavaScript](modulos/05-javascript/README.md) | Escopo, estruturas de dados, JSON, DOM e eventos |
-| [06 – Assincronismo e APIs](modulos/06-assincronismo-apis/README.md) | Promises, async/await e consumo de APIs REST |
+| [06 – Assincronismo e APIs](modulos/06-assincronismo/README.md) | Promises, async/await e consumo de APIs REST |
 | [07 – DevTools](modulos/07-devtools/README.md) | Ferramentas de desenvolvedor do navegador |
 | [08 – Ecossistema Front-end](modulos/08-ecossistema-frontend/README.md) | npm, Vite, bundlers e introdução a frameworks |
 

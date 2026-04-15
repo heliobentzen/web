@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 02 – Fetch API | Assincronismo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --azul: #0d6efd; --verde: #198754; --vermelho: #dc3545;
+      --cinza-100: #f8f9fa; --cinza-200: #e9ecef; --cinza-600: #6c757d;
+      --radius: 8px; --sombra: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    body { font-family: system-ui, sans-serif; background: var(--cinza-100); color: #212529; padding: 1.5rem; }
+    :focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; border-radius: 3px; }
+    h1 { color: #1a1a2e; font-size: 1.75rem; margin-bottom: 0.35rem; }
+    h2 { color: var(--azul); font-size: 1.1rem; margin-bottom: 0.75rem; padding-bottom: 0.35rem; border-bottom: 2px solid var(--azul); }
+    p.sub { color: var(--cinza-600); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; }
+    .card { background: white; border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--sombra); }
+
+    .btn { padding: 0.5rem 1rem; border: none; border-radius: 5px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.15s, opacity 0.15s; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-azul  { background: var(--azul); color: white; }
+    .btn-verde { background: var(--verde); color: white; }
+    .btn-verm  { background: var(--vermelho); color: white; }
+    .btn-cinza { background: #6c757d; color: white; }
+
+    input, select, textarea {
+      width: 100%; padding: 0.45rem 0.75rem; border: 1.5px solid #ced4da;
+      border-radius: 5px; font-size: 0.875rem; font-family: inherit;
+      margin-bottom: 0.5rem;
+    }
+    input:focus, select:focus { border-color: var(--azul); outline: none; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.2rem; }
+
+    /* Loading */
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 0.35rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Resultado */
+    .resultado {
+      margin-top: 0.75rem; padding: 0.75rem; border-radius: 5px; font-size: 0.8rem;
+      max-height: 200px; overflow-y: auto; font-family: monospace; line-height: 1.5;
+    }
+    .resultado.sucesso { background: #d1e7dd; color: #0a3622; }
+    .resultado.erro    { background: #f8d7da; color: #58151c; }
+    .resultado.info    { background: var(--cinza-200); color: #333; }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-block; padding: 0.2em 0.6em; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 700; font-family: monospace;
+    }
+    .s-2xx { background: #d1e7dd; color: #0a3622; }
+    .s-4xx { background: #fff3cd; color: #664d03; }
+    .s-5xx { background: #f8d7da; color: #58151c; }
+
+    /* Cards de usuários */
+    .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
+    .user-card { background: var(--cinza-100); border-radius: 5px; padding: 0.75rem; font-size: 0.8rem; border: 1px solid var(--cinza-200); transition: box-shadow 0.2s; }
+    .user-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .user-card .nome { font-weight: 700; margin-bottom: 0.25rem; color: #333; }
+    .user-card .email { color: var(--cinza-600); word-break: break-all; }
+    .user-card .badge { background: var(--azul); color: white; font-size: 0.65rem; padding: 0.15em 0.4em; border-radius: 3px; margin-top: 0.35rem; display: inline-block; }
+
+    /* Posts */
+    .post-item { padding: 0.75rem; border-bottom: 1px solid var(--cinza-200); font-size: 0.85rem; }
+    .post-item:last-child { border-bottom: none; }
+    .post-item .post-titulo { font-weight: 600; margin-bottom: 0.25rem; color: #333; }
+    .post-item .post-body { color: var(--cinza-600); font-size: 0.8rem; }
+    .post-item .post-meta { font-size: 0.7rem; color: #aaa; margin-top: 0.25rem; }
+
+    /* Tabs */
+    .tabs { display: flex; border-bottom: 2px solid var(--cinza-200); margin-bottom: 1rem; }
+    .tab { background: none; border: none; padding: 0.5rem 1rem; font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--cinza-600); transition: color 0.2s, border-color 0.2s; }
+    .tab.ativa { color: var(--azul); border-bottom-color: var(--azul); font-weight: 600; }
+    .tab-painel[hidden] { display: none; }
+
+    /* Formulário de post */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Prática 02 – Fetch API</h1>
+  <p class="sub">
+    Demonstrações interativas de GET, POST, PUT, DELETE usando a
+    <a href="https://jsonplaceholder.typicode.com/" target="_blank" rel="noopener noreferrer" style="color:var(--azul);">JSONPlaceholder</a>
+    – uma API fake gratuita para testes.
+  </p>
+
+  <div class="grid">
+
+    <!-- ════════════════════════════════
+         1. GET – Lista de usuários
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>1. GET – Listar Usuários</h2>
+      <p style="font-size:0.85rem;color:var(--cinza-600);margin-bottom:0.75rem;">
+        Endpoint: <code>GET /users</code>
+      </p>
+
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-azul" id="btn-usuarios" onclick="buscarUsuarios()">Buscar usuários</button>
+        <button class="btn btn-cinza" onclick="limpar('usuarios-resultado')">Limpar</button>
+      </div>
+
+      <div id="usuarios-status" style="margin-top:0.5rem;font-size:0.8rem;"></div>
+      <div id="user-grid" class="user-grid"></div>
+
+      <div id="usuarios-resultado" class="resultado info" style="display:none;"></div>
+    </div>
+
+    <!-- ════════════════════════════════
+         2. GET com parâmetros – Posts por usuário
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>2. GET com Parâmetros</h2>
+      <p style="font-size:0.85rem;color:var(--cinza-600);margin-bottom:0.75rem;">
+        Endpoint: <code>GET /posts?userId={id}</code>
+      </p>
+
+      <label for="user-id">ID do usuário (1-10):</label>
+      <div style="display:flex;gap:0.5rem;">
+        <input type="number" id="user-id" value="1" min="1" max="10" style="width:80px;">
+        <button class="btn btn-azul" onclick="buscarPosts()">Buscar posts</button>
+      </div>
+
+      <div id="posts-status" style="margin-top:0.5rem;font-size:0.8rem;"></div>
+      <div id="posts-lista" style="max-height:250px;overflow-y:auto;border:1px solid var(--cinza-200);border-radius:5px;margin-top:0.75rem;"></div>
+    </div>
+
+    <!-- ════════════════════════════════
+         3. POST – Criar post
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>3. POST – Criar Recurso</h2>
+      <p style="font-size:0.85rem;color:var(--cinza-600);margin-bottom:0.75rem;">
+        Endpoint: <code>POST /posts</code>
+      </p>
+
+      <label for="post-titulo">Título:</label>
+      <input type="text" id="post-titulo" value="Meu primeiro post via Fetch API" placeholder="Título do post">
+
+      <label for="post-body">Conteúdo:</label>
+      <textarea id="post-body" rows="3" style="resize:vertical;">Conteúdo criado com fetch e async/await.</textarea>
+
+      <label for="post-userid">User ID:</label>
+      <input type="number" id="post-userid" value="1" min="1" max="10" style="width:80px;">
+
+      <button class="btn btn-verde" style="margin-top:0.5rem;" onclick="criarPost()">Criar post</button>
+
+      <div id="post-resultado" class="resultado" style="display:none;"></div>
+    </div>
+
+    <!-- ════════════════════════════════
+         4. PUT / PATCH – Atualizar
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>4. PUT / PATCH – Atualizar</h2>
+
+      <div class="tabs">
+        <button class="tab ativa" onclick="mudarTab(this,'tab-put')">PUT (completo)</button>
+        <button class="tab" onclick="mudarTab(this,'tab-patch')">PATCH (parcial)</button>
+      </div>
+
+      <div id="tab-put">
+        <p style="font-size:0.8rem;color:var(--cinza-600);margin-bottom:0.5rem;">
+          PUT substitui o recurso inteiro. Todos os campos são obrigatórios.
+        </p>
+        <label for="put-id">ID do post (1-100):</label>
+        <input type="number" id="put-id" value="1" min="1" max="100" style="width:80px;">
+        <label for="put-titulo">Novo título:</label>
+        <input type="text" id="put-titulo" value="Título atualizado com PUT">
+        <button class="btn btn-azul" onclick="atualizarPut()">Enviar PUT</button>
+      </div>
+
+      <div id="tab-patch" hidden>
+        <p style="font-size:0.8rem;color:var(--cinza-600);margin-bottom:0.5rem;">
+          PATCH atualiza apenas os campos enviados.
+        </p>
+        <label for="patch-id">ID do post (1-100):</label>
+        <input type="number" id="patch-id" value="1" min="1" max="100" style="width:80px;">
+        <label for="patch-titulo">Apenas o título:</label>
+        <input type="text" id="patch-titulo" value="Só o título foi alterado (PATCH)">
+        <button class="btn btn-azul" onclick="atualizarPatch()">Enviar PATCH</button>
+      </div>
+
+      <div id="update-resultado" class="resultado" style="display:none;margin-top:0.75rem;"></div>
+    </div>
+
+    <!-- ════════════════════════════════
+         5. DELETE
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>5. DELETE – Excluir</h2>
+      <p style="font-size:0.85rem;color:var(--cinza-600);margin-bottom:0.75rem;">
+        Endpoint: <code>DELETE /posts/{id}</code>
+      </p>
+
+      <label for="delete-id">ID do post a excluir (1-100):</label>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <input type="number" id="delete-id" value="1" min="1" max="100" style="width:80px;margin:0;">
+        <button class="btn btn-verm" onclick="excluirPost()">🗑️ Excluir</button>
+      </div>
+
+      <div id="delete-resultado" class="resultado" style="display:none;margin-top:0.75rem;"></div>
+    </div>
+
+    <!-- ════════════════════════════════
+         6. AbortController – Cancelar requisição
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>6. AbortController – Cancelar Requisição</h2>
+      <p style="font-size:0.85rem;color:var(--cinza-600);margin-bottom:0.75rem;">
+        Permite cancelar uma requisição em andamento.
+      </p>
+
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="btn btn-azul" id="btn-iniciar" onclick="iniciarRequisicaoLenta()">▶ Iniciar (2s timeout)</button>
+        <button class="btn btn-verm" id="btn-cancelar" onclick="cancelarRequisicao()" disabled>⬛ Cancelar</button>
+      </div>
+
+      <div id="abort-status" style="margin-top:0.75rem;font-size:0.875rem;min-height:24px;"></div>
+      <div id="abort-resultado" class="resultado" style="display:none;margin-top:0.5rem;"></div>
+    </div>
+
+    <!-- ════════════════════════════════
+         7. Tratamento de erros HTTP
+    ════════════════════════════════ -->
+    <div class="card" style="grid-column:1/-1;">
+      <h2>7. Tratamento de Erros HTTP</h2>
+      <p style="font-size:0.85rem;color:var(--cinza-600);margin-bottom:0.75rem;">
+        Teste diferentes cenários de erro:
+      </p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="btn btn-azul"  onclick="testarStatus(200)">200 OK</button>
+        <button class="btn btn-cinza" onclick="testarStatus(201)">201 Created</button>
+        <button class="btn btn-cinza" onclick="testarStatus(404)">404 Not Found</button>
+        <button class="btn btn-cinza" onclick="testarStatus(500)">500 Server Error</button>
+        <button class="btn btn-cinza" onclick="testarOffline()">Sem conexão (simulado)</button>
+      </div>
+      <div id="status-resultado" class="resultado info" style="display:none;margin-top:0.75rem;"></div>
+    </div>
+
+  </div>
+
+  <script>
+    const BASE_URL = 'https://jsonplaceholder.typicode.com'
+
+    // ── Helpers ──
+
+    function mostrarLoading(btnId) {
+      const btn = document.getElementById(btnId)
+      if (!btn) return
+      btn.disabled = true
+      const original = btn.textContent
+      btn.innerHTML = `<span class="spinner"></span>Carregando...`
+      return () => { btn.disabled = false; btn.innerHTML = original }
+    }
+
+    function mostrarResultado(elId, conteudo, tipo = 'info') {
+      const el = document.getElementById(elId)
+      el.className = `resultado ${tipo}`
+      el.textContent = typeof conteudo === 'object' ? JSON.stringify(conteudo, null, 2) : conteudo
+      el.style.display = 'block'
+    }
+
+    function limpar(elId) {
+      const el = document.getElementById(elId)
+      if (el) { el.style.display = 'none'; el.textContent = '' }
+    }
+
+    function badgeStatus(status) {
+      const classe = status >= 500 ? 's-5xx' : status >= 400 ? 's-4xx' : 's-2xx'
+      return `<span class="status-badge ${classe}">${status}</span>`
+    }
+
+    // ── 1. GET Usuários ──
+
+    async function buscarUsuarios() {
+      const pararLoading = mostrarLoading('btn-usuarios')
+      const statusEl = document.getElementById('usuarios-status')
+      const gridEl = document.getElementById('user-grid')
+
+      try {
+        statusEl.innerHTML = '⏳ Buscando...'
+        gridEl.innerHTML = ''
+
+        const inicio = Date.now()
+        const resposta = await fetch(`${BASE_URL}/users`)
+        const duracao = Date.now() - inicio
+
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
+
+        const usuarios = await resposta.json()
+
+        statusEl.innerHTML = `${badgeStatus(resposta.status)} ${usuarios.length} usuários carregados em ${duracao}ms`
+
+        gridEl.innerHTML = usuarios.map(u => `
+          <div class="user-card">
+            <div class="nome">${u.name}</div>
+            <div class="email">${u.email}</div>
+            <div class="badge">${u.company.name}</div>
+          </div>
+        `).join('')
+
+      } catch (erro) {
+        statusEl.innerHTML = `❌ ${erro.message}`
+        console.error('Erro ao buscar usuários:', erro)
+      } finally {
+        pararLoading()
+      }
+    }
+
+    // ── 2. GET Posts por usuário ──
+
+    async function buscarPosts() {
+      const userId = document.getElementById('user-id').value
+      const statusEl = document.getElementById('posts-status')
+      const listaEl = document.getElementById('posts-lista')
+
+      try {
+        statusEl.innerHTML = '⏳ Buscando...'
+        listaEl.innerHTML = ''
+
+        const url = `${BASE_URL}/posts?userId=${userId}`
+        const resposta = await fetch(url)
+
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
+
+        const posts = await resposta.json()
+        statusEl.innerHTML = `${badgeStatus(resposta.status)} ${posts.length} posts do usuário ${userId}`
+
+        listaEl.innerHTML = posts.map(p => `
+          <div class="post-item">
+            <div class="post-titulo">${p.title}</div>
+            <div class="post-body">${p.body.slice(0, 80)}...</div>
+            <div class="post-meta">Post #${p.id} · userId: ${p.userId}</div>
+          </div>
+        `).join('')
+
+      } catch (erro) {
+        statusEl.innerHTML = `❌ ${erro.message}`
+      }
+    }
+
+    // ── 3. POST ──
+
+    async function criarPost() {
+      const titulo  = document.getElementById('post-titulo').value
+      const body    = document.getElementById('post-body').value
+      const userId  = parseInt(document.getElementById('post-userid').value)
+
+      if (!titulo.trim()) { alert('Informe um título'); return }
+
+      try {
+        mostrarResultado('post-resultado', '⏳ Criando post...', 'info')
+
+        const resposta = await fetch(`${BASE_URL}/posts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: titulo, body, userId }),
+        })
+
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
+
+        const criado = await resposta.json()
+        mostrarResultado('post-resultado',
+          `✅ Post criado! Status: ${resposta.status}\n\n${JSON.stringify(criado, null, 2)}`,
+          'sucesso'
+        )
+
+      } catch (erro) {
+        mostrarResultado('post-resultado', `❌ ${erro.message}`, 'erro')
+      }
+    }
+
+    // ── 4. PUT / PATCH ──
+
+    async function atualizarPut() {
+      const id = document.getElementById('put-id').value
+      const titulo = document.getElementById('put-titulo').value
+
+      try {
+        mostrarResultado('update-resultado', '⏳ Enviando PUT...', 'info')
+        const resposta = await fetch(`${BASE_URL}/posts/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: parseInt(id), title: titulo, body: 'Atualizado via PUT', userId: 1 }),
+        })
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
+        const dados = await resposta.json()
+        mostrarResultado('update-resultado', `✅ PUT ${resposta.status}\n\n${JSON.stringify(dados, null, 2)}`, 'sucesso')
+      } catch (e) {
+        mostrarResultado('update-resultado', `❌ ${e.message}`, 'erro')
+      }
+    }
+
+    async function atualizarPatch() {
+      const id = document.getElementById('patch-id').value
+      const titulo = document.getElementById('patch-titulo').value
+
+      try {
+        mostrarResultado('update-resultado', '⏳ Enviando PATCH...', 'info')
+        const resposta = await fetch(`${BASE_URL}/posts/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: titulo }), // apenas o título
+        })
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
+        const dados = await resposta.json()
+        mostrarResultado('update-resultado', `✅ PATCH ${resposta.status} (apenas title foi enviado)\n\n${JSON.stringify(dados, null, 2)}`, 'sucesso')
+      } catch (e) {
+        mostrarResultado('update-resultado', `❌ ${e.message}`, 'erro')
+      }
+    }
+
+    function mudarTab(btn, painelId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('ativa'))
+      btn.classList.add('ativa')
+      document.getElementById('tab-put').hidden = painelId !== 'tab-put'
+      document.getElementById('tab-patch').hidden = painelId !== 'tab-patch'
+    }
+
+    // ── 5. DELETE ──
+
+    async function excluirPost() {
+      const id = document.getElementById('delete-id').value
+
+      try {
+        mostrarResultado('delete-resultado', `⏳ Excluindo post #${id}...`, 'info')
+        const resposta = await fetch(`${BASE_URL}/posts/${id}`, { method: 'DELETE' })
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
+        mostrarResultado('delete-resultado', `✅ Post #${id} excluído. Status: ${resposta.status}\n(JSONPlaceholder simula o DELETE mas não remove de fato)`, 'sucesso')
+      } catch (e) {
+        mostrarResultado('delete-resultado', `❌ ${e.message}`, 'erro')
+      }
+    }
+
+    // ── 6. AbortController ──
+
+    let controller = null
+
+    async function iniciarRequisicaoLenta() {
+      controller = new AbortController()
+      const btnIniciar = document.getElementById('btn-iniciar')
+      const btnCancelar = document.getElementById('btn-cancelar')
+      const statusEl = document.getElementById('abort-status')
+
+      btnIniciar.disabled = true
+      btnCancelar.disabled = false
+      statusEl.innerHTML = '⏳ Requisição em andamento... (clique em Cancelar para interromper)'
+      limpar('abort-resultado')
+
+      // Simular delay adicionando um parâmetro de cache-busting para a URL
+      const inicio = Date.now()
+
+      try {
+        // Usando uma URL que retorna resposta mais lenta com delay
+        const resposta = await fetch(`${BASE_URL}/posts?_delay=2000&_=${Date.now()}`, {
+          signal: controller.signal,
+        })
+
+        // Criar um delay manual para simular
+        await new Promise((resolve, reject) => {
+          const timer = setTimeout(resolve, 2000)
+          controller.signal.addEventListener('abort', () => {
+            clearTimeout(timer)
+            reject(new DOMException('Abortado', 'AbortError'))
+          })
+        })
+
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
+        const dados = await resposta.json()
+
+        const duracao = Date.now() - inicio
+        statusEl.innerHTML = `✅ Concluído em ${duracao}ms`
+        mostrarResultado('abort-resultado', `✅ ${dados.length} posts recebidos`, 'sucesso')
+
+      } catch (erro) {
+        const duracao = Date.now() - inicio
+        if (erro.name === 'AbortError') {
+          statusEl.innerHTML = `⬛ Requisição cancelada após ${duracao}ms`
+          mostrarResultado('abort-resultado', '⬛ Requisição cancelada pelo usuário\n(AbortController.abort() foi chamado)', 'info')
+        } else {
+          statusEl.innerHTML = `❌ ${erro.message}`
+          mostrarResultado('abort-resultado', `❌ Erro: ${erro.message}`, 'erro')
+        }
+      } finally {
+        btnIniciar.disabled = false
+        btnCancelar.disabled = true
+        controller = null
+      }
+    }
+
+    function cancelarRequisicao() {
+      controller?.abort()
+    }
+
+    // ── 7. Testes de status ──
+
+    async function testarStatus(statusCode) {
+      try {
+        mostrarResultado('status-resultado', `⏳ Testando status ${statusCode}...`, 'info')
+
+        let url, opcoes = {}
+
+        if (statusCode === 200) {
+          url = `${BASE_URL}/posts/1`
+        } else if (statusCode === 201) {
+          url = `${BASE_URL}/posts`
+          opcoes = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: 'Test', body: 'Test', userId: 1 }) }
+        } else if (statusCode === 404) {
+          url = `${BASE_URL}/posts/99999`
+        } else if (statusCode === 500) {
+          // JSONPlaceholder não gera 500, simulamos com URL inválida de outro domínio
+          url = `${BASE_URL}/unknown-endpoint-that-may-fail`
+        }
+
+        const resposta = await fetch(url, opcoes)
+
+        // IMPORTANTE: fetch NÃO rejeita em 4xx/5xx!
+        // Precisamos verificar resposta.ok manualmente
+        const mensagem = resposta.ok
+          ? `✅ ${resposta.status} ${resposta.statusText} – resposta.ok = true`
+          : `⚠️ ${resposta.status} ${resposta.statusText} – resposta.ok = false\n\nFetch NÃO rejeitou! Você precisa verificar resposta.ok manualmente.\n\nif (!resposta.ok) throw new Error(\`HTTP \${resposta.status}\`)`
+
+        mostrarResultado('status-resultado', mensagem, resposta.ok ? 'sucesso' : 'erro')
+
+      } catch (e) {
+        mostrarResultado('status-resultado', `❌ Erro de rede (não HTTP): ${e.message}\n\nEste é um erro de TypeError, não HTTP.`, 'erro')
+      }
+    }
+
+    async function testarOffline() {
+      mostrarResultado('status-resultado', `⏳ Simulando erro de rede...`, 'info')
+      try {
+        // URL de domínio inválido para simular falha de rede
+        await fetch('https://este-dominio-nao-existe-xyz-abc.invalid/api')
+      } catch (e) {
+        mostrarResultado('status-resultado',
+          `❌ TypeError (erro de rede): ${e.message}\n\n` +
+          'Este é um erro de REDE, não HTTP.\n' +
+          'Fetch rejeita a Promise apenas para erros de rede.\n\n' +
+          'Tipo do erro: ' + e.constructor.name,
+          'erro'
+        )
+      }
+    }
+  </script>
+</body>
+</html>
