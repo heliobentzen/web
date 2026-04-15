@@ -251,13 +251,23 @@
 
     // ── Helpers ──
 
+    function escaparHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+    }
+
     function mostrarLoading(btnId) {
       const btn = document.getElementById(btnId)
       if (!btn) return
       btn.disabled = true
       const original = btn.textContent
       btn.innerHTML = `<span class="spinner"></span>Carregando...`
-      return () => { btn.disabled = false; btn.innerHTML = original }
+      // Restore via textContent (safe – original came from textContent)
+      return () => { btn.disabled = false; btn.textContent = original }
     }
 
     function mostrarResultado(elId, conteudo, tipo = 'info') {
@@ -300,14 +310,14 @@
 
         gridEl.innerHTML = usuarios.map(u => `
           <div class="user-card">
-            <div class="nome">${u.name}</div>
-            <div class="email">${u.email}</div>
-            <div class="badge">${u.company.name}</div>
+            <div class="nome">${escaparHtml(u.name)}</div>
+            <div class="email">${escaparHtml(u.email)}</div>
+            <div class="badge">${escaparHtml(u.company.name)}</div>
           </div>
         `).join('')
 
       } catch (erro) {
-        statusEl.innerHTML = `❌ ${erro.message}`
+        statusEl.textContent = `❌ ${erro.message}`
         console.error('Erro ao buscar usuários:', erro)
       } finally {
         pararLoading()
@@ -317,7 +327,7 @@
     // ── 2. GET Posts por usuário ──
 
     async function buscarPosts() {
-      const userId = document.getElementById('user-id').value
+      const userId = parseInt(document.getElementById('user-id').value, 10) || 1
       const statusEl = document.getElementById('posts-status')
       const listaEl = document.getElementById('posts-lista')
 
@@ -331,18 +341,19 @@
         if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`)
 
         const posts = await resposta.json()
+        // userId is sanitized as integer above – safe to interpolate
         statusEl.innerHTML = `${badgeStatus(resposta.status)} ${posts.length} posts do usuário ${userId}`
 
         listaEl.innerHTML = posts.map(p => `
           <div class="post-item">
-            <div class="post-titulo">${p.title}</div>
-            <div class="post-body">${p.body.slice(0, 80)}...</div>
+            <div class="post-titulo">${escaparHtml(p.title)}</div>
+            <div class="post-body">${escaparHtml(p.body.slice(0, 80))}...</div>
             <div class="post-meta">Post #${p.id} · userId: ${p.userId}</div>
           </div>
         `).join('')
 
       } catch (erro) {
-        statusEl.innerHTML = `❌ ${erro.message}`
+        statusEl.textContent = `❌ ${erro.message}`
       }
     }
 
@@ -482,10 +493,10 @@
       } catch (erro) {
         const duracao = Date.now() - inicio
         if (erro.name === 'AbortError') {
-          statusEl.innerHTML = `⬛ Requisição cancelada após ${duracao}ms`
+          statusEl.textContent = `⬛ Requisição cancelada após ${duracao}ms`
           mostrarResultado('abort-resultado', '⬛ Requisição cancelada pelo usuário\n(AbortController.abort() foi chamado)', 'info')
         } else {
-          statusEl.innerHTML = `❌ ${erro.message}`
+          statusEl.textContent = `❌ ${erro.message}`
           mostrarResultado('abort-resultado', `❌ Erro: ${erro.message}`, 'erro')
         }
       } finally {
