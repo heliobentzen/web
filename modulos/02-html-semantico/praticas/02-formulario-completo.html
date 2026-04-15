@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 02 – Formulário Completo | HTML Semântico</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 680px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      color: #1a1a2e;
+      margin-bottom: 0.5rem;
+    }
+    .subtitulo { color: #666; margin-bottom: 2rem; font-size: 0.95rem; }
+
+    /* Fieldset e Legend */
+    fieldset {
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    legend {
+      font-weight: 600;
+      color: #1a1a2e;
+      padding: 0 0.5rem;
+      font-size: 1rem;
+    }
+
+    /* Grupos de campo */
+    .campo {
+      margin-bottom: 1.25rem;
+    }
+    .campo:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+    }
+    label .obrigatorio {
+      color: #dc3545;
+      margin-left: 2px;
+    }
+    label .dica {
+      font-weight: normal;
+      color: #666;
+      font-size: 0.85em;
+    }
+
+    /* Inputs */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="password"],
+    input[type="search"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      border: 1.5px solid #ced4da;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #212529;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: white;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+    }
+
+    input:invalid:not(:placeholder-shown) {
+      border-color: #dc3545;
+    }
+    input:valid:not(:placeholder-shown) {
+      border-color: #198754;
+    }
+
+    textarea { resize: vertical; min-height: 120px; }
+
+    /* Mensagem de erro */
+    .erro {
+      color: #dc3545;
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+      display: none;
+    }
+    input:invalid:not(:placeholder-shown) + .erro { display: block; }
+
+    /* Radio e Checkbox */
+    .opcoes { display: flex; flex-direction: column; gap: 0.5rem; }
+    .opcao {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-weight: normal;
+      color: #333;
+    }
+    input[type="radio"],
+    input[type="checkbox"] {
+      width: 1.1em;
+      height: 1.1em;
+      cursor: pointer;
+      accent-color: #0d6efd;
+      flex-shrink: 0;
+    }
+
+    /* Range */
+    input[type="range"] {
+      width: 100%;
+      padding: 0;
+      accent-color: #0d6efd;
+    }
+    .range-valor { text-align: right; font-size: 0.85rem; color: #0d6efd; font-weight: 600; }
+
+    /* Color */
+    input[type="color"] {
+      width: 3rem;
+      height: 2.5rem;
+      padding: 0.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Botões */
+    .botoes {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    button {
+      padding: 0.65rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:active { transform: scale(0.98); }
+    .btn-primario { background: #0d6efd; color: white; }
+    .btn-primario:hover { background: #0b5ed7; }
+    .btn-secundario { background: #e9ecef; color: #495057; }
+    .btn-secundario:hover { background: #dee2e6; }
+
+    /* Progresso de senha */
+    .forca-senha { height: 4px; border-radius: 2px; background: #e9ecef; margin-top: 0.4rem; overflow: hidden; }
+    .forca-senha-barra { height: 100%; width: 0; border-radius: 2px; transition: width 0.3s, background 0.3s; }
+
+    /* Sucesso */
+    .mensagem-sucesso {
+      display: none;
+      background: #d1e7dd;
+      border: 1px solid #a3cfbb;
+      color: #0a3622;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Formulário de Cadastro</h1>
+    <p class="subtitulo">Todos os campos marcados com <span style="color:#dc3545">*</span> são obrigatórios.</p>
+
+    <!--
+      novalidate: desativa validação nativa para usarmos a validação customizada via JS
+      (em produção pode-se remover e usar a validação nativa)
+    -->
+    <form id="form-cadastro" novalidate>
+
+      <!-- ─── Dados Pessoais ─── -->
+      <fieldset>
+        <legend>👤 Dados Pessoais</legend>
+
+        <div class="campo">
+          <label for="nome">
+            Nome completo <span class="obrigatorio">*</span>
+          </label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+            minlength="3"
+            maxlength="100"
+            autocomplete="name"
+            placeholder="Ex: Maria da Silva"
+          >
+          <span class="erro">Por favor, informe seu nome completo (mínimo 3 caracteres).</span>
+        </div>
+
+        <div class="campo">
+          <label for="email">
+            E-mail <span class="obrigatorio">*</span>
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="seu@email.com"
+          >
+          <span class="erro">Informe um e-mail válido.</span>
+        </div>
+
+        <div class="campo">
+          <label for="senha">
+            Senha <span class="obrigatorio">*</span>
+            <span class="dica">(mínimo 8 caracteres)</span>
+          </label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            required
+            minlength="8"
+            autocomplete="new-password"
+            placeholder="••••••••"
+          >
+          <div class="forca-senha" aria-hidden="true">
+            <div class="forca-senha-barra" id="barra-forca"></div>
+          </div>
+          <span class="erro">A senha deve ter pelo menos 8 caracteres.</span>
+        </div>
+
+        <div class="campo">
+          <label for="telefone">Telefone</label>
+          <input
+            type="tel"
+            id="telefone"
+            name="telefone"
+            autocomplete="tel"
+            pattern="[0-9\s\-\(\)]{10,15}"
+            placeholder="(11) 99999-9999"
+          >
+          <span class="erro">Formato inválido. Ex: (11) 99999-9999</span>
+        </div>
+
+        <div class="campo">
+          <label for="data-nascimento">Data de nascimento</label>
+          <input
+            type="date"
+            id="data-nascimento"
+            name="data_nascimento"
+            autocomplete="bday"
+            max=""
+          >
+        </div>
+
+        <div class="campo">
+          <label for="url-site">Site pessoal ou portfólio</label>
+          <input
+            type="url"
+            id="url-site"
+            name="url_site"
+            autocomplete="url"
+            placeholder="https://meusite.com"
+          >
+          <span class="erro">Informe uma URL válida (deve começar com https://).</span>
+        </div>
+      </fieldset>
+
+      <!-- ─── Preferências ─── -->
+      <fieldset>
+        <legend>⚙️ Preferências</legend>
+
+        <div class="campo">
+          <label for="linguagem">
+            Linguagem de programação favorita <span class="obrigatorio">*</span>
+          </label>
+          <select id="linguagem" name="linguagem" required>
+            <option value="">Selecione uma opção...</option>
+            <optgroup label="Front-end">
+              <option value="html">HTML/CSS</option>
+              <option value="js">JavaScript</option>
+              <option value="ts">TypeScript</option>
+            </optgroup>
+            <optgroup label="Back-end">
+              <option value="python">Python</option>
+              <option value="node">Node.js</option>
+              <option value="java">Java</option>
+              <option value="go">Go</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="campo">
+          <p style="font-weight:500; margin-bottom:0.4rem; font-size:0.9rem;">
+            Nível de experiência <span class="obrigatorio">*</span>
+          </p>
+          <div class="opcoes" role="group" aria-labelledby="nivel-label">
+            <label class="opcao">
+              <input type="radio" name="nivel" value="iniciante" required>
+              Iniciante (0–1 ano)
+            </label>
+            <label class="opcao">
+              <input type="radio" name="nivel" value="junior">
+              Júnior (1–3 anos)
+            </label>
+            <label class="opcao">
+              <input type="radio" name="nivel" value="pleno">
+              Pleno (3–6 anos)
+            </label>
+            <label class="opcao">
+              <input type="radio" name="nivel" value="senior">
+              Sênior (6+ anos)
+            </label>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="horas-por-dia">
+            Horas de estudo por dia: <span id="horas-valor" class="range-valor">1h</span>
+          </label>
+          <input
+            type="range"
+            id="horas-por-dia"
+            name="horas_dia"
+            min="0"
+            max="12"
+            value="1"
+            step="0.5"
+          >
+        </div>
+
+        <div class="campo">
+          <label for="cor-favorita">Cor favorita</label>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <input type="color" id="cor-favorita" name="cor_favorita" value="#0d6efd">
+            <span id="hex-cor" style="font-family:monospace; color:#666;">#0d6efd</span>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ─── Interesses ─── -->
+      <fieldset>
+        <legend>🎯 Interesses</legend>
+
+        <div class="campo">
+          <p style="font-weight:500; margin-bottom:0.5rem; font-size:0.9rem;">Áreas de interesse (selecione todas que se aplicam)</p>
+          <div class="opcoes">
+            <label class="opcao">
+              <input type="checkbox" name="interesses" value="frontend">
+              Front-end Development
+            </label>
+            <label class="opcao">
+              <input type="checkbox" name="interesses" value="backend">
+              Back-end Development
+            </label>
+            <label class="opcao">
+              <input type="checkbox" name="interesses" value="mobile">
+              Mobile (React Native / Flutter)
+            </label>
+            <label class="opcao">
+              <input type="checkbox" name="interesses" value="devops">
+              DevOps / Cloud
+            </label>
+            <label class="opcao">
+              <input type="checkbox" name="interesses" value="ux">
+              UX / Design de Interface
+            </label>
+            <label class="opcao">
+              <input type="checkbox" name="interesses" value="dados">
+              Dados / Machine Learning
+            </label>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="busca-tecnologia">Buscar tecnologia</label>
+          <input
+            type="search"
+            id="busca-tecnologia"
+            name="busca"
+            list="tecnologias-lista"
+            placeholder="Ex: React, Vue, Angular..."
+          >
+          <datalist id="tecnologias-lista">
+            <option value="React">
+            <option value="Vue.js">
+            <option value="Angular">
+            <option value="Svelte">
+            <option value="Next.js">
+            <option value="Nuxt.js">
+            <option value="Astro">
+            <option value="Vite">
+            <option value="TypeScript">
+            <option value="GraphQL">
+          </datalist>
+        </div>
+
+        <div class="campo">
+          <label for="bio">
+            Sobre você
+            <span class="dica">(<span id="contador-chars">0</span>/500 caracteres)</span>
+          </label>
+          <textarea
+            id="bio"
+            name="bio"
+            maxlength="500"
+            rows="4"
+            placeholder="Conte um pouco sobre sua experiência e objetivos..."
+          ></textarea>
+        </div>
+      </fieldset>
+
+      <!-- ─── Termos ─── -->
+      <fieldset>
+        <legend>📋 Termos</legend>
+
+        <div class="campo">
+          <label class="opcao">
+            <input type="checkbox" id="termos" name="termos" required>
+            Li e concordo com os <a href="/termos">Termos de Uso</a> e a
+            <a href="/privacidade">Política de Privacidade</a> <span class="obrigatorio">*</span>
+          </label>
+        </div>
+
+        <div class="campo">
+          <label class="opcao">
+            <input type="checkbox" id="newsletter" name="newsletter" value="1">
+            Quero receber novidades, tutoriais e dicas por e-mail
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="botoes">
+        <button type="submit" class="btn-primario">✅ Criar conta</button>
+        <button type="reset" class="btn-secundario">🗑️ Limpar</button>
+      </div>
+
+    </form>
+
+    <div class="mensagem-sucesso" id="sucesso" role="alert">
+      🎉 <strong>Conta criada com sucesso!</strong> Verifique seu e-mail para confirmar o cadastro.
+    </div>
+  </div>
+
+  <script>
+    // ─── Configurar data máxima de nascimento (hoje) ───
+    document.getElementById('data-nascimento').max = new Date().toISOString().split('T')[0]
+
+    // ─── Range: atualizar valor exibido ───
+    const rangeHoras = document.getElementById('horas-por-dia')
+    const horasValor = document.getElementById('horas-valor')
+    rangeHoras.addEventListener('input', () => {
+      const v = parseFloat(rangeHoras.value)
+      horasValor.textContent = v === 1 ? '1h' : `${v}h`
+    })
+
+    // ─── Color picker: exibir hex ───
+    const corInput = document.getElementById('cor-favorita')
+    const hexCor = document.getElementById('hex-cor')
+    corInput.addEventListener('input', () => {
+      hexCor.textContent = corInput.value
+    })
+
+    // ─── Contador de caracteres do textarea ───
+    const bio = document.getElementById('bio')
+    const contador = document.getElementById('contador-chars')
+    bio.addEventListener('input', () => {
+      contador.textContent = bio.value.length
+    })
+
+    // ─── Força da senha ───
+    const senhaInput = document.getElementById('senha')
+    const barraForca = document.getElementById('barra-forca')
+    senhaInput.addEventListener('input', () => {
+      const senha = senhaInput.value
+      let forca = 0
+      if (senha.length >= 8) forca++
+      if (/[A-Z]/.test(senha)) forca++
+      if (/[0-9]/.test(senha)) forca++
+      if (/[^A-Za-z0-9]/.test(senha)) forca++
+      const cores = ['', '#dc3545', '#fd7e14', '#ffc107', '#198754']
+      const larguras = ['0%', '25%', '50%', '75%', '100%']
+      barraForca.style.width = larguras[forca]
+      barraForca.style.background = cores[forca]
+    })
+
+    // ─── Submissão do formulário ───
+    document.getElementById('form-cadastro').addEventListener('submit', function(e) {
+      e.preventDefault()
+
+      // Validação manual (exemplo simples)
+      const campos = this.querySelectorAll('[required]')
+      let valido = true
+
+      campos.forEach(campo => {
+        if (!campo.checkValidity()) {
+          campo.reportValidity()
+          valido = false
+        }
+      })
+
+      if (valido) {
+        // Coletar dados do formulário como objeto
+        const dados = Object.fromEntries(new FormData(this))
+        console.log('Dados do formulário:', dados)
+
+        // Exibir mensagem de sucesso
+        document.getElementById('sucesso').style.display = 'block'
+        this.style.opacity = '0.5'
+        this.style.pointerEvents = 'none'
+
+        // Em produção: enviar via fetch para uma API
+        // fetch('/api/cadastro', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(dados)
+        // })
+      }
+    })
+  </script>
+</body>
+</html>

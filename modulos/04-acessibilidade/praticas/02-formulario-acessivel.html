@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 02 – Formulário Acessível | Acessibilidade Web</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --azul: #0d6efd; --verde: #198754; --vermelho: #dc3545; --radius: 8px; }
+    body { font-family: system-ui, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 2rem 1rem; color: #212529; }
+    :focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; border-radius: 4px; }
+
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .subtitulo { color: #666; margin-bottom: 2rem; font-size: 0.95rem; }
+
+    .form-card { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+
+    fieldset { border: 1px solid #dee2e6; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+    legend { font-weight: 700; color: #333; padding: 0 0.5rem; }
+
+    .campo { margin-bottom: 1.25rem; }
+    label { display: block; font-weight: 500; margin-bottom: 0.35rem; font-size: 0.9rem; }
+    .obrig { color: var(--vermelho); }
+    .dica { display: block; font-size: 0.8rem; color: #666; margin-top: 0.25rem; font-weight: normal; }
+
+    input[type="text"], input[type="email"], input[type="tel"],
+    input[type="password"], select, textarea {
+      width: 100%; padding: 0.6rem 0.85rem;
+      border: 2px solid #ced4da; border-radius: var(--radius);
+      font-size: 1rem; font-family: inherit; color: #212529;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--azul); box-shadow: 0 0 0 3px rgba(13,110,253,0.2); outline: none; }
+    input[aria-invalid="true"] { border-color: var(--vermelho); }
+    input[aria-invalid="false"]:not(:placeholder-shown) { border-color: var(--verde); }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    .erro {
+      display: none; color: var(--vermelho); font-size: 0.8rem; margin-top: 0.3rem;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .erro[hidden] { display: none !important; }
+
+    .opcao { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; cursor: pointer; font-weight: normal; }
+    input[type="radio"], input[type="checkbox"] { width: 1.1em; height: 1.1em; accent-color: var(--azul); cursor: pointer; flex-shrink: 0; }
+
+    .btn { padding: 0.7rem 1.5rem; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-primario { background: var(--azul); color: white; }
+    .btn-primario:hover { background: #0b5ed7; }
+
+    .aviso-campos { font-size: 0.85rem; color: #666; margin-bottom: 1.5rem; }
+
+    /* Mensagem de sucesso */
+    .alert-sucesso {
+      background: #d1e7dd; border: 1px solid #a3cfbb; color: #0a3622;
+      padding: 1rem 1.5rem; border-radius: var(--radius); margin-top: 1.5rem;
+    }
+
+    /* Indicador de força de senha */
+    .forca-senha { display: flex; gap: 0.25rem; margin-top: 0.4rem; }
+    .forca-barra { height: 4px; flex: 1; background: #dee2e6; border-radius: 2px; transition: background 0.3s; }
+
+    /* Contagem de chars */
+    .char-count { text-align: right; font-size: 0.75rem; color: #666; margin-top: 0.25rem; }
+    .char-count.perto { color: #fd7e14; }
+    .char-count.limite { color: var(--vermelho); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Formulário Acessível</h1>
+    <p class="subtitulo">
+      Demonstração de boas práticas de acessibilidade em formulários:
+      labels associados, mensagens de erro, anúncios live e indicadores visuais claros.
+    </p>
+
+    <div class="form-card">
+
+      <p class="aviso-campos" role="note">
+        Campos marcados com <span aria-hidden="true">*</span>
+        <span class="sr-only">(asterisco)</span> são obrigatórios.
+      </p>
+
+      <!-- Região de anúncios de erro -->
+      <div
+        id="erros-gerais"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        hidden
+        style="background:#f8d7da; border:1px solid #f5c2c7; color:#58151c; padding:0.75rem 1rem; border-radius:var(--radius); margin-bottom:1.5rem;"
+      >
+        <!-- Preenchido via JS -->
+      </div>
+
+      <form id="form" novalidate>
+
+        <!-- ─── Dados pessoais ─── -->
+        <fieldset>
+          <legend>Dados Pessoais</legend>
+
+          <div class="campo">
+            <label for="nome">
+              Nome completo <span class="obrig" aria-hidden="true">*</span>
+            </label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              required
+              aria-required="true"
+              aria-describedby="nome-erro"
+              autocomplete="name"
+              placeholder="Ex: Maria da Silva"
+            >
+            <span id="nome-erro" role="alert" class="erro" hidden>
+              ⚠️ Por favor, informe seu nome completo (mínimo 3 caracteres).
+            </span>
+          </div>
+
+          <div class="campo">
+            <label for="email">
+              E-mail <span class="obrig" aria-hidden="true">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              aria-required="true"
+              aria-describedby="email-dica email-erro"
+              autocomplete="email"
+              placeholder="seu@email.com"
+            >
+            <span id="email-dica" class="dica">Usaremos apenas para comunicações importantes.</span>
+            <span id="email-erro" role="alert" class="erro" hidden>
+              ⚠️ Informe um e-mail válido no formato nome@dominio.com
+            </span>
+          </div>
+
+          <div class="campo">
+            <label for="senha">
+              Senha <span class="obrig" aria-hidden="true">*</span>
+              <span class="dica">Mínimo 8 caracteres. Use letras maiúsculas, números e símbolos.</span>
+            </label>
+            <input
+              type="password"
+              id="senha"
+              name="senha"
+              required
+              aria-required="true"
+              aria-describedby="senha-forca senha-erro"
+              autocomplete="new-password"
+              minlength="8"
+            >
+            <!-- Indicador de força da senha -->
+            <div class="forca-senha" aria-hidden="true">
+              <div class="forca-barra" id="f1"></div>
+              <div class="forca-barra" id="f2"></div>
+              <div class="forca-barra" id="f3"></div>
+              <div class="forca-barra" id="f4"></div>
+            </div>
+            <!-- Texto acessível da força (lido por leitores de tela) -->
+            <span id="senha-forca" class="dica" aria-live="polite"></span>
+            <span id="senha-erro" role="alert" class="erro" hidden>
+              ⚠️ A senha deve ter pelo menos 8 caracteres.
+            </span>
+          </div>
+
+          <div class="campo">
+            <label for="tel">Telefone</label>
+            <input
+              type="tel"
+              id="tel"
+              name="tel"
+              aria-describedby="tel-dica"
+              autocomplete="tel"
+              placeholder="(11) 99999-9999"
+            >
+            <span id="tel-dica" class="dica">Formato: (XX) XXXXX-XXXX</span>
+          </div>
+
+        </fieldset>
+
+        <!-- ─── Preferências ─── -->
+        <fieldset>
+          <legend>Preferências de Comunicação</legend>
+
+          <!-- Grupo de radio buttons: fieldset/legend é a forma correta -->
+          <fieldset style="border:none; padding:0; margin-bottom:1rem;">
+            <legend style="font-size:0.9rem; font-weight:500; margin-bottom:0.5rem;">
+              Frequência de e-mails <span class="obrig" aria-hidden="true">*</span>
+            </legend>
+            <div aria-describedby="freq-erro">
+              <label class="opcao">
+                <input type="radio" name="frequencia" value="diario" required aria-required="true">
+                Diário
+              </label>
+              <label class="opcao">
+                <input type="radio" name="frequencia" value="semanal">
+                Semanal
+              </label>
+              <label class="opcao">
+                <input type="radio" name="frequencia" value="nunca">
+                Nunca
+              </label>
+            </div>
+            <span id="freq-erro" role="alert" class="erro" hidden>
+              ⚠️ Selecione uma frequência.
+            </span>
+          </fieldset>
+
+          <div class="campo">
+            <label for="assunto">Área de interesse</label>
+            <select id="assunto" name="assunto">
+              <option value="">Selecione...</option>
+              <option value="frontend">Front-end</option>
+              <option value="backend">Back-end</option>
+              <option value="mobile">Mobile</option>
+              <option value="ux">UX/Design</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="mensagem">
+              Mensagem <span class="obrig" aria-hidden="true">*</span>
+              <span class="dica">Mínimo 20 caracteres.</span>
+            </label>
+            <textarea
+              id="mensagem"
+              name="mensagem"
+              required
+              aria-required="true"
+              aria-describedby="msg-chars msg-erro"
+              minlength="20"
+              maxlength="500"
+              placeholder="Conte sobre suas expectativas..."
+            ></textarea>
+            <div id="msg-chars" class="char-count" aria-live="polite">0 / 500</div>
+            <span id="msg-erro" role="alert" class="erro" hidden>
+              ⚠️ A mensagem deve ter pelo menos 20 caracteres.
+            </span>
+          </div>
+
+        </fieldset>
+
+        <!-- ─── Consentimento ─── -->
+        <fieldset>
+          <legend>Consentimento</legend>
+
+          <div class="campo">
+            <label class="opcao">
+              <input
+                type="checkbox"
+                id="termos"
+                name="termos"
+                required
+                aria-required="true"
+                aria-describedby="termos-erro"
+              >
+              <span>
+                Li e concordo com os
+                <a href="/termos" style="color:var(--azul);">Termos de Uso</a>
+                e a
+                <a href="/privacidade" style="color:var(--azul);">Política de Privacidade</a>
+                <span class="obrig" aria-hidden="true">*</span>
+              </span>
+            </label>
+            <span id="termos-erro" role="alert" class="erro" hidden>
+              ⚠️ Você precisa aceitar os termos para continuar.
+            </span>
+          </div>
+
+          <div class="campo">
+            <label class="opcao">
+              <input type="checkbox" id="newsletter" name="newsletter">
+              <span>Quero receber novidades e dicas por e-mail</span>
+            </label>
+          </div>
+
+        </fieldset>
+
+        <button type="submit" class="btn btn-primario" style="width:100%;">
+          Enviar cadastro
+        </button>
+
+      </form>
+
+      <!-- Mensagem de sucesso (anunciada ao leitor de tela) -->
+      <div id="sucesso" role="status" aria-live="polite" hidden class="alert-sucesso">
+        <p><strong>🎉 Cadastro realizado com sucesso!</strong></p>
+        <p>Você receberá um e-mail de confirmação em breve.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <style>
+    /* Classe utilitária: visível apenas para leitores de tela */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+  </style>
+
+  <script>
+    // ── Força da senha ──
+    document.getElementById('senha').addEventListener('input', function() {
+      const val = this.value
+      let forca = 0
+      if (val.length >= 8)          forca++
+      if (/[A-Z]/.test(val))        forca++
+      if (/[0-9]/.test(val))        forca++
+      if (/[^A-Za-z0-9]/.test(val)) forca++
+
+      const barras = ['f1','f2','f3','f4']
+      const cores  = ['', '#dc3545', '#fd7e14', '#ffc107', '#198754']
+      const textos = ['', 'Senha fraca', 'Senha razoável', 'Senha boa', 'Senha forte']
+
+      barras.forEach((id, i) => {
+        document.getElementById(id).style.background = i < forca ? cores[forca] : '#dee2e6'
+      })
+
+      document.getElementById('senha-forca').textContent =
+        val.length > 0 ? textos[forca] : ''
+    })
+
+    // ── Contador de caracteres ──
+    document.getElementById('mensagem').addEventListener('input', function() {
+      const n = this.value.length
+      const el = document.getElementById('msg-chars')
+      el.textContent = `${n} / 500`
+      el.className = 'char-count' + (n > 450 ? ' limite' : n > 400 ? ' perto' : '')
+    })
+
+    // ── Validação e submissão ──
+    document.getElementById('form').addEventListener('submit', function(e) {
+      e.preventDefault()
+      const erros = []
+
+      // Limpar erros anteriores
+      document.querySelectorAll('[role="alert"]').forEach(el => { el.hidden = true })
+      document.querySelectorAll('input, textarea').forEach(el => el.removeAttribute('aria-invalid'))
+
+      // Validar nome
+      const nome = document.getElementById('nome')
+      if (!nome.value.trim() || nome.value.trim().length < 3) {
+        marcarErro(nome, 'nome-erro')
+        erros.push('Nome')
+      } else { marcarOk(nome) }
+
+      // Validar email
+      const email = document.getElementById('email')
+      if (!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        marcarErro(email, 'email-erro')
+        erros.push('E-mail')
+      } else { marcarOk(email) }
+
+      // Validar senha
+      const senha = document.getElementById('senha')
+      if (!senha.value || senha.value.length < 8) {
+        marcarErro(senha, 'senha-erro')
+        erros.push('Senha')
+      } else { marcarOk(senha) }
+
+      // Validar frequência
+      const freq = document.querySelector('[name="frequencia"]:checked')
+      if (!freq) {
+        document.getElementById('freq-erro').hidden = false
+        erros.push('Frequência de e-mails')
+      }
+
+      // Validar mensagem
+      const msg = document.getElementById('mensagem')
+      if (!msg.value || msg.value.length < 20) {
+        marcarErro(msg, 'msg-erro')
+        erros.push('Mensagem')
+      } else { marcarOk(msg) }
+
+      // Validar termos
+      const termos = document.getElementById('termos')
+      if (!termos.checked) {
+        termos.setAttribute('aria-invalid', 'true')
+        document.getElementById('termos-erro').hidden = false
+        erros.push('Termos de uso')
+      }
+
+      if (erros.length > 0) {
+        // Anunciar erros de forma acessível
+        const container = document.getElementById('erros-gerais')
+        container.hidden = false
+        container.innerHTML = `
+          <strong>Por favor, corrija ${erros.length} erro(s) antes de enviar:</strong>
+          <ul style="margin-top:0.5rem; padding-left:1.25rem;">
+            ${erros.map(e => `<li>${e}</li>`).join('')}
+          </ul>
+        `
+        // Mover foco para o resumo de erros
+        container.focus?.() || container.setAttribute('tabindex', '-1')
+        const firstInvalid = document.querySelector('[aria-invalid="true"]')
+        firstInvalid?.focus()
+      } else {
+        // Sucesso
+        document.getElementById('erros-gerais').hidden = true
+        document.getElementById('form').hidden = true
+        const sucesso = document.getElementById('sucesso')
+        sucesso.hidden = false
+      }
+    })
+
+    function marcarErro(input, erroId) {
+      input.setAttribute('aria-invalid', 'true')
+      document.getElementById(erroId).hidden = false
+    }
+
+    function marcarOk(input) {
+      input.setAttribute('aria-invalid', 'false')
+    }
+  </script>
+</body>
+</html>

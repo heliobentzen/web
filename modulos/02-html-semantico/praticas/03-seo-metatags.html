@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<!--
+  PRÁTICA 03 – SEO e Metatags
+  Esta página demonstra todos os metadados importantes para SEO:
+  - Metadados básicos (title, description, canonical, robots)
+  - Open Graph (Facebook, LinkedIn, WhatsApp)
+  - Twitter/X Cards
+  - Dados Estruturados (JSON-LD / Schema.org)
+  - Sitemap e robots.txt (comentados, por serem arquivos separados)
+-->
+<html lang="pt-BR" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ══════════════════════════════════════════
+       1. METADADOS BÁSICOS DE SEO
+  ══════════════════════════════════════════ -->
+
+  <!--
+    TITLE: aparece na aba do navegador e nos resultados de busca.
+    Ideal: 50–60 caracteres. Formato: "Palavra-chave principal | Nome do Site"
+  -->
+  <title>Guia de HTML Semântico para SEO em 2024 | TechBlog</title>
+
+  <!--
+    DESCRIPTION: resumo exibido nos resultados de busca (SERP).
+    Ideal: 150–160 caracteres. Seja descritivo e inclua a palavra-chave.
+    NÃO afeta diretamente o ranking, mas influencia o CTR (click-through rate).
+  -->
+  <meta name="description" content="Aprenda a usar HTML semântico para melhorar o SEO do seu site. Guia completo com exemplos práticos de metadados, Open Graph e dados estruturados.">
+
+  <!--
+    CANONICAL: indica a URL "oficial" desta página.
+    Evita penalidades por conteúdo duplicado (ex: http vs https, www vs sem www).
+  -->
+  <link rel="canonical" href="https://techblog.example.com/html-semantico-seo">
+
+  <!--
+    ROBOTS: instrui robôs de busca.
+    index = pode indexar | noindex = não indexar
+    follow = pode seguir links | nofollow = não seguir links
+  -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+  <!-- Autor do conteúdo -->
+  <meta name="author" content="João Silva">
+
+  <!-- Idioma (reforça o lang do html) -->
+  <meta http-equiv="content-language" content="pt-BR">
+
+  <!-- Temas de cor para mobile -->
+  <meta name="theme-color" content="#1a1a2e">
+
+  <!-- ══════════════════════════════════════════
+       2. OPEN GRAPH (Facebook, LinkedIn, WhatsApp, Telegram)
+  ══════════════════════════════════════════ -->
+
+  <!-- Tipo de conteúdo: website, article, video.movie, etc. -->
+  <meta property="og:type" content="article">
+
+  <!-- URL canônica da página -->
+  <meta property="og:url" content="https://techblog.example.com/html-semantico-seo">
+
+  <!-- Título ao compartilhar (pode ser diferente do <title>) -->
+  <meta property="og:title" content="Guia Definitivo: HTML Semântico e SEO em 2024">
+
+  <!-- Descrição ao compartilhar -->
+  <meta property="og:description" content="Metadados, Open Graph e dados estruturados: tudo que você precisa saber para ranquear melhor.">
+
+  <!--
+    Imagem ao compartilhar.
+    Especificações recomendadas:
+    - Dimensões: 1200×630px (proporção 1.91:1)
+    - Formato: JPG ou PNG
+    - Tamanho máximo: 8MB
+    - Texto na imagem: máximo 20% da área
+  -->
+  <meta property="og:image" content="https://techblog.example.com/og/html-seo-2024.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ilustração com código HTML e elementos de SEO">
+
+  <!-- Nome do site -->
+  <meta property="og:site_name" content="TechBlog">
+
+  <!-- Localização -->
+  <meta property="og:locale" content="pt_BR">
+
+  <!-- Metadados extras para tipo "article" -->
+  <meta property="article:published_time" content="2024-01-15T10:00:00-03:00">
+  <meta property="article:modified_time" content="2024-01-20T14:30:00-03:00">
+  <meta property="article:author" content="https://techblog.example.com/autores/joao-silva">
+  <meta property="article:section" content="Tutoriais">
+  <meta property="article:tag" content="HTML">
+  <meta property="article:tag" content="SEO">
+  <meta property="article:tag" content="Web">
+
+  <!-- ══════════════════════════════════════════
+       3. TWITTER / X CARDS
+  ══════════════════════════════════════════ -->
+
+  <!--
+    Tipo do card:
+    - summary: imagem pequena (quadrada)
+    - summary_large_image: imagem grande (retangular) – mais recomendado
+    - app: para aplicativos
+    - player: para vídeo/áudio
+  -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- @username do site no Twitter/X -->
+  <meta name="twitter:site" content="@techblog">
+
+  <!-- @username do autor -->
+  <meta name="twitter:creator" content="@joaosilva">
+
+  <!-- Título (pode ser igual ao og:title) -->
+  <meta name="twitter:title" content="Guia Definitivo: HTML Semântico e SEO em 2024">
+
+  <!-- Descrição (até 200 caracteres) -->
+  <meta name="twitter:description" content="Aprenda metadados, Open Graph e dados estruturados. Tudo para um melhor ranqueamento.">
+
+  <!--
+    Imagem para o Twitter.
+    Dimensões recomendadas para summary_large_image: 1200×628px
+    Tamanho máximo: 5MB. Formatos: JPG, PNG, WebP, GIF
+  -->
+  <meta name="twitter:image" content="https://techblog.example.com/twitter/html-seo-2024.jpg">
+  <meta name="twitter:image:alt" content="Código HTML com elementos de SEO destacados">
+
+  <!-- ══════════════════════════════════════════
+       4. DADOS ESTRUTURADOS (JSON-LD / Schema.org)
+       Ajuda o Google a entender o conteúdo e exibir rich results
+  ══════════════════════════════════════════ -->
+
+  <!-- Schema: Article (notícias, tutoriais, posts de blog) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Guia de HTML Semântico para SEO em 2024",
+    "description": "Aprenda a usar HTML semântico para melhorar o SEO do seu site.",
+    "url": "https://techblog.example.com/html-semantico-seo",
+    "datePublished": "2024-01-15T10:00:00-03:00",
+    "dateModified": "2024-01-20T14:30:00-03:00",
+    "author": {
+      "@type": "Person",
+      "name": "João Silva",
+      "url": "https://techblog.example.com/autores/joao-silva"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "TechBlog",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://techblog.example.com/logo.png"
+      }
+    },
+    "image": {
+      "@type": "ImageObject",
+      "url": "https://techblog.example.com/og/html-seo-2024.jpg",
+      "width": 1200,
+      "height": 630
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://techblog.example.com/html-semantico-seo"
+    },
+    "keywords": ["HTML semântico", "SEO", "metadados", "Open Graph"],
+    "articleSection": "Tutoriais",
+    "inLanguage": "pt-BR"
+  }
+  </script>
+
+  <!-- Schema: BreadcrumbList (migalhas de pão) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://techblog.example.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tutoriais",
+        "item": "https://techblog.example.com/tutoriais"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "HTML Semântico para SEO",
+        "item": "https://techblog.example.com/html-semantico-seo"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Schema: FAQPage (aumenta presença na SERP com perguntas e respostas) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "O que é HTML semântico?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "HTML semântico é o uso de elementos HTML que descrevem claramente seu significado tanto para o navegador quanto para o desenvolvedor e ferramentas de acessibilidade."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "HTML semântico melhora o SEO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sim. Mecanismos de busca entendem melhor a estrutura do conteúdo quando você usa elementos semânticos como article, section, h1-h6, etc."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- ══════════════════════════════════════════
+       5. ÍCONES E ÍCONES DE APLICATIVO
+  ══════════════════════════════════════════ -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- ══════════════════════════════════════════
+       6. PERFORMANCE E PRELOAD
+  ══════════════════════════════════════════ -->
+
+  <!-- Preconnect: estabelece conexão antecipada com origens externas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- DNS-prefetch: alternativa mais leve ao preconnect -->
+  <link rel="dns-prefetch" href="//analytics.example.com">
+
+  <!-- Preload: carrega recursos críticos antes do parser chegar até eles -->
+  <!-- <link rel="preload" href="hero.webp" as="image"> -->
+  <!-- <link rel="preload" href="main.css" as="style"> -->
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f8f9fa;
+      color: #212529;
+      line-height: 1.7;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
+    h1 { font-size: 2rem; color: #1a1a2e; margin-bottom: 1rem; }
+    h2 { font-size: 1.4rem; color: #333; margin: 2rem 0 1rem; border-bottom: 2px solid #dee2e6; padding-bottom: 0.5rem; }
+    h3 { font-size: 1.1rem; color: #495057; margin: 1.5rem 0 0.5rem; }
+    p { margin-bottom: 1rem; }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85em;
+      line-height: 1.6;
+      margin: 1rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .dica {
+      background: #e7f3ff;
+      border-left: 4px solid #0d6efd;
+      padding: 1rem;
+      border-radius: 0 4px 4px 0;
+      margin: 1rem 0;
+    }
+    .aviso {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      border-radius: 0 4px 4px 0;
+      margin: 1rem 0;
+    }
+    nav.breadcrumb { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
+    nav.breadcrumb a { color: #0d6efd; text-decoration: none; }
+    nav.breadcrumb a:hover { text-decoration: underline; }
+    nav.breadcrumb span[aria-current] { color: #333; }
+
+    /* Checklist */
+    .checklist { list-style: none; }
+    .checklist li { padding: 0.4rem 0; display: flex; align-items: flex-start; gap: 0.5rem; }
+    .checklist .ok::before { content: "✅ "; }
+    .checklist .nao::before { content: "❌ "; }
+    .checklist .dica-item::before { content: "💡 "; }
+
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9em; }
+    th, td { padding: 0.65rem 0.85rem; text-align: left; border-bottom: 1px solid #dee2e6; }
+    th { background: #f8f9fa; font-weight: 600; }
+
+    .tag {
+      background: #e7f3ff;
+      color: #0d6efd;
+      padding: 0.2em 0.6em;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+    time { color: #666; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Breadcrumb semântico (deve espelhar o JSON-LD de BreadcrumbList) -->
+    <nav aria-label="Migalha de pão" class="breadcrumb">
+      <ol style="list-style:none; display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <li><a href="/">Home</a></li>
+        <li aria-hidden="true">/</li>
+        <li><a href="/tutoriais">Tutoriais</a></li>
+        <li aria-hidden="true">/</li>
+        <li><span aria-current="page">HTML Semântico para SEO</span></li>
+      </ol>
+    </nav>
+
+    <article>
+      <header>
+        <h1>Guia de HTML Semântico para SEO em 2024</h1>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; color:#666; font-size:0.9rem; margin-bottom:1.5rem;">
+          <span>Por <a href="/autores/joao-silva" rel="author" style="color:#0d6efd;">João Silva</a></span>
+          <time datetime="2024-01-15">15 jan. 2024</time>
+          <time datetime="2024-01-20">Atualizado: 20 jan. 2024</time>
+          <span>
+            <span class="tag">HTML</span>
+            <span class="tag">SEO</span>
+            <span class="tag">Metadados</span>
+          </span>
+        </div>
+      </header>
+
+      <p>
+        O <strong>SEO técnico em HTML</strong> vai muito além de colocar palavras-chave no conteúdo.
+        Os metadados corretos ajudam os mecanismos de busca a indexar sua página, melhoram a aparência
+        nos resultados de busca (<em>SERP</em>) e controlam como sua página é exibida ao ser compartilhada
+        nas redes sociais.
+      </p>
+
+      <h2>1. Metadados Básicos</h2>
+
+      <div class="card">
+        <h3>Title e Description</h3>
+        <pre>
+&lt;title&gt;Guia de HTML Semântico para SEO | TechBlog&lt;/title&gt;
+&lt;meta name="description" content="Aprenda metadados, Open Graph e dados estruturados..."&gt;</pre>
+
+        <ul class="checklist">
+          <li class="ok"><code>&lt;title&gt;</code>: 50–60 caracteres, palavra-chave no início</li>
+          <li class="ok"><code>description</code>: 150–160 caracteres, ação clara</li>
+          <li class="nao">Nunca duplique titles entre páginas</li>
+          <li class="dica-item">O Google pode reescrever seu title/description — seja relevante</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Canonical e Robots</h3>
+        <pre>
+&lt;link rel="canonical" href="https://example.com/pagina-principal"&gt;
+&lt;meta name="robots" content="index, follow"&gt;</pre>
+
+        <table>
+          <thead><tr><th>Diretiva</th><th>Efeito</th></tr></thead>
+          <tbody>
+            <tr><td><code>index</code></td><td>Permite indexação (padrão)</td></tr>
+            <tr><td><code>noindex</code></td><td>Não indexa a página</td></tr>
+            <tr><td><code>follow</code></td><td>Segue links (padrão)</td></tr>
+            <tr><td><code>nofollow</code></td><td>Não passa PageRank pelos links</td></tr>
+            <tr><td><code>noarchive</code></td><td>Não armazena cópia em cache</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>2. Open Graph</h2>
+
+      <p>
+        O protocolo Open Graph controla como sua página aparece quando compartilhada no
+        Facebook, LinkedIn, WhatsApp e outras plataformas.
+      </p>
+
+      <div class="card">
+        <pre>
+&lt;meta property="og:type" content="article"&gt;
+&lt;meta property="og:url" content="https://example.com/artigo"&gt;
+&lt;meta property="og:title" content="Título ao Compartilhar"&gt;
+&lt;meta property="og:description" content="Descrição ao compartilhar."&gt;
+&lt;meta property="og:image" content="https://example.com/og-image.jpg"&gt;
+&lt;meta property="og:image:width" content="1200"&gt;
+&lt;meta property="og:image:height" content="630"&gt;</pre>
+
+        <div class="dica">
+          💡 <strong>Imagem OG ideal:</strong> 1200×630px, JPG ou PNG, até 8MB.
+          Teste sua página em <a href="https://developers.facebook.com/tools/debug/" target="_blank" rel="noopener noreferrer">Sharing Debugger do Facebook</a>.
+        </div>
+      </div>
+
+      <h2>3. Twitter / X Cards</h2>
+
+      <div class="card">
+        <pre>
+&lt;meta name="twitter:card" content="summary_large_image"&gt;
+&lt;meta name="twitter:site" content="@meusite"&gt;
+&lt;meta name="twitter:title" content="Título no Twitter"&gt;
+&lt;meta name="twitter:description" content="Descrição no Twitter."&gt;
+&lt;meta name="twitter:image" content="https://example.com/twitter.jpg"&gt;</pre>
+
+        <div class="aviso">
+          ⚠️ Twitter Cards têm seu próprio validador:
+          <a href="https://cards-dev.twitter.com/validator" target="_blank" rel="noopener noreferrer">cards-dev.twitter.com/validator</a>
+        </div>
+      </div>
+
+      <h2>4. Dados Estruturados (Schema.org)</h2>
+
+      <p>
+        Os dados estruturados em <strong>JSON-LD</strong> permitem ao Google exibir
+        <em>rich results</em>: estrelas de avaliação, preços, FAQs, eventos, etc.
+      </p>
+
+      <div class="card">
+        <h3>Tipos mais comuns</h3>
+        <table>
+          <thead><tr><th>Tipo</th><th>Rich Result</th></tr></thead>
+          <tbody>
+            <tr><td><code>Article</code></td><td>Carrossel de notícias, AMP</td></tr>
+            <tr><td><code>Product</code></td><td>Preço, disponibilidade, avaliações</td></tr>
+            <tr><td><code>FAQPage</code></td><td>Perguntas e respostas no SERP</td></tr>
+            <tr><td><code>LocalBusiness</code></td><td>Painel de conhecimento, Google Maps</td></tr>
+            <tr><td><code>Recipe</code></td><td>Informações da receita, avaliações</td></tr>
+            <tr><td><code>Event</code></td><td>Data, local e link do evento</td></tr>
+            <tr><td><code>BreadcrumbList</code></td><td>Migalhas de pão no SERP</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>5. Checklist de SEO Técnico</h2>
+
+      <div class="card">
+        <ul class="checklist">
+          <li class="ok">Title único por página, 50-60 caracteres</li>
+          <li class="ok">Meta description atrativa, 150-160 caracteres</li>
+          <li class="ok">URL canônica definida</li>
+          <li class="ok">Hierarquia de headings correta (h1 único)</li>
+          <li class="ok">Imagens com alt text descritivo</li>
+          <li class="ok">Links com texto descritivo (não "clique aqui")</li>
+          <li class="ok">Open Graph configurado</li>
+          <li class="ok">Twitter Cards configurado</li>
+          <li class="ok">Dados estruturados relevantes</li>
+          <li class="ok">Sitemap XML presente e enviado ao Search Console</li>
+          <li class="ok">robots.txt configurado corretamente</li>
+          <li class="ok">HTTPS ativo</li>
+          <li class="ok">Site mobile-friendly</li>
+          <li class="ok">Core Web Vitals dentro dos limites</li>
+        </ul>
+      </div>
+
+      <!-- FAQ semântico (espelhado no JSON-LD FAQPage) -->
+      <section>
+        <h2>Perguntas Frequentes</h2>
+
+        <details>
+          <summary><strong>O que é HTML semântico?</strong></summary>
+          <p>
+            HTML semântico é o uso de elementos HTML que descrevem claramente seu significado
+            tanto para o navegador quanto para o desenvolvedor e ferramentas de acessibilidade.
+          </p>
+        </details>
+
+        <details>
+          <summary><strong>HTML semântico melhora o SEO?</strong></summary>
+          <p>
+            Sim. Mecanismos de busca entendem melhor a estrutura do conteúdo quando você usa
+            elementos semânticos como <code>article</code>, <code>section</code>, <code>h1</code>–<code>h6</code>, etc.
+          </p>
+        </details>
+      </section>
+
+    </article>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 02 – Explorando o DOM</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f8f9fa;
+      color: #212529;
+    }
+    h1 { color: #0d6efd; }
+    h2 { border-bottom: 2px solid #dee2e6; padding-bottom: 0.5rem; }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .instrucao {
+      background: #e7f3ff;
+      border-left: 4px solid #0d6efd;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    code {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.9em;
+      line-height: 1.6;
+    }
+    .highlight { background: #fff3cd; padding: 0.2em; border-radius: 2px; }
+    ul li { margin: 0.5rem 0; }
+    #area-interativa {
+      border: 2px dashed #0d6efd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      min-height: 100px;
+    }
+    button {
+      background: #0d6efd;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 0.25rem;
+      font-size: 0.9rem;
+    }
+    button:hover { background: #0b5ed7; }
+    #log {
+      background: #1e1e1e;
+      color: #4ec9b0;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      min-height: 80px;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Prática 02 – Explorando o DOM</h1>
+  <p>
+    Esta página foi criada para você explorar o DOM usando o console do DevTools.
+    Abra o DevTools (<kbd>F12</kbd>) e vá para a aba <strong>Console</strong>.
+  </p>
+
+  <!-- =====================================================
+       SEÇÃO 1: SELEÇÃO DE ELEMENTOS
+  ====================================================== -->
+  <section class="card">
+    <h2>1. Selecionando Elementos</h2>
+
+    <div class="instrucao">
+      <strong>💻 No console, teste os comandos abaixo:</strong>
+    </div>
+
+    <pre>
+// Seletor CSS – retorna o PRIMEIRO elemento que combina
+document.querySelector('h1')
+document.querySelector('.card')
+document.querySelector('#area-interativa')
+
+// Seletor CSS – retorna TODOS os elementos que combinam (NodeList)
+document.querySelectorAll('section')
+document.querySelectorAll('h2')
+
+// Métodos legados (ainda funcionam)
+document.getElementById('area-interativa')
+document.getElementsByClassName('card')  // HTMLCollection
+document.getElementsByTagName('p')       // HTMLCollection
+
+// Atalhos do console do Chrome/Edge:
+// $('seletor')  → mesmo que querySelector
+// $$('seletor') → mesmo que querySelectorAll</pre>
+
+    <p>
+      Identificação dos elementos nesta página:
+      <span class="highlight">h1</span>, 
+      <span class="highlight">.card</span>, 
+      <span class="highlight">#area-interativa</span>
+    </p>
+  </section>
+
+  <!-- =====================================================
+       SEÇÃO 2: LENDO E MODIFICANDO CONTEÚDO
+  ====================================================== -->
+  <section class="card">
+    <h2>2. Lendo e Modificando Conteúdo</h2>
+
+    <div class="instrucao">
+      <strong>💻 Experimente no console:</strong>
+    </div>
+
+    <pre>
+// Ler o texto de um elemento
+document.querySelector('h1').textContent
+document.querySelector('h1').innerHTML
+
+// Modificar o texto
+document.querySelector('h1').textContent = 'DOM Modificado! 🎉'
+
+// Modificar HTML interno
+document.querySelector('#area-interativa').innerHTML =
+  '&lt;strong&gt;Conteúdo inserido via JavaScript!&lt;/strong&gt;'
+
+// Ler e modificar atributos
+const img = document.querySelector('img')
+img?.getAttribute('alt')
+img?.setAttribute('alt', 'Novo texto alternativo')
+
+// Ler e modificar estilos inline
+const titulo = document.querySelector('h1')
+titulo.style.color = 'red'
+titulo.style.fontSize = '3rem'
+titulo.style.transform = 'rotate(-5deg)'
+
+// Adicionar/remover/verificar classes
+titulo.classList.add('destaque')
+titulo.classList.remove('destaque')
+titulo.classList.toggle('destaque')
+titulo.classList.contains('destaque')</pre>
+  </section>
+
+  <!-- =====================================================
+       SEÇÃO 3: CRIANDO E INSERINDO ELEMENTOS
+  ====================================================== -->
+  <section class="card">
+    <h2>3. Criando e Inserindo Elementos</h2>
+
+    <div class="instrucao">
+      <strong>💻 Experimente no console:</strong>
+    </div>
+
+    <pre>
+// Criar um novo elemento
+const novoParagrafo = document.createElement('p')
+novoParagrafo.textContent = 'Parágrafo criado via JavaScript!'
+novoParagrafo.style.color = 'green'
+
+// Inserir no DOM
+const area = document.querySelector('#area-interativa')
+area.appendChild(novoParagrafo)        // no final
+area.prepend(novoParagrafo)            // no início
+area.insertAdjacentHTML('beforeend',
+  '&lt;em&gt;Texto inserido com insertAdjacentHTML&lt;/em&gt;')
+
+// Remover um elemento
+novoParagrafo.remove()
+
+// Clonar um elemento
+const clone = document.querySelector('.card').cloneNode(true)
+document.body.appendChild(clone)
+
+// Verificar relações na árvore
+const secao = document.querySelector('section')
+secao.parentElement           // elemento pai
+secao.children                // elementos filhos
+secao.nextElementSibling      // irmão seguinte
+secao.previousElementSibling  // irmão anterior</pre>
+
+    <div id="area-interativa">
+      <p><em>Esta área é o alvo dos experimentos. Modifique-a!</em></p>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SEÇÃO 4: EVENTOS
+  ====================================================== -->
+  <section class="card">
+    <h2>4. Eventos (introdução)</h2>
+
+    <div class="instrucao">
+      <strong>💻 Experimente no console:</strong>
+    </div>
+
+    <pre>
+// Adicionar listener de evento
+document.querySelector('h1').addEventListener('click', function(event) {
+  console.log('Você clicou no h1!')
+  console.log('Evento:', event)
+  console.log('Target:', event.target)
+})
+
+// Arrow function
+document.querySelector('body').addEventListener('mousemove', (e) => {
+  console.log(`Mouse em: x=${e.clientX}, y=${e.clientY}`)
+})
+
+// Evento de teclado
+document.addEventListener('keydown', (e) => {
+  console.log(`Tecla pressionada: ${e.key} (código: ${e.code})`)
+})</pre>
+
+    <p>Clique nos botões abaixo para ver os eventos em ação:</p>
+
+    <button id="btn-adicionar">➕ Adicionar elemento</button>
+    <button id="btn-alterar-cor">🎨 Alterar cor aleatória</button>
+    <button id="btn-limpar">🗑️ Limpar área</button>
+
+    <h3>Log de eventos:</h3>
+    <div id="log">Aguardando interações...</div>
+  </section>
+
+  <!-- =====================================================
+       SEÇÃO 5: TRAVERSAL NA ÁRVORE DOM
+  ====================================================== -->
+  <section class="card">
+    <h2>5. Traversal na Árvore DOM</h2>
+
+    <div class="instrucao">
+      <strong>💻 Experimente no console:</strong>
+    </div>
+
+    <pre>
+// Navegar pela árvore
+const body = document.body
+
+body.children            // HTMLCollection com filhos diretos
+body.childNodes          // NodeList incluindo text nodes e comments
+body.firstElementChild   // primeiro filho elemento
+body.lastElementChild    // último filho elemento
+
+// Contar elementos
+document.querySelectorAll('section').length   // número de sections
+document.querySelectorAll('*').length         // TODOS os elementos
+
+// Verificar tipo de nó
+document.body.nodeType    // 1 = ELEMENT_NODE
+document.body.nodeName    // 'BODY'
+
+// closest() – sobe na árvore procurando um seletor
+document.querySelector('#log').closest('.card')
+document.querySelector('#log').closest('section')</pre>
+  </section>
+
+  <script>
+    // =============================================
+    // Demonstração interativa dos botões
+    // =============================================
+
+    const logEl = document.getElementById('log')
+    const areaInterativa = document.getElementById('area-interativa')
+    let contador = 0
+
+    function registrarLog(mensagem) {
+      const timestamp = new Date().toLocaleTimeString()
+      logEl.textContent = `[${timestamp}] ${mensagem}\n` + logEl.textContent
+    }
+
+    // Botão: Adicionar elemento
+    document.getElementById('btn-adicionar').addEventListener('click', () => {
+      contador++
+      const novo = document.createElement('p')
+      novo.textContent = `Elemento #${contador} adicionado via JavaScript`
+      novo.style.color = '#0d6efd'
+      areaInterativa.appendChild(novo)
+      registrarLog(`Elemento #${contador} adicionado ao DOM`)
+    })
+
+    // Botão: Alterar cor aleatória
+    document.getElementById('btn-alterar-cor').addEventListener('click', () => {
+      const cor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')
+      areaInterativa.style.borderColor = cor
+      areaInterativa.style.backgroundColor = cor + '22' // 22 = ~13% opacidade em hex
+      registrarLog(`Cor alterada para ${cor}`)
+    })
+
+    // Botão: Limpar área
+    document.getElementById('btn-limpar').addEventListener('click', () => {
+      areaInterativa.innerHTML = '<p><em>Área limpa! Adicione novos elementos.</em></p>'
+      areaInterativa.style.borderColor = '#0d6efd'
+      areaInterativa.style.backgroundColor = ''
+      contador = 0
+      registrarLog('Área limpa e contador resetado')
+    })
+
+    // Log de teclas pressionadas
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'F12') { // Não logar abertura do DevTools
+        registrarLog(`Tecla: ${e.key}`)
+      }
+    })
+
+    registrarLog('Página carregada – DOM pronto!')
+
+    // =============================================
+    // Expor funções no objeto window para o console
+    // =============================================
+
+    /**
+     * Funções auxiliares para explorar via console:
+     *
+     * mostrarArvore(elemento) – exibe a estrutura do elemento
+     * contarNos(elemento)    – conta nós filhos
+     */
+    window.mostrarArvore = function(elemento = document.body, nivel = 0) {
+      const indent = '  '.repeat(nivel)
+      const tag = elemento.tagName ? elemento.tagName.toLowerCase() : '#text'
+      const id = elemento.id ? `#${elemento.id}` : ''
+      const classes = elemento.classList?.length ? `.${[...elemento.classList].join('.')}` : ''
+      console.log(`${indent}<${tag}${id}${classes}>`)
+      for (const filho of elemento.children || []) {
+        window.mostrarArvore(filho, nivel + 1)
+      }
+    }
+
+    window.contarNos = function(elemento = document.body) {
+      return elemento.querySelectorAll('*').length
+    }
+
+    console.log('%c🌐 Prática DOM carregada!', 'color: #0d6efd; font-size: 1.2em; font-weight: bold')
+    console.log('Funções disponíveis no console:')
+    console.log('  mostrarArvore()  – exibe a árvore DOM')
+    console.log('  contarNos()      – conta elementos na página')
+  </script>
+</body>
+</html>

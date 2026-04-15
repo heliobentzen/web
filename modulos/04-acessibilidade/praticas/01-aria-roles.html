@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 01 – ARIA e Roles | Acessibilidade Web</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --azul: #0d6efd; --verde: #198754; --vermelho: #dc3545;
+      --cinza-100: #f8f9fa; --cinza-200: #e9ecef; --cinza-600: #6c757d;
+      --radius: 8px; --sombra: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    body { font-family: system-ui, sans-serif; background: var(--cinza-100); color: #212529; line-height: 1.6; }
+
+    /* ── Skip link ── */
+    .skip-link {
+      position: absolute; top: -100px; left: 1rem;
+      background: var(--azul); color: white; padding: 0.5rem 1rem;
+      border-radius: var(--radius); text-decoration: none; font-weight: 600;
+      transition: top 0.3s; z-index: 9999;
+    }
+    .skip-link:focus { top: 1rem; }
+
+    h1 { color: #1a1a2e; font-size: 2rem; margin-bottom: 0.5rem; }
+    h2 { color: var(--azul); font-size: 1.25rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--azul); }
+    h3 { font-size: 1rem; margin-bottom: 0.75rem; color: #333; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+    .secao { margin-bottom: 3rem; }
+
+    .card {
+      background: white; border-radius: var(--radius); padding: 1.5rem;
+      box-shadow: var(--sombra); margin-bottom: 1rem;
+    }
+    .dica {
+      background: #e7f3ff; border-left: 4px solid var(--azul);
+      padding: 0.75rem 1rem; border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.875rem; margin: 1rem 0;
+    }
+    .aviso {
+      background: #fff3cd; border-left: 4px solid #ffc107;
+      padding: 0.75rem 1rem; border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.875rem; margin: 1rem 0;
+    }
+
+    /* ── Focus visível ── */
+    :focus-visible {
+      outline: 3px solid var(--azul);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* Botões */
+    .btn {
+      padding: 0.6rem 1.25rem; border: none; border-radius: var(--radius);
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primario { background: var(--azul); color: white; }
+    .btn-perigo   { background: var(--vermelho); color: white; }
+    .btn-sucesso  { background: var(--verde); color: white; }
+
+    /* ── Tab Panel ── */
+    [role="tablist"] {
+      display: flex; gap: 0; border-bottom: 2px solid var(--cinza-200);
+      margin-bottom: 1rem;
+    }
+    [role="tab"] {
+      background: none; border: none; padding: 0.65rem 1.25rem;
+      font-size: 0.9rem; cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; color: var(--cinza-600);
+      transition: color 0.2s, border-color 0.2s;
+    }
+    [role="tab"]:hover { color: var(--azul); }
+    [role="tab"][aria-selected="true"] {
+      color: var(--azul); border-bottom-color: var(--azul); font-weight: 600;
+    }
+    [role="tabpanel"] { padding: 1rem 0; }
+    [role="tabpanel"][hidden] { display: none; }
+
+    /* ── Acordeão ── */
+    details { border: 1px solid var(--cinza-200); border-radius: var(--radius); margin-bottom: 0.5rem; }
+    summary {
+      padding: 1rem; cursor: pointer; font-weight: 500; list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+      user-select: none;
+    }
+    summary::after { content: "▼"; font-size: 0.75rem; transition: transform 0.2s; }
+    details[open] summary::after { transform: rotate(180deg); }
+    details[open] summary { border-bottom: 1px solid var(--cinza-200); }
+    .details-content { padding: 1rem; font-size: 0.9rem; color: #444; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.aberto { opacity: 1; pointer-events: all; }
+    .modal {
+      background: white; border-radius: var(--radius); padding: 2rem;
+      max-width: 480px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      transform: scale(0.9); transition: transform 0.2s;
+    }
+    .modal-overlay.aberto .modal { transform: scale(1); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .modal-titulo { font-size: 1.2rem; font-weight: 700; }
+    .modal-fechar {
+      background: none; border: none; font-size: 1.5rem; cursor: pointer;
+      color: var(--cinza-600); padding: 0.25rem 0.5rem; border-radius: 4px;
+      line-height: 1;
+    }
+    .modal-fechar:hover { background: var(--cinza-200); }
+    .modal-corpo { margin-bottom: 1.5rem; color: #444; }
+    .modal-rodape { display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+    /* ── Toast ── */
+    .toast-container {
+      position: fixed; bottom: 1rem; right: 1rem;
+      z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .toast {
+      background: #1a1a2e; color: white; padding: 0.75rem 1.25rem;
+      border-radius: var(--radius); font-size: 0.875rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to   { transform: translateX(0);   opacity: 1; }
+    }
+
+    /* ── Live Region ── */
+    .status-box {
+      padding: 1rem; border-radius: var(--radius);
+      background: var(--cinza-200); font-size: 0.9rem; min-height: 50px;
+    }
+    #status-live { color: var(--verde); font-weight: 600; }
+
+    /* ── Landmark demo ── */
+    .landmark-demo {
+      border: 2px solid var(--azul); border-radius: var(--radius);
+      overflow: hidden; font-size: 0.85rem;
+    }
+    .landmark-header { background: #1a1a2e; color: white; padding: 0.75rem 1rem; }
+    .landmark-nav    { background: #0a3160; color: white; padding: 0.5rem 1rem; display: flex; gap: 1rem; }
+    .landmark-body   { display: flex; }
+    .landmark-aside  { background: #e7f3ff; padding: 0.75rem; width: 140px; }
+    .landmark-main   { background: white; padding: 0.75rem; flex: 1; }
+    .landmark-footer { background: #343a40; color: #ccc; padding: 0.5rem 1rem; text-align: center; }
+    .landmark-label  { font-size: 0.7rem; font-family: monospace; background: rgba(0,0,0,0.3); padding: 0.1em 0.4em; border-radius: 3px; }
+
+    code {
+      background: #e9ecef; padding: 0.2em 0.4em; border-radius: 3px;
+      font-size: 0.85em; font-family: monospace;
+    }
+    .badge { display: inline-block; padding: 0.2em 0.5em; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    .badge-ok  { background: #d1e7dd; color: #0a3622; }
+    .badge-err { background: #f8d7da; color: #58151c; }
+  </style>
+</head>
+<body>
+
+  <!-- Skip link -->
+  <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
+
+  <!-- ══ HEADER ══ -->
+  <header style="background:#1a1a2e; color:white; padding:1rem 2rem; position:sticky; top:0; z-index:200;">
+    <div style="display:flex; justify-content:space-between; align-items:center; max-width:900px; margin:0 auto;">
+      <a href="/" style="color:#e94560; font-weight:700; font-size:1.25rem; text-decoration:none;" aria-label="Ir para o início">a11y Lab</a>
+      <nav aria-label="Navegação principal">
+        <ul style="list-style:none; display:flex; gap:1.5rem;">
+          <li><a href="#landmarks" style="color:#ccc; text-decoration:none;">Landmarks</a></li>
+          <li><a href="#aria" style="color:#ccc; text-decoration:none;">ARIA</a></li>
+          <li><a href="#padroes" style="color:#ccc; text-decoration:none;">Padrões</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo-principal">
+    <div class="container">
+
+      <h1>Prática 01 – ARIA e Roles</h1>
+      <p style="color:var(--cinza-600); margin-bottom:2rem;">
+        Explore landmarks, roles e atributos ARIA com exemplos interativos.
+        <strong>Dica:</strong> Use apenas o teclado (<kbd>Tab</kbd>, <kbd>Enter</kbd>, <kbd>Esc</kbd>) para testar!
+      </p>
+
+      <!-- ══ SEÇÃO 1: LANDMARKS ══ -->
+      <section class="secao" id="landmarks" aria-labelledby="landmarks-titulo">
+        <h2 id="landmarks-titulo">1. Landmarks HTML5 e ARIA</h2>
+
+        <div class="dica">
+          💡 <strong>Landmarks</strong> são elementos que definem regiões da página.
+          Leitores de tela os usam para navegação rápida.
+          Pressione <kbd>D</kbd> no NVDA ou <kbd>W</kbd> no VoiceOver para navegar entre landmarks.
+        </div>
+
+        <div class="card">
+          <h3>Mapa de Landmarks desta página</h3>
+          <div class="landmark-demo">
+            <div class="landmark-header"><span class="landmark-label">&lt;header&gt; / role="banner"</span> Cabeçalho do site</div>
+            <div class="landmark-nav"><span class="landmark-label">&lt;nav&gt; / role="navigation"</span> Menu</div>
+            <div class="landmark-body">
+              <div class="landmark-aside"><span class="landmark-label">&lt;aside&gt; / role="complementary"</span><br>Conteúdo complementar</div>
+              <div class="landmark-main"><span style="font-size:0.7rem; font-family:monospace; background:#e7f3ff; padding:0.1em 0.4em; border-radius:3px;">&lt;main&gt; / role="main"</span><br>Conteúdo principal (único por página)</div>
+            </div>
+            <div class="landmark-footer"><span class="landmark-label">&lt;footer&gt; / role="contentinfo"</span></div>
+          </div>
+
+          <div class="aviso" style="margin-top:1rem;">
+            ⚠️ <strong>Regra:</strong> Use cada landmark semântico no máximo uma vez por página.
+            Se precisar de múltiplos <code>&lt;nav&gt;</code>, use <code>aria-label</code> para diferenciá-los.
+          </div>
+
+          <div style="margin-top:1rem;">
+            <span class="badge badge-ok">✅ Correto</span>
+            <code>&lt;nav aria-label="Navegação principal"&gt;</code><br>
+            <code style="margin-left:1.5rem;">&lt;nav aria-label="Paginação"&gt;</code><br><br>
+            <span class="badge badge-err">❌ Evitar</span>
+            <code>&lt;nav&gt;&lt;/nav&gt;</code><br>
+            <code>&lt;nav&gt;&lt;/nav&gt;</code> <em style="font-size:0.85rem;">(sem rótulos, ambíguos)</em>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ SEÇÃO 2: ARIA ══ -->
+      <section class="secao" id="aria" aria-labelledby="aria-titulo">
+        <h2 id="aria-titulo">2. Atributos ARIA Essenciais</h2>
+
+        <!-- aria-label vs aria-labelledby -->
+        <div class="card">
+          <h3>aria-label e aria-labelledby</h3>
+
+          <div style="display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
+            <!-- Botão com ícone: precisa de aria-label -->
+            <button class="btn btn-perigo" aria-label="Excluir item do carrinho" title="Excluir">
+              🗑️
+            </button>
+
+            <button class="btn btn-sucesso" aria-label="Confirmar pedido" title="Confirmar">
+              ✓
+            </button>
+
+            <!-- Botão com texto: não precisa de aria-label -->
+            <button class="btn btn-primario">
+              Salvar alterações
+            </button>
+          </div>
+
+          <div class="dica">
+            💡 Abra o DevTools → aba <strong>Elements</strong> → subaba <strong>Accessibility</strong>
+            para ver a árvore de acessibilidade de cada elemento.
+          </div>
+        </div>
+
+        <!-- aria-live -->
+        <div class="card">
+          <h3>aria-live – Regiões Dinâmicas</h3>
+          <p style="font-size:0.9rem; color:#444; margin-bottom:1rem;">
+            Use <code>aria-live</code> para anunciar mudanças dinâmicas de conteúdo.
+          </p>
+
+          <div aria-live="polite" aria-atomic="true" id="status-live" class="status-box" role="status">
+            Aguardando ação...
+          </div>
+
+          <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:1rem;">
+            <button class="btn btn-primario" onclick="simularCarregamento()">
+              Simular carregamento
+            </button>
+            <button class="btn btn-sucesso" onclick="simularSucesso()">
+              Simular sucesso
+            </button>
+            <button class="btn btn-perigo" onclick="simularErro()">
+              Simular erro
+            </button>
+          </div>
+        </div>
+
+        <!-- aria-expanded -->
+        <div class="card">
+          <h3>aria-expanded – Elementos Expansíveis</h3>
+
+          <button
+            class="btn btn-primario"
+            aria-expanded="false"
+            aria-controls="painel-expansivel"
+            id="toggle-painel"
+            onclick="togglePainel(this)"
+          >
+            ▶ Mostrar detalhes
+          </button>
+
+          <div id="painel-expansivel" hidden style="margin-top:1rem; padding:1rem; background:var(--cinza-100); border-radius:var(--radius);">
+            <p>Este conteúdo foi revelado! O leitor de tela anuncia o estado expansível via <code>aria-expanded</code>.</p>
+          </div>
+        </div>
+
+        <!-- aria-current -->
+        <div class="card">
+          <h3>aria-current – Item Atual</h3>
+          <nav aria-label="Trilha de navegação">
+            <ol style="list-style:none; display:flex; gap:0.5rem; font-size:0.9rem; flex-wrap:wrap; align-items:center;">
+              <li><a href="#" style="color:var(--azul);">Home</a></li>
+              <li aria-hidden="true" style="color:#ccc;">/</li>
+              <li><a href="#" style="color:var(--azul);">Módulos</a></li>
+              <li aria-hidden="true" style="color:#ccc;">/</li>
+              <li>
+                <a href="#" aria-current="page" style="color:#333; font-weight:600; text-decoration:none;">
+                  Acessibilidade
+                </a>
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </section>
+
+      <!-- ══ SEÇÃO 3: PADRÕES ══ -->
+      <section class="secao" id="padroes" aria-labelledby="padroes-titulo">
+        <h2 id="padroes-titulo">3. Padrões de UI Acessíveis</h2>
+
+        <!-- Tabs -->
+        <div class="card">
+          <h3>Tabs (Abas) – ARIA Pattern</h3>
+          <div
+            role="tablist"
+            aria-label="Exemplos de código"
+            id="tablist"
+          >
+            <button role="tab" aria-selected="true" aria-controls="tab-html" id="tab-1">HTML</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-css"  id="tab-2" tabindex="-1">CSS</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-js"   id="tab-3" tabindex="-1">JavaScript</button>
+          </div>
+
+          <div role="tabpanel" id="tab-html" aria-labelledby="tab-1">
+            <p>O HTML define a estrutura semântica da página com elementos como <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>.</p>
+          </div>
+          <div role="tabpanel" id="tab-css" aria-labelledby="tab-2" hidden>
+            <p>O CSS define a apresentação visual. Use <code>:focus-visible</code> para indicadores de foco acessíveis.</p>
+          </div>
+          <div role="tabpanel" id="tab-js" aria-labelledby="tab-3" hidden>
+            <p>JavaScript adiciona interatividade. Gerencie <code>aria-expanded</code>, <code>aria-selected</code> e foco do teclado.</p>
+          </div>
+
+          <div class="dica">
+            💡 Navegue entre as abas com as <kbd>←</kbd> <kbd>→</kbd> do teclado!
+          </div>
+        </div>
+
+        <!-- Acordeão com details/summary -->
+        <div class="card">
+          <h3>Acordeão – Usando &lt;details&gt; e &lt;summary&gt;</h3>
+          <p style="font-size:0.9rem; color:#444; margin-bottom:1rem;">
+            <code>&lt;details&gt;</code> e <code>&lt;summary&gt;</code> são acessíveis nativamente, sem JavaScript!
+          </p>
+
+          <details>
+            <summary>O que é WCAG?</summary>
+            <div class="details-content">
+              WCAG (Web Content Accessibility Guidelines) são as diretrizes internacionais de acessibilidade web publicadas pelo W3C. A versão atual é WCAG 2.2 (2023).
+            </div>
+          </details>
+          <details>
+            <summary>O que é ARIA?</summary>
+            <div class="details-content">
+              ARIA (Accessible Rich Internet Applications) é uma especificação W3C que define atributos HTML para adicionar semântica de acessibilidade a elementos que não a possuem nativamente.
+            </div>
+          </details>
+          <details>
+            <summary>Por que acessibilidade beneficia a todos?</summary>
+            <div class="details-content">
+              Acessibilidade melhora a experiência para todos: usuários com deficiência, idosos, usuários em dispositivos diferentes, com conexão lenta, ou simplesmente em situações adversas como sol forte ou mãos ocupadas.
+            </div>
+          </details>
+        </div>
+
+        <!-- Modal -->
+        <div class="card">
+          <h3>Modal / Dialog Acessível</h3>
+          <p style="font-size:0.9rem; color:#444; margin-bottom:1rem;">
+            Um modal acessível deve: gerenciar foco, aprisionar o Tab, fechar com Esc, e usar <code>role="dialog"</code>.
+          </p>
+          <button class="btn btn-primario" id="abrir-modal" onclick="abrirModal()">
+            Abrir modal
+          </button>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div
+    class="modal-overlay"
+    id="modal-overlay"
+    role="presentation"
+  >
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-titulo"
+      aria-describedby="modal-desc"
+      id="modal"
+    >
+      <div class="modal-header">
+        <h2 class="modal-titulo" id="modal-titulo">Confirmar ação</h2>
+        <button class="modal-fechar" id="modal-fechar" aria-label="Fechar modal">✕</button>
+      </div>
+      <div class="modal-corpo" id="modal-desc">
+        <p>Esta é uma demonstração de um modal acessível.</p>
+        <p style="margin-top:0.5rem; font-size:0.9rem; color:#666;">
+          ✅ O foco foi movido para cá automaticamente.<br>
+          ✅ Pressione <kbd>Tab</kbd> para navegar dentro do modal.<br>
+          ✅ Pressione <kbd>Esc</kbd> para fechar.
+        </p>
+      </div>
+      <div class="modal-rodape">
+        <button class="btn btn-primario" onclick="fecharModal()">Confirmar</button>
+        <button class="btn" style="background:var(--cinza-200); color:#333;" onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- FOOTER -->
+  <footer style="background:#1a1a2e; color:#aaa; padding:1.5rem; text-align:center; font-size:0.875rem; margin-top:3rem;">
+    <p>Prática de Acessibilidade Web &mdash; Módulo 04</p>
+  </footer>
+
+  <script>
+    // ══════════════════════════════════════
+    // ARIA-LIVE: Regiões Dinâmicas
+    // ══════════════════════════════════════
+
+    const statusLive = document.getElementById('status-live')
+
+    function simularCarregamento() {
+      statusLive.textContent = '⏳ Carregando dados...'
+      statusLive.style.color = '#664d03'
+      setTimeout(() => {
+        statusLive.textContent = '✅ 42 resultados encontrados.'
+        statusLive.style.color = 'var(--verde)'
+      }, 2000)
+    }
+
+    function simularSucesso() {
+      statusLive.textContent = '✅ Operação realizada com sucesso!'
+      statusLive.style.color = 'var(--verde)'
+    }
+
+    function simularErro() {
+      statusLive.textContent = '❌ Erro: não foi possível completar a operação.'
+      statusLive.style.color = 'var(--vermelho)'
+    }
+
+    // ══════════════════════════════════════
+    // ARIA-EXPANDED
+    // ══════════════════════════════════════
+
+    function togglePainel(btn) {
+      const expandido = btn.getAttribute('aria-expanded') === 'true'
+      btn.setAttribute('aria-expanded', !expandido)
+      btn.textContent = expandido ? '▶ Mostrar detalhes' : '▼ Ocultar detalhes'
+      const painel = document.getElementById('painel-expansivel')
+      painel.hidden = expandido
+    }
+
+    // ══════════════════════════════════════
+    // TABS ACESSÍVEL (padrão ARIA APG)
+    // ══════════════════════════════════════
+
+    const tablist = document.getElementById('tablist')
+    const tabs = tablist.querySelectorAll('[role="tab"]')
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => ativarTab(tab))
+
+      tab.addEventListener('keydown', (e) => {
+        let novoIndex = index
+
+        if (e.key === 'ArrowRight') {
+          novoIndex = (index + 1) % tabs.length
+        } else if (e.key === 'ArrowLeft') {
+          novoIndex = (index - 1 + tabs.length) % tabs.length
+        } else if (e.key === 'Home') {
+          novoIndex = 0
+        } else if (e.key === 'End') {
+          novoIndex = tabs.length - 1
+        } else {
+          return
+        }
+
+        e.preventDefault()
+        ativarTab(tabs[novoIndex])
+        tabs[novoIndex].focus()
+      })
+    })
+
+    function ativarTab(tabAtiva) {
+      tabs.forEach(tab => {
+        const selecionado = tab === tabAtiva
+        tab.setAttribute('aria-selected', selecionado)
+        tab.setAttribute('tabindex', selecionado ? '0' : '-1')
+
+        const painel = document.getElementById(tab.getAttribute('aria-controls'))
+        painel.hidden = !selecionado
+      })
+    }
+
+    // ══════════════════════════════════════
+    // MODAL ACESSÍVEL
+    // ══════════════════════════════════════
+
+    const overlay = document.getElementById('modal-overlay')
+    const modal   = document.getElementById('modal')
+    let anteriorFoco = null
+
+    function abrirModal() {
+      anteriorFoco = document.activeElement
+      overlay.classList.add('aberto')
+
+      // Mover foco para o primeiro elemento focável
+      const primeiroBotao = modal.querySelector('button')
+      primeiroBotao?.focus()
+
+      // Aprisionar foco
+      document.addEventListener('keydown', armadilhaFoco)
+    }
+
+    function fecharModal() {
+      overlay.classList.remove('aberto')
+      document.removeEventListener('keydown', armadilhaFoco)
+
+      // Restaurar foco
+      anteriorFoco?.focus()
+      mostrarToast('Modal fechado ✅')
+    }
+
+    function armadilhaFoco(e) {
+      if (e.key === 'Escape') {
+        fecharModal()
+        return
+      }
+
+      if (e.key !== 'Tab') return
+
+      const focaveis = modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      const primeiro = focaveis[0]
+      const ultimo   = focaveis[focaveis.length - 1]
+
+      if (e.shiftKey && document.activeElement === primeiro) {
+        e.preventDefault()
+        ultimo.focus()
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault()
+        primeiro.focus()
+      }
+    }
+
+    document.getElementById('modal-fechar').addEventListener('click', fecharModal)
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) fecharModal()
+    })
+
+    // ══════════════════════════════════════
+    // TOAST
+    // ══════════════════════════════════════
+
+    function mostrarToast(msg) {
+      const container = document.getElementById('toast-container')
+      const toast = document.createElement('div')
+      toast.className = 'toast'
+      toast.textContent = msg
+      container.appendChild(toast)
+      setTimeout(() => toast.remove(), 3000)
+    }
+  </script>
+</body>
+</html>

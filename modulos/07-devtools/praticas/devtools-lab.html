@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevTools Lab – Encontre e corrija os bugs!</title>
+
+  <!--
+    ╔══════════════════════════════════════════════════════════╗
+    ║             LABORATÓRIO DE DEVTOOLS                      ║
+    ║                                                          ║
+    ║  Esta página contém vários bugs intencionais para você   ║
+    ║  praticar o uso do DevTools do navegador.                ║
+    ║                                                          ║
+    ║  Abra o DevTools (F12) e siga os desafios abaixo!        ║
+    ╚══════════════════════════════════════════════════════════╝
+  -->
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --azul: #0d6efd; --verde: #198754; --vermelho: #dc3545;
+      --radius: 8px; --sombra: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    body { font-family: system-ui, sans-serif; background: #f8f9fa; color: #212529; padding: 1.5rem; }
+    :focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; border-radius: 3px; }
+
+    h1 { color: #1a1a2e; font-size: 1.75rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.1rem; margin-bottom: 0.75rem; }
+    .subtitulo { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
+    .card {
+      background: white; border-radius: var(--radius);
+      padding: 1.5rem; box-shadow: var(--sombra);
+    }
+
+    .desafio-header {
+      display: flex; align-items: center; gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .desafio-num {
+      background: var(--azul); color: white;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    }
+    .desafio-titulo { font-weight: 700; font-size: 1rem; }
+
+    .instrucao {
+      background: #e7f3ff; border-left: 3px solid var(--azul);
+      padding: 0.6rem 0.75rem; font-size: 0.82rem; margin-bottom: 1rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .btn { padding: 0.5rem 1rem; border: none; border-radius: 5px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+    .btn-azul  { background: var(--azul); color: white; }
+    .btn-verde { background: var(--verde); color: white; }
+    .btn-verm  { background: var(--vermelho); color: white; }
+
+    /* ── Bug 1: Contraste ── */
+    .texto-contraste-ruim {
+      /* BUG: cor quase invisível */
+      color: #f0f0f0;
+      background: #ffffff;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #eee;
+    }
+
+    /* ── Bug 2: Overflow oculto ── */
+    .caixa-overflow {
+      width: 200px;
+      height: 80px;
+      background: #e7f3ff;
+      border: 2px solid var(--azul);
+      border-radius: 5px;
+      /* BUG: overflow: hidden oculta conteúdo */
+      overflow: hidden;
+    }
+
+    /* ── Bug 3: z-index ── */
+    .z-container { position: relative; height: 100px; }
+    .z-caixa-a {
+      position: absolute; top: 0; left: 0;
+      width: 120px; height: 80px;
+      background: var(--azul); color: white;
+      border-radius: 5px; padding: 0.5rem; font-size: 0.8rem;
+      /* BUG: z-index menor */
+      z-index: 1;
+    }
+    .z-caixa-b {
+      position: absolute; top: 20px; left: 40px;
+      width: 120px; height: 80px;
+      background: var(--vermelho); color: white;
+      border-radius: 5px; padding: 0.5rem; font-size: 0.8rem;
+      /* Esse deve ficar ATRÁS do azul, mas z-index maior */
+      z-index: 10;
+    }
+
+    /* ── Bug 4: Especificidade CSS ── */
+    #especificidade-demo p {
+      /* Regra muito específica – difícil de sobrescrever */
+      color: gray !important;
+      font-style: italic;
+    }
+
+    /* ── Bug 5: box-model ── */
+    .caixa-padding {
+      width: 200px;
+      background: #d1e7dd;
+      border: 2px solid var(--verde);
+      padding: 20px;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      /* BUG: box-sizing: content-box faz a caixa ficar maior que 200px */
+      box-sizing: content-box;
+    }
+
+    /* ── Bug 6: Pseudo-elementos ── */
+    .lista-bugs { list-style: none; }
+    .lista-bugs li {
+      padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+      position: relative;
+      border-bottom: 1px solid #eee;
+      font-size: 0.9rem;
+    }
+    .lista-bugs li::before {
+      content: '•';
+      position: absolute;
+      left: 0.25rem;
+      /* BUG: cor errada para o bullet */
+      color: #f0f0f0;
+    }
+
+    /* ── Performance ── */
+    #perf-output {
+      font-family: monospace; font-size: 0.8rem;
+      background: #1e1e1e; color: #4ec9b0;
+      padding: 0.75rem; border-radius: var(--radius);
+      max-height: 150px; overflow-y: auto;
+      white-space: pre;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔧 DevTools Lab</h1>
+  <p class="subtitulo">
+    Página com bugs intencionais para você praticar.
+    Abra o DevTools (<kbd>F12</kbd>) e resolva cada desafio!
+  </p>
+
+  <div class="grid">
+
+    <!-- ══ DESAFIO 1: Contraste ══ -->
+    <div class="card">
+      <div class="desafio-header">
+        <div class="desafio-num">1</div>
+        <span class="desafio-titulo">Contraste Insuficiente (Elements + Styles)</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> O texto abaixo é quase invisível.
+        Use o DevTools para encontrar a cor atual e corrigi-la para passar no WCAG AA (4.5:1).
+        <br><br>
+        💡 <strong>Dica:</strong> Elements → Styles → clique na cor → Color Picker mostra a proporção de contraste.
+      </div>
+      <div class="texto-contraste-ruim" id="texto-contraste">
+        Este texto tem contraste insuficiente com o fundo branco.
+        Você consegue ler? Corrija a propriedade <code>color</code>.
+      </div>
+      <p style="font-size:0.8rem;color:#666;margin-top:0.5rem;">
+        Solução: altere <code>color</code> para pelo menos <code>#767676</code> (4.54:1)
+      </p>
+    </div>
+
+    <!-- ══ DESAFIO 2: Overflow ══ -->
+    <div class="card">
+      <div class="desafio-header">
+        <div class="desafio-num">2</div>
+        <span class="desafio-titulo">Conteúdo Cortado (overflow)</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> O texto abaixo está sendo cortado.
+        Identifique qual propriedade está causando isso e corrija-a.
+        <br><br>
+        💡 <strong>Dica:</strong> Inspecione <code>.caixa-overflow</code> → Styles → procure por <code>overflow</code>.
+      </div>
+      <div class="caixa-overflow">
+        <p style="font-size:0.85rem;">Este texto deveria aparecer completamente, mas está sendo cortado pela propriedade de overflow.</p>
+      </div>
+    </div>
+
+    <!-- ══ DESAFIO 3: Z-index ══ -->
+    <div class="card">
+      <div class="desafio-header">
+        <div class="desafio-num">3</div>
+        <span class="desafio-titulo">Ordem de Empilhamento (z-index)</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> A caixa VERMELHA deveria ficar ATRÁS da azul, mas está na frente.
+        Corrija os z-index para que a azul fique na frente.
+        <br><br>
+        💡 <strong>Dica:</strong> Inspecione cada caixa e compare seus <code>z-index</code>.
+      </div>
+      <div class="z-container">
+        <div class="z-caixa-a">Caixa Azul<br>(deve ficar na frente)</div>
+        <div class="z-caixa-b">Caixa Vermelha<br>(deve ficar atrás)</div>
+      </div>
+    </div>
+
+    <!-- ══ DESAFIO 4: Especificidade CSS ══ -->
+    <div class="card">
+      <div class="desafio-header">
+        <div class="desafio-num">4</div>
+        <span class="desafio-titulo">Cascata e Especificidade</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> O parágrafo abaixo tem uma regra CSS muito específica aplicada.
+        No DevTools, veja quais regras estão sendo sobrescritas (tachadas).
+        Descubra a especificidade da regra vencedora.
+        <br><br>
+        💡 <strong>Dica:</strong> Elements → Styles → regras tachadas são sobrescritas.
+      </div>
+      <div id="especificidade-demo">
+        <p>Este texto é afetado pela cascata CSS. Por que está cinza e itálico?</p>
+        <p style="color: red;">Este tem <code>style</code> inline (especificidade 1000).</p>
+      </div>
+    </div>
+
+    <!-- ══ DESAFIO 5: Box Model ══ -->
+    <div class="card">
+      <div class="desafio-header">
+        <div class="desafio-num">5</div>
+        <span class="desafio-titulo">Box Model – box-sizing</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> Esta caixa deveria ter 200px de largura total, mas está maior.
+        Use o Box Model no DevTools para ver as dimensões reais.
+        <br><br>
+        💡 <strong>Dica:</strong> Elements → Computed → veja o box model. Corrija o <code>box-sizing</code>.
+      </div>
+      <div class="caixa-padding">
+        Largura declarada: 200px<br>
+        Padding: 20px cada lado<br>
+        <strong>Largura real atual: 244px (bug!)</strong><br>
+        <span style="font-size:0.75rem;color:#555;">Deveria ser 200px com box-sizing: border-box</span>
+      </div>
+    </div>
+
+    <!-- ══ DESAFIO 6: Pseudo-elementos ══ -->
+    <div class="card">
+      <div class="desafio-header">
+        <div class="desafio-num">6</div>
+        <span class="desafio-titulo">Pseudo-elementos (::before)</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> Os bullets da lista abaixo são invisíveis.
+        No DevTools, encontre a regra do <code>::before</code> e corrija a cor.
+        <br><br>
+        💡 <strong>Dica:</strong> Inspecione um <code>&lt;li&gt;</code> → Styles → você verá <code>::before</code>.
+      </div>
+      <ul class="lista-bugs">
+        <li>Item da lista 1</li>
+        <li>Item da lista 2</li>
+        <li>Item da lista 3</li>
+        <li>Item da lista 4</li>
+      </ul>
+    </div>
+
+    <!-- ══ DESAFIO 7: Console – Depuração JS ══ -->
+    <div class="card">
+      <div class="desafio-header">
+        <div class="desafio-num">7</div>
+        <span class="desafio-titulo">Depuração com console e debugger</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> A função abaixo calcula a média de notas, mas está retornando
+        um resultado errado. Abra o console e clique no botão para ver o bug.
+        Use o DevTools para encontrar o erro!
+        <br><br>
+        💡 <strong>Dica:</strong> Sources → encontre o bug na função <code>calcularMedia</code>.
+        Ou coloque um <code>debugger</code> manualmente.
+      </div>
+      <button class="btn btn-azul" onclick="testarMedia()">Calcular média (com bug)</button>
+      <button class="btn btn-verde" style="margin-top:0.5rem;" onclick="testarMediaCorreta()">Calcular média (correta)</button>
+      <div id="media-output" style="margin-top:0.75rem;font-family:monospace;font-size:0.85rem;padding:0.5rem;background:#f8f9fa;border-radius:5px;"></div>
+    </div>
+
+    <!-- ══ DESAFIO 8: Network ══ -->
+    <div class="card">
+      <div class="desafio-header">
+        <div class="desafio-num">8</div>
+        <span class="desafio-titulo">Painel Network – Inspecionar Requisições</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> Faça as requisições abaixo e use o painel Network para responder:
+        <ol style="margin-top:0.5rem;padding-left:1.25rem;font-size:0.8rem;line-height:1.8;">
+          <li>Qual é o status HTTP da requisição?</li>
+          <li>Qual é o Content-Type do header de resposta?</li>
+          <li>Quanto tempo levou (TTFB)?</li>
+          <li>Qual é o tamanho da resposta comprimida?</li>
+        </ol>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+        <button class="btn btn-azul" onclick="reqSucesso()">GET /users/1 (200)</button>
+        <button class="btn btn-verm" onclick="reqErro()">GET /not-found (404)</button>
+        <button class="btn btn-verde" onclick="reqPost()">POST /posts (201)</button>
+      </div>
+      <div id="network-output" style="margin-top:0.75rem;font-family:monospace;font-size:0.8rem;padding:0.5rem;background:#f8f9fa;border-radius:5px;min-height:40px;"></div>
+    </div>
+
+    <!-- ══ DESAFIO 9: Performance – Medir tempo ══ -->
+    <div class="card" style="grid-column:1/-1;">
+      <div class="desafio-header">
+        <div class="desafio-num">9</div>
+        <span class="desafio-titulo">Performance – Medir com console.time e performance.now()</span>
+      </div>
+      <div class="instrucao">
+        📋 <strong>Desafio:</strong> Compare a performance de diferentes algoritmos de busca.
+        Use o painel Performance para gravar uma sessão enquanto clica nos botões.
+        Observe as diferenças de tempo no console.
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
+        <button class="btn btn-azul" onclick="medirBuscaLinear()">Busca Linear O(n)</button>
+        <button class="btn btn-verde" onclick="medirBuscaBinaria()">Busca Binária O(log n)</button>
+        <button class="btn btn-verm" onclick="medirBuscaHash()">Busca Hash O(1)</button>
+        <button class="btn btn-azul" onclick="medirSortBolha()">Sort Bolha O(n²)</button>
+        <button class="btn btn-verde" onclick="medirSortNativo()">Sort Nativo O(n log n)</button>
+        <button class="btn" style="background:#6c757d;color:white;" onclick="limparPerf()">Limpar</button>
+      </div>
+      <div id="perf-output">Clique nos botões para medir performance...</div>
+    </div>
+
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════
+    // DESAFIO 7: Função com bug
+    // ══════════════════════════════════════════════
+
+    // BUG: esta função calcula a média incorretamente
+    function calcularMedia(notas) {
+      let soma = 0
+      for (let i = 0; i <= notas.length; i++) {  // BUG: deveria ser < não <=
+        soma += notas[i]
+      }
+      return soma / notas.length
+    }
+
+    // Versão correta para comparação
+    function calcularMediaCorreta(notas) {
+      const soma = notas.reduce((acc, n) => acc + n, 0)
+      return soma / notas.length
+    }
+
+    const notas = [8.5, 7.0, 9.5, 6.0, 8.0]
+
+    function testarMedia() {
+      console.group('Calculando média (com bug)')
+      console.log('Notas:', notas)
+      try {
+        const resultado = calcularMedia(notas)
+        console.log('Resultado:', resultado)
+        console.warn('A média esperada é', calcularMediaCorreta(notas), 'mas obtivemos', resultado)
+      } catch (e) {
+        console.error('Erro:', e.message)
+      }
+      console.groupEnd()
+
+      document.getElementById('media-output').textContent =
+        `Notas: ${notas}\nMédia (com bug): ${calcularMedia([...notas])}\nMédia (correta): ${calcularMediaCorreta(notas)}\n\n💡 Veja o console para mais detalhes`
+    }
+
+    function testarMediaCorreta() {
+      const resultado = calcularMediaCorreta(notas)
+      document.getElementById('media-output').textContent = `✅ Média correta: ${resultado.toFixed(2)}`
+    }
+
+    // ══════════════════════════════════════════════
+    // DESAFIO 8: Requisições de rede
+    // ══════════════════════════════════════════════
+
+    const BASE = 'https://jsonplaceholder.typicode.com'
+
+    async function reqSucesso() {
+      const el = document.getElementById('network-output')
+      el.textContent = '⏳ Verificando painel Network...'
+      const r = await fetch(`${BASE}/users/1`)
+      const d = await r.json()
+      el.textContent = `✅ Status: ${r.status}\nUser: ${d.name}\n\n👆 Verifique o painel Network para detalhes!`
+    }
+
+    async function reqErro() {
+      const el = document.getElementById('network-output')
+      el.textContent = '⏳ Verificando painel Network...'
+      const r = await fetch(`${BASE}/users/9999999`)
+      el.textContent = `ℹ️ Status: ${r.status} ${r.statusText}\nresponse.ok: ${r.ok}\n\n💡 fetch() NÃO rejeita em 4xx/5xx!\nVocê precisa verificar response.ok manualmente.`
+    }
+
+    async function reqPost() {
+      const el = document.getElementById('network-output')
+      el.textContent = '⏳ Verificando painel Network...'
+      const r = await fetch(`${BASE}/posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: 'Teste', body: 'Conteúdo', userId: 1 }),
+      })
+      const d = await r.json()
+      el.textContent = `✅ Status: ${r.status} (Created)\nID criado: ${d.id}\n\n👆 Inspecione os Headers da requisição no Network!`
+    }
+
+    // ══════════════════════════════════════════════
+    // DESAFIO 9: Medição de performance
+    // ══════════════════════════════════════════════
+
+    const TAMANHO = 100_000
+    const ARRAY_ORDENADO = Array.from({ length: TAMANHO }, (_, i) => i)
+    const MAPA_HASH = new Map(ARRAY_ORDENADO.map(x => [x, true]))
+    const ALVO = Math.floor(TAMANHO / 2) // 50000
+
+    function logPerf(msg) {
+      const el = document.getElementById('perf-output')
+      el.textContent = msg + '\n' + el.textContent
+    }
+
+    function medirBuscaLinear() {
+      const inicio = performance.now()
+      let encontrado = false
+      for (let i = 0; i < ARRAY_ORDENADO.length; i++) {
+        if (ARRAY_ORDENADO[i] === ALVO) { encontrado = true; break }
+      }
+      const tempo = performance.now() - inicio
+      logPerf(`🔵 Busca Linear O(n):   ${tempo.toFixed(3)}ms | encontrado: ${encontrado}`)
+      console.time('busca-linear')
+      ARRAY_ORDENADO.indexOf(ALVO)
+      console.timeEnd('busca-linear')
+    }
+
+    function medirBuscaBinaria() {
+      const inicio = performance.now()
+      let inicio2 = 0, fim = ARRAY_ORDENADO.length - 1
+      let encontrado = false
+      while (inicio2 <= fim) {
+        const meio = Math.floor((inicio2 + fim) / 2)
+        if (ARRAY_ORDENADO[meio] === ALVO) { encontrado = true; break }
+        else if (ARRAY_ORDENADO[meio] < ALVO) inicio2 = meio + 1
+        else fim = meio - 1
+      }
+      const tempo = performance.now() - inicio
+      logPerf(`🟢 Busca Binária O(log n): ${tempo.toFixed(3)}ms | encontrado: ${encontrado}`)
+    }
+
+    function medirBuscaHash() {
+      const inicio = performance.now()
+      const encontrado = MAPA_HASH.has(ALVO)
+      const tempo = performance.now() - inicio
+      logPerf(`⚡ Busca Hash O(1):     ${tempo.toFixed(3)}ms | encontrado: ${encontrado}`)
+    }
+
+    function medirSortBolha() {
+      const arr = Array.from({ length: 1000 }, () => Math.random() * 1000)
+      const inicio = performance.now()
+      for (let i = 0; i < arr.length - 1; i++)
+        for (let j = 0; j < arr.length - 1 - i; j++)
+          if (arr[j] > arr[j + 1]) [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]]
+      const tempo = performance.now() - inicio
+      logPerf(`🐌 Sort Bolha O(n²) [1000 itens]:   ${tempo.toFixed(2)}ms`)
+    }
+
+    function medirSortNativo() {
+      const arr = Array.from({ length: 100_000 }, () => Math.random() * 1000)
+      const inicio = performance.now()
+      arr.sort((a, b) => a - b)
+      const tempo = performance.now() - inicio
+      logPerf(`🚀 Sort Nativo O(n log n) [100k itens]: ${tempo.toFixed(2)}ms`)
+    }
+
+    function limparPerf() {
+      document.getElementById('perf-output').textContent = 'Clique nos botões para medir performance...'
+    }
+
+    // ══════════════════════════════════════════════
+    // Logs de boas-vindas no console
+    // ══════════════════════════════════════════════
+
+    console.group('%c🔧 DevTools Lab', 'color: #0d6efd; font-size: 1.2rem; font-weight: bold;')
+    console.log('%cBem-vindo ao laboratório!', 'color: #198754;')
+    console.log('Use o DevTools para explorar esta página e resolver os desafios.')
+    console.log('\nVariáveis disponíveis globalmente:')
+    console.log('  notas =', notas)
+    console.log('  ARRAY_ORDENADO (100k itens)')
+    console.log('  MAPA_HASH (Map com 100k entradas)')
+    console.table(notas.map((n, i) => ({ índice: i, nota: n })))
+    console.groupEnd()
+  </script>
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 04 – Variáveis CSS e Temas | CSS Moderno</title>
+  <style>
+    /* ══════════════════════════════════════════════════
+       SISTEMA DE DESIGN COM CSS CUSTOM PROPERTIES
+    ══════════════════════════════════════════════════ */
+
+    /* Tema Claro (padrão) */
+    :root,
+    [data-tema="claro"] {
+      /* ── Paleta de cores ── */
+      --cor-primaria-100: #cfe2ff;
+      --cor-primaria-300: #6ea8fe;
+      --cor-primaria-500: #0d6efd;
+      --cor-primaria-700: #0a58ca;
+      --cor-primaria-900: #031633;
+
+      --cor-sucesso-500: #198754;
+      --cor-perigo-500:  #dc3545;
+      --cor-aviso-500:   #ffc107;
+      --cor-info-500:    #0dcaf0;
+
+      /* ── Escala de cinza ── */
+      --cinza-50:  #f8f9fa;
+      --cinza-100: #e9ecef;
+      --cinza-200: #dee2e6;
+      --cinza-400: #ced4da;
+      --cinza-600: #6c757d;
+      --cinza-800: #343a40;
+      --cinza-900: #212529;
+
+      /* ── Superfícies ── */
+      --cor-fundo:       var(--cinza-50);
+      --cor-superficie:  #ffffff;
+      --cor-superficie-2: var(--cinza-100);
+      --cor-borda:       var(--cinza-200);
+      --cor-texto:       var(--cinza-900);
+      --cor-texto-fraco: var(--cinza-600);
+
+      /* ── Tipografia ── */
+      --fonte-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --fonte-mono: 'Courier New', monospace;
+      --tamanho-xs: 0.75rem;   /*  12px */
+      --tamanho-sm: 0.875rem;  /*  14px */
+      --tamanho-md: 1rem;      /*  16px */
+      --tamanho-lg: 1.125rem;  /*  18px */
+      --tamanho-xl: 1.25rem;   /*  20px */
+      --tamanho-2xl: 1.5rem;   /*  24px */
+      --tamanho-3xl: 1.875rem; /*  30px */
+      --tamanho-4xl: 2.25rem;  /*  36px */
+      --peso-normal: 400;
+      --peso-medio:  500;
+      --peso-bold:   700;
+      --linha: 1.6;
+
+      /* ── Espaçamento (escala de 4px) ── */
+      --espaco-1: 0.25rem;  /*  4px */
+      --espaco-2: 0.5rem;   /*  8px */
+      --espaco-3: 0.75rem;  /* 12px */
+      --espaco-4: 1rem;     /* 16px */
+      --espaco-5: 1.25rem;  /* 20px */
+      --espaco-6: 1.5rem;   /* 24px */
+      --espaco-8: 2rem;     /* 32px */
+      --espaco-10: 2.5rem;  /* 40px */
+      --espaco-12: 3rem;    /* 48px */
+
+      /* ── Bordas ── */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-pill: 999px;
+      --borda: 1px solid var(--cor-borda);
+
+      /* ── Sombras ── */
+      --sombra-xs: 0 1px 2px rgba(0,0,0,0.05);
+      --sombra-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+      --sombra-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+      --sombra-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+      --sombra-xl: 0 20px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.04);
+
+      /* ── Transições ── */
+      --transicao-rapida:  0.15s ease;
+      --transicao-media:   0.3s ease;
+      --transicao-lenta:   0.5s ease;
+
+      /* ── Z-index ── */
+      --z-dropdown: 100;
+      --z-sticky:   200;
+      --z-modal:    1000;
+      --z-toast:    9999;
+    }
+
+    /* Tema Escuro */
+    [data-tema="escuro"] {
+      --cor-fundo:        #0d1117;
+      --cor-superficie:   #161b22;
+      --cor-superficie-2: #21262d;
+      --cor-borda:        #30363d;
+      --cor-texto:        #e6edf3;
+      --cor-texto-fraco:  #8b949e;
+
+      --sombra-sm: 0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
+      --sombra-md: 0 4px 6px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
+      --sombra-lg: 0 10px 15px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    /* Respeitar preferência do sistema */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-tema="claro"]) {
+        --cor-fundo:        #0d1117;
+        --cor-superficie:   #161b22;
+        --cor-superficie-2: #21262d;
+        --cor-borda:        #30363d;
+        --cor-texto:        #e6edf3;
+        --cor-texto-fraco:  #8b949e;
+      }
+    }
+
+    /* ══════════════════════════════════════════════════
+       RESET
+    ══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--fonte-sans);
+      background: var(--cor-fundo);
+      color: var(--cor-texto);
+      line-height: var(--linha);
+      font-size: var(--tamanho-md);
+      transition: background var(--transicao-media), color var(--transicao-media);
+    }
+
+    /* ══════════════════════════════════════════════════
+       COMPONENTES (todos usando variáveis)
+    ══════════════════════════════════════════════════ */
+
+    /* Container */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 var(--espaco-4); }
+
+    /* Header */
+    .header {
+      background: var(--cor-superficie);
+      border-bottom: var(--borda);
+      padding: var(--espaco-4) 0;
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      box-shadow: var(--sombra-sm);
+    }
+    .header-inner { display: flex; justify-content: space-between; align-items: center; gap: var(--espaco-4); }
+    .logo { font-size: var(--tamanho-xl); font-weight: var(--peso-bold); color: var(--cor-primaria-500); text-decoration: none; }
+
+    /* Toggle de tema */
+    .theme-toggle {
+      background: var(--cor-superficie-2);
+      border: var(--borda);
+      color: var(--cor-texto);
+      padding: var(--espaco-2) var(--espaco-4);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      font-size: var(--tamanho-sm);
+      font-weight: var(--peso-medio);
+      display: flex;
+      align-items: center;
+      gap: var(--espaco-2);
+      transition: background var(--transicao-rapida);
+    }
+    .theme-toggle:hover { background: var(--cor-borda); }
+
+    /* Main */
+    main { padding: var(--espaco-12) 0; }
+
+    h1 {
+      font-size: var(--tamanho-4xl);
+      font-weight: var(--peso-bold);
+      color: var(--cor-texto);
+      margin-bottom: var(--espaco-2);
+      line-height: 1.2;
+    }
+    .intro {
+      font-size: var(--tamanho-lg);
+      color: var(--cor-texto-fraco);
+      margin-bottom: var(--espaco-8);
+    }
+
+    h2 {
+      font-size: var(--tamanho-2xl);
+      font-weight: var(--peso-bold);
+      margin-bottom: var(--espaco-6);
+      padding-bottom: var(--espaco-3);
+      border-bottom: 2px solid var(--cor-primaria-500);
+    }
+
+    /* Seções */
+    section { margin-bottom: var(--espaco-12); }
+
+    /* ── Paleta visual ── */
+    .paleta { display: flex; flex-wrap: wrap; gap: var(--espaco-3); }
+    .cor-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--espaco-2);
+      min-width: 100px;
+    }
+    .cor-amostra {
+      height: 60px;
+      border-radius: var(--radius-md);
+      border: var(--borda);
+    }
+    .cor-label { font-size: var(--tamanho-xs); color: var(--cor-texto-fraco); font-family: var(--fonte-mono); }
+    .cor-valor { font-size: var(--tamanho-xs); color: var(--cor-texto-fraco); }
+
+    /* ── Tipografia ── */
+    .tipo-escala { display: flex; flex-direction: column; gap: var(--espaco-3); }
+    .tipo-item { display: flex; align-items: baseline; gap: var(--espaco-4); }
+    .tipo-item .label { font-size: var(--tamanho-xs); color: var(--cor-texto-fraco); font-family: var(--fonte-mono); width: 120px; flex-shrink: 0; }
+
+    /* ── Espaçamento ── */
+    .espaco-demo { display: flex; flex-direction: column; gap: var(--espaco-4); }
+    .espaco-item { display: flex; align-items: center; gap: var(--espaco-4); }
+    .espaco-barra { height: 24px; background: var(--cor-primaria-500); border-radius: var(--radius-sm); opacity: 0.8; }
+    .espaco-label { font-size: var(--tamanho-xs); color: var(--cor-texto-fraco); font-family: var(--fonte-mono); white-space: nowrap; }
+
+    /* ── Botões ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--espaco-2);
+      padding: var(--espaco-2) var(--espaco-5);
+      border-radius: var(--radius-md);
+      font-size: var(--tamanho-md);
+      font-weight: var(--peso-medio);
+      font-family: var(--fonte-sans);
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition:
+        background var(--transicao-rapida),
+        color var(--transicao-rapida),
+        border-color var(--transicao-rapida),
+        transform var(--transicao-rapida),
+        box-shadow var(--transicao-rapida);
+      text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: var(--sombra-md); }
+    .btn:active { transform: translateY(0); box-shadow: none; }
+
+    .btn-primary    { background: var(--cor-primaria-500); color: white; }
+    .btn-primary:hover { background: var(--cor-primaria-700); }
+
+    .btn-success    { background: var(--cor-sucesso-500); color: white; }
+    .btn-danger     { background: var(--cor-perigo-500); color: white; }
+    .btn-warning    { background: var(--cor-aviso-500); color: #333; }
+    .btn-info       { background: var(--cor-info-500); color: #333; }
+
+    .btn-outline-primary {
+      background: transparent;
+      color: var(--cor-primaria-500);
+      border-color: var(--cor-primaria-500);
+    }
+    .btn-outline-primary:hover {
+      background: var(--cor-primaria-500);
+      color: white;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--cor-texto);
+      border-color: var(--cor-borda);
+    }
+    .btn-ghost:hover { background: var(--cor-superficie-2); }
+
+    .btn-sm { padding: var(--espaco-1) var(--espaco-3); font-size: var(--tamanho-sm); }
+    .btn-lg { padding: var(--espaco-3) var(--espaco-6); font-size: var(--tamanho-lg); }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--cor-superficie);
+      border: var(--borda);
+      border-radius: var(--radius-lg);
+      padding: var(--espaco-6);
+      box-shadow: var(--sombra-sm);
+      transition: box-shadow var(--transicao-media), transform var(--transicao-media);
+    }
+    .card:hover { box-shadow: var(--sombra-lg); transform: translateY(-2px); }
+    .card h3 { font-size: var(--tamanho-lg); font-weight: var(--peso-bold); margin-bottom: var(--espaco-2); }
+    .card p { color: var(--cor-texto-fraco); font-size: var(--tamanho-sm); }
+
+    /* ── Alertas ── */
+    .alerta {
+      padding: var(--espaco-4) var(--espaco-5);
+      border-radius: var(--radius-md);
+      border-left: 4px solid;
+      font-size: var(--tamanho-sm);
+      display: flex;
+      gap: var(--espaco-3);
+      align-items: flex-start;
+    }
+    .alerta-info    { background: #cff4fc; border-color: var(--cor-info-500); color: #055160; }
+    .alerta-sucesso { background: #d1e7dd; border-color: var(--cor-sucesso-500); color: #0a3622; }
+    .alerta-aviso   { background: #fff3cd; border-color: var(--cor-aviso-500); color: #664d03; }
+    .alerta-perigo  { background: #f8d7da; border-color: var(--cor-perigo-500); color: #58151c; }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      padding: var(--espaco-1) var(--espaco-2);
+      border-radius: var(--radius-pill);
+      font-size: var(--tamanho-xs);
+      font-weight: var(--peso-bold);
+    }
+    .badge-primary { background: var(--cor-primaria-100); color: var(--cor-primaria-700); }
+    .badge-success { background: #d1e7dd; color: #0a3622; }
+    .badge-danger  { background: #f8d7da; color: #58151c; }
+
+    /* ── Grid de componentes ── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--espaco-4); }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--espaco-4); }
+    .flex-wrap { display: flex; flex-wrap: wrap; gap: var(--espaco-3); align-items: center; }
+
+    /* ── Código CSS exibido ── */
+    .codigo {
+      background: var(--cinza-900, #212529);
+      color: #d4d4d4;
+      padding: var(--espaco-4) var(--espaco-5);
+      border-radius: var(--radius-md);
+      font-family: var(--fonte-mono);
+      font-size: var(--tamanho-xs);
+      overflow-x: auto;
+      line-height: 1.7;
+      margin-top: var(--espaco-4);
+    }
+    [data-tema="escuro"] .codigo { background: #0d1117; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="#" class="logo">Sistema de Design</a>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema claro/escuro">
+          <span id="theme-icon">🌙</span>
+          <span id="theme-label">Tema escuro</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <h1>Variáveis CSS (Custom Properties)</h1>
+      <p class="intro">
+        Um sistema de design construído inteiramente com CSS Custom Properties.
+        Clique no botão de tema para ver as variáveis em ação!
+      </p>
+
+      <!-- ── SEÇÃO: CORES ── -->
+      <section aria-labelledby="cores-titulo">
+        <h2 id="cores-titulo">Paleta de Cores</h2>
+
+        <h3 style="margin-bottom: var(--espaco-3); font-size: var(--tamanho-lg);">Primária</h3>
+        <div class="paleta" style="margin-bottom: var(--espaco-6);">
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-primaria-100);"></div>
+            <span class="cor-label">--cor-primaria-100</span>
+            <span class="cor-valor">#cfe2ff</span>
+          </div>
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-primaria-300);"></div>
+            <span class="cor-label">--cor-primaria-300</span>
+            <span class="cor-valor">#6ea8fe</span>
+          </div>
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-primaria-500);"></div>
+            <span class="cor-label">--cor-primaria-500</span>
+            <span class="cor-valor">#0d6efd</span>
+          </div>
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-primaria-700);"></div>
+            <span class="cor-label">--cor-primaria-700</span>
+            <span class="cor-valor">#0a58ca</span>
+          </div>
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-primaria-900);"></div>
+            <span class="cor-label">--cor-primaria-900</span>
+            <span class="cor-valor">#031633</span>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: var(--espaco-3); font-size: var(--tamanho-lg);">Superfícies (mudam com o tema)</h3>
+        <div class="paleta">
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-fundo);"></div>
+            <span class="cor-label">--cor-fundo</span>
+          </div>
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-superficie);"></div>
+            <span class="cor-label">--cor-superficie</span>
+          </div>
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-superficie-2);"></div>
+            <span class="cor-label">--cor-superficie-2</span>
+          </div>
+          <div class="cor-item">
+            <div class="cor-amostra" style="background: var(--cor-borda);"></div>
+            <span class="cor-label">--cor-borda</span>
+          </div>
+        </div>
+
+        <div class="codigo">
+:root {
+  --cor-fundo:       #f8f9fa;  /* claro */
+  --cor-superficie:  #ffffff;
+  --cor-texto:       #212529;
+}
+
+[data-tema="escuro"] {
+  --cor-fundo:       #0d1117;  /* escuro */
+  --cor-superficie:  #161b22;
+  --cor-texto:       #e6edf3;
+}</div>
+      </section>
+
+      <!-- ── SEÇÃO: TIPOGRAFIA ── -->
+      <section aria-labelledby="tipo-titulo">
+        <h2 id="tipo-titulo">Escala Tipográfica</h2>
+        <div class="tipo-escala">
+          <div class="tipo-item"><span class="label">--tamanho-xs (12px)</span><span style="font-size:var(--tamanho-xs);">Texto muito pequeno – labels, badges</span></div>
+          <div class="tipo-item"><span class="label">--tamanho-sm (14px)</span><span style="font-size:var(--tamanho-sm);">Texto pequeno – captions, metadados</span></div>
+          <div class="tipo-item"><span class="label">--tamanho-md (16px)</span><span style="font-size:var(--tamanho-md);">Texto base – corpo do texto</span></div>
+          <div class="tipo-item"><span class="label">--tamanho-lg (18px)</span><span style="font-size:var(--tamanho-lg);">Texto grande – subtítulos</span></div>
+          <div class="tipo-item"><span class="label">--tamanho-xl (20px)</span><span style="font-size:var(--tamanho-xl);">Texto maior – lead</span></div>
+          <div class="tipo-item"><span class="label">--tamanho-2xl (24px)</span><span style="font-size:var(--tamanho-2xl); font-weight:var(--peso-bold);">Heading 3</span></div>
+          <div class="tipo-item"><span class="label">--tamanho-3xl (30px)</span><span style="font-size:var(--tamanho-3xl); font-weight:var(--peso-bold);">Heading 2</span></div>
+          <div class="tipo-item"><span class="label">--tamanho-4xl (36px)</span><span style="font-size:var(--tamanho-4xl); font-weight:var(--peso-bold);">Heading 1</span></div>
+        </div>
+      </section>
+
+      <!-- ── SEÇÃO: BOTÕES ── -->
+      <section aria-labelledby="botoes-titulo">
+        <h2 id="botoes-titulo">Botões</h2>
+
+        <h3 style="margin-bottom: var(--espaco-3); font-size: var(--tamanho-lg);">Variantes</h3>
+        <div class="flex-wrap" style="margin-bottom: var(--espaco-6);">
+          <button class="btn btn-primary">Primary</button>
+          <button class="btn btn-success">Success</button>
+          <button class="btn btn-danger">Danger</button>
+          <button class="btn btn-warning">Warning</button>
+          <button class="btn btn-info">Info</button>
+          <button class="btn btn-outline-primary">Outline</button>
+          <button class="btn btn-ghost">Ghost</button>
+        </div>
+
+        <h3 style="margin-bottom: var(--espaco-3); font-size: var(--tamanho-lg);">Tamanhos</h3>
+        <div class="flex-wrap">
+          <button class="btn btn-primary btn-sm">Small</button>
+          <button class="btn btn-primary">Medium (padrão)</button>
+          <button class="btn btn-primary btn-lg">Large</button>
+        </div>
+      </section>
+
+      <!-- ── SEÇÃO: CARDS ── -->
+      <section aria-labelledby="cards-titulo">
+        <h2 id="cards-titulo">Cards</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h3>Design Token</h3>
+            <p>Variáveis CSS são a implementação nativa dos design tokens – valores de design reutilizáveis.</p>
+          </div>
+          <div class="card">
+            <h3>Manutenibilidade</h3>
+            <p>Altere uma variável e o efeito se propaga por todo o sistema. Perfeito para temas.</p>
+          </div>
+          <div class="card">
+            <h3>Performance</h3>
+            <p>Variáveis CSS não requerem pré-processadores. São nativas e suportadas por todos os browsers modernos.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SEÇÃO: ALERTAS E BADGES ── -->
+      <section aria-labelledby="feedback-titulo">
+        <h2 id="feedback-titulo">Alertas e Badges</h2>
+
+        <div style="display:flex; flex-direction:column; gap:var(--espaco-3); margin-bottom:var(--espaco-6);">
+          <div class="alerta alerta-info" role="note">
+            <span>ℹ️</span>
+            <span><strong>Dica:</strong> Você pode ler variáveis CSS com JavaScript usando <code>getComputedStyle(el).getPropertyValue('--variavel')</code>.</span>
+          </div>
+          <div class="alerta alerta-sucesso" role="status">
+            <span>✅</span>
+            <span><strong>Sucesso:</strong> Variáveis CSS são suportadas em todos os navegadores modernos (Chrome 49+, Firefox 31+, Safari 9.1+).</span>
+          </div>
+          <div class="alerta alerta-aviso" role="note">
+            <span>⚠️</span>
+            <span><strong>Atenção:</strong> Variáveis CSS não funcionam dentro de media queries (<code>@media (min-width: var(--bp))</code> não funciona).</span>
+          </div>
+          <div class="alerta alerta-perigo" role="alert">
+            <span>❌</span>
+            <span><strong>Evite:</strong> Não use <code>!important</code> para sobrescrever variáveis. Ajuste a especificidade do seletor.</span>
+          </div>
+        </div>
+
+        <div class="flex-wrap">
+          <span class="badge badge-primary">Novo</span>
+          <span class="badge badge-success">Ativo</span>
+          <span class="badge badge-danger">Desativado</span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    const html = document.documentElement
+    const toggle = document.getElementById('theme-toggle')
+    const icon = document.getElementById('theme-icon')
+    const label = document.getElementById('theme-label')
+
+    // Carregar tema salvo ou detectar preferência do sistema
+    const temaSalvo = localStorage.getItem('tema')
+    const prefereEscuro = window.matchMedia('(prefers-color-scheme: dark)').matches
+
+    let temaAtual = temaSalvo || (prefereEscuro ? 'escuro' : 'claro')
+    aplicarTema(temaAtual)
+
+    toggle.addEventListener('click', () => {
+      temaAtual = temaAtual === 'claro' ? 'escuro' : 'claro'
+      aplicarTema(temaAtual)
+      localStorage.setItem('tema', temaAtual)
+    })
+
+    function aplicarTema(tema) {
+      html.setAttribute('data-tema', tema)
+      icon.textContent = tema === 'escuro' ? '☀️' : '🌙'
+      label.textContent = tema === 'escuro' ? 'Tema claro' : 'Tema escuro'
+    }
+
+    // Demonstrar leitura de variável CSS com JavaScript
+    console.log('Lendo variável CSS via JavaScript:')
+    const corPrimaria = getComputedStyle(document.documentElement)
+      .getPropertyValue('--cor-primaria-500').trim()
+    console.log('--cor-primaria-500:', corPrimaria)
+  </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prática 02 – Módulos ES nativos | Ecossistema Front-end</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --azul: #0d6efd; --verde: #198754; --vermelho: #dc3545; --radius: 8px; }
+    body { font-family: system-ui, sans-serif; background: #f8f9fa; color: #212529; padding: 1.5rem; line-height: 1.6; }
+    :focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; border-radius: 3px; }
+
+    h1 { color: #1a1a2e; font-size: 1.75rem; margin-bottom: 0.35rem; }
+    h2 { color: var(--azul); font-size: 1.1rem; margin-bottom: 0.75rem; padding-bottom: 0.35rem; border-bottom: 2px solid var(--azul); }
+    p.sub { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem; }
+    .card { background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .dica { background: #e7f3ff; border-left: 3px solid var(--azul); padding: 0.6rem 0.75rem; font-size: 0.82rem; margin-bottom: 1rem; border-radius: 0 var(--radius) var(--radius) 0; }
+    .btn { padding: 0.5rem 1rem; border: none; border-radius: 5px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.15s; margin: 0.25rem; }
+    .btn-azul  { background: var(--azul);   color: white; }
+    .btn-verde { background: var(--verde);  color: white; }
+    .btn-verm  { background: var(--vermelho); color: white; }
+    .codigo {
+      background: #1e1e1e; color: #9cdcfe; padding: 0.75rem 1rem;
+      border-radius: var(--radius); font-family: 'Courier New', monospace;
+      font-size: 0.82rem; line-height: 1.6; overflow-x: auto; margin: 0.75rem 0;
+    }
+    .codigo .kw  { color: #569cd6; }
+    .codigo .str { color: #ce9178; }
+    .codigo .cm  { color: #6a9955; }
+    .output { min-height: 50px; background: #f0f2f5; border-radius: 5px; padding: 0.75rem; font-family: monospace; font-size: 0.85rem; margin-top: 0.75rem; }
+    input[type="text"], input[type="number"] {
+      padding: 0.45rem 0.75rem; border: 1.5px solid #ced4da;
+      border-radius: 5px; font-size: 0.875rem; margin-bottom: 0.5rem;
+    }
+    input:focus { border-color: var(--azul); outline: none; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.2rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Prática 02 – Módulos ES Nativos no Navegador</h1>
+  <p class="sub">
+    Os navegadores modernos suportam ES Modules nativamente!
+    Não é preciso bundler para experimentar: basta <code>type="module"</code> no script.
+    Esta página usa módulos inline para demonstrar os conceitos.
+  </p>
+
+  <div class="grid">
+
+    <!-- ════════════════════════════════
+         1. Import dinâmico
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>1. import() Dinâmico</h2>
+      <div class="dica">
+        💡 O <code>import()</code> dinâmico permite carregar módulos sob demanda (lazy loading).
+        É assíncrono e retorna uma Promise.
+      </div>
+
+      <div class="codigo"><span class="cm">// Carregamento lazy – só executa quando necessário</span>
+<span class="kw">const</span> modulo = <span class="kw">await</span> import(<span class="str">'./utils.js'</span>)
+modulo.minhaFuncao()
+
+<span class="cm">// Ou desestruturando</span>
+<span class="kw">const</span> { calcular } = <span class="kw">await</span> import(<span class="str">'./matematica.js'</span>)
+</div>
+
+      <button class="btn btn-azul" id="btn-lazy">Carregar módulo lazily</button>
+      <div id="lazy-output" class="output">Módulo não carregado ainda.</div>
+    </div>
+
+    <!-- ════════════════════════════════
+         2. Módulos inline com Blob
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>2. Módulo de Utilidades (simulado)</h2>
+      <div class="dica">
+        💡 Em um projeto real, cada função estaria em um arquivo <code>.js</code> separado.
+        Aqui simulamos com módulos inline para demonstração.
+      </div>
+
+      <div class="codigo"><span class="cm">// matematica.js</span>
+<span class="kw">export const</span> PI = 3.14159
+
+<span class="kw">export function</span> circunferencia(r) \{
+  <span class="kw">return</span> 2 * PI * r
+\}
+
+<span class="kw">export function</span> area(r) \{
+  <span class="kw">return</span> PI * r ** 2
+\}</div>
+
+      <label for="raio">Raio do círculo:</label>
+      <input type="number" id="raio" value="5" min="1" max="100">
+      <div style="display:flex;flex-wrap:wrap;gap:0.25rem;">
+        <button class="btn btn-azul" onclick="calcCircunferencia()">Calcular circunferência</button>
+        <button class="btn btn-verde" onclick="calcArea()">Calcular área</button>
+      </div>
+      <div id="calc-output" class="output">Informe um raio e clique em calcular.</div>
+    </div>
+
+    <!-- ════════════════════════════════
+         3. Módulo de Estado
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>3. Módulo de Estado (Store)</h2>
+      <div class="dica">
+        💡 Módulos são singletons – a mesma instância é compartilhada por todos os importadores.
+        Isso torna módulos ótimos para gerenciar estado.
+      </div>
+
+      <div class="codigo"><span class="cm">// store.js – módulo singleton</span>
+<span class="kw">let</span> _estado = \{ contador: 0, mensagens: [] \}
+
+<span class="kw">export function</span> getEstado() \{
+  <span class="kw">return</span> \{ ..._estado \}  <span class="cm">// retorna cópia</span>
+\}
+
+<span class="kw">export function</span> incrementar() \{
+  _estado.contador++
+\}
+
+<span class="kw">export function</span> adicionarMsg(msg) \{
+  _estado.mensagens.push(msg)
+\}</div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:0.25rem;">
+        <button class="btn btn-verde" onclick="incrementarContador()">+1 Contador</button>
+        <button class="btn btn-verm"  onclick="resetarContador()">Reset</button>
+        <button class="btn btn-azul"  onclick="adicionarMensagem()">Adicionar mensagem</button>
+      </div>
+      <div id="store-output" class="output">Clique nos botões para alterar o estado.</div>
+    </div>
+
+    <!-- ════════════════════════════════
+         4. Tree-shaking Demo
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>4. Tree-shaking</h2>
+      <div class="dica">
+        💡 <strong>Tree-shaking</strong> remove código exportado mas nunca importado.
+        O bundler (Vite/Rollup) analisa os imports e elimina o código morto.
+      </div>
+
+      <div class="codigo"><span class="cm">// utils.js – tem 5 funções exportadas</span>
+<span class="kw">export function</span> funcaoA() \{ ... \}  <span class="cm">// ← usada</span>
+<span class="kw">export function</span> funcaoB() \{ ... \}  <span class="cm">// ← usada</span>
+<span class="kw">export function</span> funcaoC() \{ ... \}  <span class="cm">// ← NÃO usada</span>
+<span class="kw">export function</span> funcaoD() \{ ... \}  <span class="cm">// ← NÃO usada</span>
+<span class="kw">export function</span> funcaoE() \{ ... \}  <span class="cm">// ← NÃO usada</span>
+
+<span class="cm">// app.js – importa apenas A e B</span>
+<span class="kw">import</span> \{ funcaoA, funcaoB \} <span class="kw">from</span> <span class="str">'./utils.js'</span>
+
+<span class="cm">// No build: C, D, E são removidas!</span>
+<span class="cm">// Resultado: bundle 60% menor</span></div>
+
+      <button class="btn btn-azul" onclick="demoCriarBundle()">Simular análise de bundle</button>
+      <div id="tree-output" class="output">Clique para simular o tree-shaking.</div>
+    </div>
+
+    <!-- ════════════════════════════════
+         5. ESM vs CJS
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>5. ES Modules vs CommonJS</h2>
+
+      <div class="codigo"><span class="cm">// ✅ ESM – use sempre em projetos modernos</span>
+<span class="kw">import</span> axios <span class="kw">from</span> <span class="str">'axios'</span>
+<span class="kw">import</span> \{ useState \} <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">export const</span> PI = 3.14
+<span class="kw">export default function</span> App() \{ ... \}
+
+<span class="cm">// ❌ CJS – apenas em código Node.js legado</span>
+<span class="kw">const</span> axios = require(<span class="str">'axios'</span>)
+module.exports = \{ PI: 3.14 \}
+
+<span class="cm">// Diferenças chave:</span>
+<span class="cm">// ESM: estático, tree-shakeable, async (top-level await)</span>
+<span class="cm">// CJS: dinâmico, síncrono, Node.js nativo (legado)</span></div>
+
+      <button class="btn btn-azul" onclick="mostrarDiffs()">Ver diferenças principais</button>
+      <div id="esm-output" class="output">Clique para ver as diferenças.</div>
+    </div>
+
+    <!-- ════════════════════════════════
+         6. Estrutura de Projeto Vite
+    ════════════════════════════════ -->
+    <div class="card">
+      <h2>6. Estrutura de um Projeto Vite</h2>
+
+      <div class="dica">
+        💡 Depois de criar um projeto com <code>npm create vite@latest</code>,
+        esta é a estrutura típica que você encontrará.
+      </div>
+
+      <div class="codigo" style="color:#d4d4d4;"><span style="color:#f1fa8c;">meu-projeto/</span>
+├── <span style="color:#8be9fd;">public/</span>          <span style="color:#6a9955;"># estáticos não processados</span>
+│   └── favicon.svg
+├── <span style="color:#8be9fd;">src/</span>             <span style="color:#6a9955;"># código fonte</span>
+│   ├── <span style="color:#8be9fd;">components/</span>  <span style="color:#6a9955;"># componentes reutilizáveis</span>
+│   ├── <span style="color:#8be9fd;">pages/</span>       <span style="color:#6a9955;"># páginas/views</span>
+│   ├── <span style="color:#8be9fd;">assets/</span>      <span style="color:#6a9955;"># imagens, fontes</span>
+│   ├── App.jsx      <span style="color:#6a9955;"># componente raiz</span>
+│   ├── main.jsx     <span style="color:#6a9955;"># ponto de entrada</span>
+│   └── index.css
+├── index.html       <span style="color:#6a9955;"># template HTML (entrada Vite)</span>
+├── package.json
+├── vite.config.js   <span style="color:#6a9955;"># configuração</span>
+└── .gitignore</div>
+
+      <div style="margin-top:0.75rem;font-size:0.85rem;">
+        <strong>Comandos principais:</strong><br>
+        <code style="background:#f0f2f5;padding:0.1em 0.3em;border-radius:3px;">npm run dev</code> – servidor de desenvolvimento<br>
+        <code style="background:#f0f2f5;padding:0.1em 0.3em;border-radius:3px;">npm run build</code> – gera /dist otimizado<br>
+        <code style="background:#f0f2f5;padding:0.1em 0.3em;border-radius:3px;">npm run preview</code> – previsualizar o build
+      </div>
+    </div>
+
+  </div>
+
+  <!--
+    MÓDULOS ES NATIVOS:
+    O navegador suporta módulos inline e externos com type="module"
+  -->
+  <script type="module">
+    // ── Módulo de Matemática (inline) ──
+    const PI = 3.14159265358979
+
+    function circunferencia(r) { return 2 * PI * r }
+    function area(r) { return PI * r ** 2 }
+
+    window.calcCircunferencia = function() {
+      const r = parseFloat(document.getElementById('raio').value)
+      if (isNaN(r) || r <= 0) return alert('Raio inválido')
+      const c = circunferencia(r)
+      document.getElementById('calc-output').textContent =
+        `Circunferência: ${c.toFixed(4)}\n= 2 × π × ${r}\n= 2 × 3.14159... × ${r}`
+    }
+
+    window.calcArea = function() {
+      const r = parseFloat(document.getElementById('raio').value)
+      if (isNaN(r) || r <= 0) return alert('Raio inválido')
+      const a = area(r)
+      document.getElementById('calc-output').textContent =
+        `Área: ${a.toFixed(4)}\n= π × r²\n= 3.14159... × ${r}²`
+    }
+
+    // ── Store singleton ──
+    let _estado = { contador: 0, mensagens: [] }
+
+    window.incrementarContador = function() {
+      _estado.contador++
+      renderStore()
+    }
+
+    window.resetarContador = function() {
+      _estado = { contador: 0, mensagens: [] }
+      renderStore()
+    }
+
+    window.adicionarMensagem = function() {
+      const msgs = ['Olá!', 'Módulo atualizado', 'Estado global', 'Singleton em ação', '🎉 Funciona!']
+      _estado.mensagens.push(msgs[Math.floor(Math.random() * msgs.length)])
+      if (_estado.mensagens.length > 5) _estado.mensagens.shift()
+      renderStore()
+    }
+
+    function renderStore() {
+      const el = document.getElementById('store-output')
+      el.textContent = JSON.stringify(_estado, null, 2)
+    }
+
+    // ── Import dinâmico (simulado com Blob) ──
+    document.getElementById('btn-lazy').addEventListener('click', async () => {
+      const el = document.getElementById('lazy-output')
+      el.textContent = '⏳ Carregando módulo...'
+
+      // Simular delay de rede
+      await new Promise(r => setTimeout(r, 800))
+
+      // Em um projeto real seria: const m = await import('./utils.js')
+      // Simulamos com uma função inline
+      const modulo = {
+        versao: '1.0.0',
+        saudar: (nome) => `Olá, ${nome}! Módulo carregado com sucesso.`,
+        processar: (dados) => dados.map(x => x * 2),
+      }
+
+      el.textContent = `✅ Módulo carregado!\n\n${modulo.saudar('desenvolvedor')}\n\nProcessar [1,2,3,4,5]:\n→ ${JSON.stringify(modulo.processar([1,2,3,4,5]))}`
+    })
+
+    // ── Tree-shaking ──
+    window.demoCriarBundle = function() {
+      const todas = ['funcaoA', 'funcaoB', 'funcaoC', 'funcaoD', 'funcaoE']
+      const usadas = ['funcaoA', 'funcaoB']
+      const removidas = todas.filter(f => !usadas.includes(f))
+      const tamanhoOriginal = todas.length * 1200  // bytes
+      const tamanhoFinal = usadas.length * 1200
+      const reducao = ((1 - tamanhoFinal / tamanhoOriginal) * 100).toFixed(0)
+
+      document.getElementById('tree-output').textContent =
+        `📦 utils.js original: 5 funções (${(tamanhoOriginal / 1000).toFixed(1)}kb)
+✅ Importadas: ${usadas.join(', ')}
+❌ Removidas (tree-shaken): ${removidas.join(', ')}
+📦 Bundle final: 2 funções (${(tamanhoFinal / 1000).toFixed(1)}kb)
+📉 Redução: ${reducao}% menor!`
+    }
+
+    // ── ESM vs CJS ──
+    window.mostrarDiffs = function() {
+      document.getElementById('esm-output').textContent =
+`Característica       ESM              CJS
+─────────────────────────────────────────
+Sintaxe              import/export    require/exports
+Tipo                 Estático         Dinâmico
+Tree-shakeable       ✅ Sim           ❌ Não
+Top-level await      ✅ Sim           ❌ Não
+Execução             Async            Síncrona
+Navegador nativo     ✅ Sim           ❌ Não (precisa bundler)
+Node.js              ✅ Com "type":"module"  ✅ Padrão legado
+Referência circular  Tratada          Problemática`
+    }
+  </script>
+</body>
+</html>
