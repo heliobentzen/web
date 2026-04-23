@@ -1,53 +1,47 @@
-# Módulo 05 – JavaScript: Escopo, Estruturas de Dados, JSON, DOM e Eventos
+# Módulo 05 – JavaScript Fundamentals
 
-## Objetivos
+## O que você vai aprender
 
-Ao final deste módulo você será capaz de:
-
-- Compreender escopo de variáveis, hoisting e closures
-- Usar estruturas de dados (arrays, objetos, Map, Set)
-- Trabalhar com JSON
-- Manipular o DOM com eficiência
-- Gerenciar eventos e event delegation
+- Variáveis: const, let
+- Arrays e objetos
+- Selecionando e mudando DOM
+- Eventos: click, submit
+- Promises e fetch (async)
 
 ---
 
-## 1. Variáveis e Escopo
+## 1. Variáveis
 
 ```javascript
-// ── var, let, const ──
+const nome = 'João'        // use const (não reatribua)
+let idade = 30             // use let (pode reatribuir)
 
-var varivel = 'var'      // escopo de função, hoisted, pode redeclarar
-let mutavel  = 'let'     // escopo de bloco, não redeclarável no mesmo escopo
-const imutavel = 'const' // escopo de bloco, não reatribuível (mas objetos são mutáveis)
+const pessoa = {}          // objeto muda internamente, ok!
+pessoa.nome = 'Maria'      // referência não muda
+```
 
-// Regra geral: use const por padrão, let quando precisar reatribuir, evite var
+---
 
-// ── Escopo de bloco ──
-{
-  let dentro = 'bloco'
-  const tambem = 'bloco'
-  // var fora = 'vaza!' // var vaza do bloco
-}
-// console.log(dentro)   // ReferenceError
-// console.log(tambem)   // ReferenceError
+## 2. Arrays e Objetos
 
-// ── Escopo de função ──
-function minhaFuncao() {
-  var local = 'só aqui'
-  let tambemLocal = 'só aqui'
-}
-// console.log(local)  // ReferenceError
+```javascript
+// Array
+const numeros = [1, 2, 3]
+numeros.push(4)            // [1, 2, 3, 4]
 
-// ── Hoisting ──
-console.log(x)      // undefined (var é "elevado" mas não o valor)
-var x = 5
-console.log(x)      // 5
+// Objeto
+const usuario = { nome: 'João', idade: 30 }
+usuario.email = 'joao@example.com'
 
-// console.log(y)   // ReferenceError (let/const não são inicializadas = TDZ)
-let y = 10
+// Desestruturação
+const { nome, idade } = usuario
+const [primeiro, segundo] = numeros
+```
 
-// ── Closures ──
+---
+
+## 3. DOM
+
 function criarContador() {
   let count = 0
   return {
@@ -61,6 +55,7 @@ contador.incrementar()  // 1
 contador.incrementar()  // 2
 contador.valor()        // 2
 // A variável `count` persiste na closure mesmo após `criarContador` retornar
+
 ```
 
 ---

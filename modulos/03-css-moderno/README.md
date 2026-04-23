@@ -1,55 +1,30 @@
-# Módulo 03 – CSS Moderno: Flexbox, Grid, Variáveis e Design Responsivo
+# Módulo 03 – CSS Moderno
 
-## Objetivos
+## O que você vai aprender
 
-Ao final deste módulo você será capaz de:
-
-- Dominar o modelo de caixa (Box Model) do CSS
-- Criar layouts flexíveis com Flexbox
-- Criar layouts bidimensionais com CSS Grid
-- Usar variáveis CSS (Custom Properties) para temas consistentes
-- Aplicar Design Responsivo com a abordagem Mobile First
-- Usar pseudo-classes, pseudo-elementos e animações
+- Flexbox para layouts
+- CSS Grid
+- Variáveis CSS
+- Mobile First
 
 ---
 
-## 1. Seletores e Especificidade
-
-### 1.1 Tipos de Seletores
+## Seletores Básicos
 
 ```css
-/* Universal */
-* { box-sizing: border-box; }
+* { box-sizing: border-box; }           /* todos */
+p { line-height: 1.6; }                  /* tipo */
+.card { background: white; }             /* classe */
+#header { position: sticky; }            /* ID */
+input[type="email"] { border: 1px solid; }
+.nav a { color: white; }                 /* descendente */
+```
 
-/* Tipo (tag) */
-p { line-height: 1.6; }
+Próximo passo: fazer as práticas!
 
-/* Classe */
-.card { background: white; }
-
-/* ID */
-#header { position: sticky; top: 0; }
-
-/* Atributo */
-input[type="email"] { border-color: blue; }
-a[href^="https"] { color: green; }   /* href começa com "https" */
-a[href$=".pdf"] { color: red; }      /* href termina com ".pdf" */
-a[href*="example"] { color: orange; } /* href contém "example" */
-
-/* Descendente */
-.nav a { color: white; }
-
-/* Filho direto */
-.nav > li { display: inline-block; }
-
-/* Irmão adjacente */
-h2 + p { font-size: 1.1em; }
-
-/* Irmãos gerais */
-h2 ~ p { color: gray; }
-
-/* Combinação */
+/*Combinação*/
 .card.destaque { border: 2px solid gold; }
+
 ```
 
 ### 1.2 Especificidade

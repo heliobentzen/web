@@ -1,52 +1,36 @@
-# Módulo 02 – HTML Semântico: Estruturação e Boas Práticas para SEO
+# Módulo 02 – HTML Semântico
 
-## Objetivos
+## O que você vai aprender
 
-Ao final deste módulo você será capaz de:
-
-- Estruturar documentos HTML usando elementos semânticos corretos
-- Compreender o impacto da semântica na acessibilidade e no SEO
-- Configurar corretamente os metadados de uma página
-- Criar formulários acessíveis e funcionais
-- Trabalhar com mídias (imagens, vídeo, áudio) de forma responsiva
+- Estrutura básica HTML
+- Elementos semânticos corretos
+- Metadados importantes
+- Formulários acessíveis
 
 ---
 
-## 1. Estrutura Básica de um Documento HTML5
+## 1. Estrutura Básica
 
 ```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- Metadados: não são exibidos na página -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Título da Página – Nome do Site</title>
-  <meta name="description" content="Descrição concisa da página com 150-160 caracteres.">
+  <title>Título da Página</title>
+  <meta name="description" content="Descrição curta da página">
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="/favicon.ico">
 </head>
 <body>
-  <!-- Conteúdo visível -->
-
+  <!-- Seu conteúdo aqui -->
   <script src="app.js" defer></script>
 </body>
 </html>
 ```
 
-**Elementos essenciais do `<head>`:**
-
-| Tag | Propósito |
-|-----|-----------|
-| `<meta charset="UTF-8">` | Define a codificação de caracteres (suporta acentos, emojis, etc.) |
-| `<meta name="viewport" ...>` | Controla o viewport em dispositivos móveis |
-| `<title>` | Título na aba do navegador e nos resultados de busca |
-| `<meta name="description">` | Descrição exibida nos resultados de busca |
-| `<link rel="stylesheet">` | Vincula arquivo CSS |
-| `<link rel="icon">` | Ícone da aba (favicon) |
-| `<link rel="canonical">` | URL canônica (evita conteúdo duplicado) |
-
 ---
+
+## 2. Elementos Semânticos
 
 ## 2. Elementos Semânticos de Layout
 
@@ -127,6 +111,7 @@ Os títulos (`<h1>` a `<h6>`) criam o **outline** do documento e são cruciais p
 ```
 
 **Regras:**
+
 - Apenas **um `<h1>` por página** (embora HTML5 permita mais, é melhor prática)
 - Não pule níveis (de `<h2>` para `<h4>` sem `<h3>`)
 - Escolha headings pelo significado hierárquico, **não** pelo tamanho visual (use CSS para o visual)
@@ -283,6 +268,7 @@ const el = document.querySelector('.minha-classe')
 ```
 
 **Boas práticas de imagem:**
+
 - Sempre inclua `alt` (descritivo para imagens informativas, vazio `alt=""` para decorativas)
 - Defina `width` e `height` para evitar layout shift (CLS)
 - Use `loading="lazy"` para imagens abaixo do fold

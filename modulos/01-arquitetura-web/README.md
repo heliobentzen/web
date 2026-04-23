@@ -1,53 +1,29 @@
-# Módulo 01 – Arquitetura da Web Moderna e Funcionamento dos Navegadores
+# Módulo 01 – Como a Web Funciona
 
-## Objetivos
+## O que você vai aprender
 
-Ao final deste módulo você será capaz de:
-
-- Explicar como uma requisição web percorre a rede desde o navegador até o servidor e volta
-- Descrever o papel do DNS, HTTP/HTTPS e TCP/IP
-- Entender como os navegadores transformam código em pixels na tela
-- Compreender o que é o DOM e como ele se relaciona com o HTML
-- Conhecer os principais Web Standards e quem os define
+- URL → navegador → servidor → resposta (ciclo básico)
+- O que é DOM e como o navegador renderiza HTML
+- Inspecionar páginas com DevTools
 
 ---
 
-## 1. Como a Web Funciona
+## 1. O Ciclo de Requisição
 
-Quando você digita uma URL no navegador, uma série de etapas acontece em milissegundos:
-
+Resumido:
 ```
-Usuário digita URL → DNS lookup → TCP handshake → TLS handshake (HTTPS)
-→ HTTP Request → Servidor processa → HTTP Response → Navegador renderiza
+URL → DNS (descobre IP) → HTTP Request → Servidor responde → Navegador renderiza
 ```
 
-### 1.1 DNS (Domain Name System)
+**Tudo que você precisa saber:**
+- **URL**: endereço da página (ex: `https://exemplo.com/pagina`)
+- **DNS**: traduz `exemplo.com` → IP do servidor
+- **HTTP/HTTPS**: protocolo para comunicação (HTTPS é seguro)
+- **Renderização**: navegador transforma HTML em página visual
 
-O DNS é o "catálogo telefônico" da internet. Ele traduz nomes legíveis por humanos (`example.com`) em endereços IP (`93.184.216.34`).
+---
 
-**Etapas do DNS lookup:**
-
-1. Navegador verifica cache local
-2. Sistema operacional verifica seu cache + arquivo `hosts`
-3. Consulta ao servidor DNS recursivo (geralmente do provedor de internet)
-4. Servidor recursivo consulta Root Nameserver → TLD Nameserver (`.com`) → Authoritative Nameserver
-5. IP retornado e cacheado
-
-### 1.2 TCP/IP
-
-TCP (Transmission Control Protocol) garante entrega confiável de dados em pacotes ordenados. O handshake de três vias é:
-
-```
-Cliente → SYN       → Servidor
-Cliente ← SYN-ACK  ← Servidor
-Cliente → ACK       → Servidor
-```
-
-### 1.3 TLS/HTTPS
-
-HTTPS = HTTP + TLS (Transport Layer Security). O TLS garante:
-
-- **Confidencialidade** – dados criptografados
+## 2. DOM – Document Object Model
 - **Integridade** – dados não foram alterados em trânsito
 - **Autenticidade** – certificado válido emitido para o domínio correto
 
@@ -237,10 +213,6 @@ O navegador expõe diversas APIs nativas para JavaScript:
 
 ---
 
-## Referências
+## Próximas Etapas
 
-- [Como os navegadores funcionam (web.dev)](https://web.dev/articles/howbrowserswork)
-- [Critical Rendering Path (web.dev)](https://web.dev/articles/critical-rendering-path)
-- [HTTP – MDN](https://developer.mozilla.org/pt-BR/docs/Web/HTTP)
-- [DOM – MDN](https://developer.mozilla.org/pt-BR/docs/Web/API/Document_Object_Model)
-- [Inside look at modern web browser (Chrome blog)](https://developer.chrome.com/blog/inside-browser-part1/)
+Faça as práticas!

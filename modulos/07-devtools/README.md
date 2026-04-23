@@ -1,53 +1,81 @@
-# Módulo 07 – Ferramentas de Desenvolvedor (DevTools)
+# Módulo 07 – DevTools (Ferramentas do Navegador)
 
-## Objetivos
+## O que você vai aprender
 
-Ao final deste módulo você será capaz de:
-
-- Navegar pelos painéis do DevTools com eficiência
-- Inspecionar e modificar o DOM em tempo real
-- Depurar CSS e layout com as ferramentas visuais
-- Usar o console JavaScript com profundidade
-- Depurar JavaScript com breakpoints e call stack
-- Analisar performance e requisições de rede
-- Auditar acessibilidade e performance com Lighthouse
+- Inspector: ver e editar HTML
+- Console: executar JavaScript
+- Network: monitorar requisições
+- Performance: medir velocidade
+- Debugging: breakpoints
 
 ---
 
-## 1. Abrindo o DevTools
+## 1. Abrindo DevTools
 
 | Atalho | Ação |
 |--------|------|
-| `F12` | Abrir/fechar DevTools |
-| `Ctrl+Shift+I` (Windows/Linux) / `Cmd+Option+I` (Mac) | Abrir DevTools |
-| `Ctrl+Shift+C` / `Cmd+Option+C` | Abrir e ativar seleção de elemento |
-| `Ctrl+Shift+J` / `Cmd+Option+J` | Abrir no Console |
-| `Ctrl+[` / `Ctrl+]` | Navegar entre painéis |
-| `Ctrl+Shift+M` | Ativar/desativar modo responsivo |
-| `Ctrl+P` (dentro do DevTools) | Abrir arquivo rapidamente |
-| `Ctrl+Shift+P` (dentro do DevTools) | Abrir paleta de comandos |
+| `F12` | Abrir/fechar |
+| `Ctrl+Shift+I` | Abrir DevTools |
+| `Ctrl+Shift+C` | Inspecionar elemento |
+| `Ctrl+Shift+J` | Abrir Console |
+| `Ctrl+Shift+M` | Modo Responsivo (mobile) |
 
 ---
 
-## 2. Painel Elements (Inspector)
+## 2. Painel Elements (HTML)
 
-### 2.1 Inspecionar e Editar HTML
+- Clique direito em elemento → "Inspecionar"
+- Duplo clique em tag/atributo → edita
+- Delete em elemento selecionado → remove
+- $0 no console = último elemento selecionado
 
-- **Clicar com botão direito → Inspecionar**: abre o DevTools com o elemento selecionado
-- **Duplo clique em um atributo**: edita inline
-- **Tecla `H`** com elemento selecionado: alterna `visibility: hidden`
-- **Tecla `Delete`** com elemento selecionado: remove o elemento do DOM
-- **Drag & Drop** de elementos na árvore HTML: move o elemento
-- `$0` no console: referencia o último elemento selecionado
+---
 
-### 2.2 Painel Styles (CSS)
+## 3. Painel Console
 
+```javascript
+// Log
+console.log('Mensagem')
+console.warn('Aviso')
+console.error('Erro')
+
+// Tabela
+console.table([{ nome: 'João' }, { nome: 'Maria' }])
+
+// Agrupar
+console.group('Dados')
+console.log('Item 1')
+console.log('Item 2')
+console.groupEnd()
+
+// Tempo
+console.time('timer')
+// ... código ...
+console.timeEnd('timer')  // exibe tempo decorrido
 ```
-┌──────────────────────────────────────────────────────┐
-│ Styles  Computed  Layout  Event Listeners  Properties │
-├──────────────────────────────────────────────────────┤
-│ Filter                              :hov  .cls  + ⊕  │
-│                                                       │
+
+---
+
+## 4. Debugger (Breakpoints)
+
+1. Abra aba "Sources"
+2. Escolha arquivo JavaScript
+3. Clique no número da linha para marcar breakpoint
+4. Execute código que alcança o breakpoint
+5. Use step over (F10) e step into (F11) para debugar
+
+---
+
+## 5. Network
+
+Aba "Network" mostra todas as requisições HTTP:
+
+- Código de status (200, 404, 500)
+- Tempo de resposta
+- Tamanho do arquivo
+- Headers
+
+Próximo: fazer as práticas!
 │ element.style { }                                     │
 │                                                       │
 │ h1 {                          styles.css:23           │
@@ -59,6 +87,7 @@ Ao final deste módulo você será capaz de:
 │   box-sizing: border-box;                             │
 │ }                                                     │
 └──────────────────────────────────────────────────────┘
+
 ```
 
 **Dicas:**
@@ -82,6 +111,7 @@ Mostra os **valores finais calculados** pelo navegador, após toda a cascata CSS
 No painel **Layout** (ou parte do Computed), você vê:
 
 ```
+
 ┌────────────────────────────────────┐
 │         MARGIN  (24px top)         │
 │  ┌──────────────────────────────┐  │
@@ -95,6 +125,7 @@ No painel **Layout** (ou parte do Computed), você vê:
 │  │  └────────────────────────┘  │  │
 │  └──────────────────────────────┘  │
 └────────────────────────────────────┘
+
 ```
 
 ---
@@ -245,14 +276,17 @@ function calcular(x, y) {
 Clique em uma requisição para ver:
 
 **Headers:**
+
 - Request URL, Method, Status Code
 - Request Headers (Content-Type, Authorization, Cookie)
 - Response Headers (Cache-Control, Content-Type, CORS headers)
 
 **Preview/Response:**
+
 - Corpo da resposta (JSON formatado, HTML, imagem, etc.)
 
 **Timing:**
+
 ```
 Queueing:         2ms   ← aguardando slot de conexão
 DNS Lookup:       0ms   ← já em cache
@@ -266,6 +300,7 @@ Content Download: 14ms  ← download do corpo
 ### 5.3 Throttling (Simular conexão lenta)
 
 No menu dropdown "No throttling":
+
 - **Slow 3G**: 400kb/s download, 400ms latência
 - **Fast 3G**: 1.6Mb/s download, 150ms latência
 - Criar perfil personalizado
@@ -302,6 +337,7 @@ curl 'https://api.example.com/users' \
 ```
 
 **Métricas-chave:**
+
 - **FPS**: frames por segundo (< 60fps = janking)
 - **LCP** (Largest Contentful Paint): deve ser < 2.5s
 - **CLS** (Cumulative Layout Shift): deve ser < 0.1
@@ -325,6 +361,7 @@ SEO             98  ★★★★★
 ```
 
 **Principais métricas de Performance:**
+
 | Métrica | Bom | Precisa melhorar | Ruim |
 |---------|-----|------------------|------|
 | FCP | < 1.8s | 1.8-3s | > 3s |
@@ -377,18 +414,21 @@ const rect = document.querySelector('header').getBoundingClientRect()
 ## 9. Depurando Problemas Comuns
 
 ### CSS não está aplicando
+
 1. Inspecione o elemento → Styles
 2. Verifique se a regra está tachada (sobrescrita)
 3. Verifique a especificidade no Computed
 4. Verifique se a regra existe (Filter por seletor)
 
 ### JavaScript com erro
+
 1. Verifique o Console para a mensagem e stack trace
 2. Clique no link do arquivo no console para ir ao código
 3. Coloque um breakpoint na linha indicada
 4. Inspecione o Scope para ver os valores das variáveis
 
 ### Requisição de rede falhando
+
 1. Painel Network → filtre por XHR/Fetch
 2. Clique na requisição → Headers → verifique URL e method
 3. Response → verifique o corpo do erro

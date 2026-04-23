@@ -1,52 +1,77 @@
-# Módulo 06 – Assincronismo em JavaScript e Consumo de APIs
+# Módulo 06 – Assincronismo e Fetch
 
-## Objetivos
+## O que você vai aprender
 
-Ao final deste módulo você será capaz de:
-
-- Entender o Event Loop e como o JavaScript lida com operações assíncronas
-- Usar callbacks, Promises e async/await
-- Consumir APIs REST com a Fetch API
-- Tratar erros adequadamente em código assíncrono
-- Usar AbortController para cancelar requisições
-- Implementar padrões como retry, debounce e cache
+- Promises e async/await
+- Fetch API para requisições HTTP
+- Tratamento de erros
+- JSON parse/stringify
 
 ---
 
-## 1. O Event Loop
-
-JavaScript é **single-threaded** – executa uma instrução de cada vez. Porém, não bloqueia ao realizar operações demoradas (I/O, rede, timers) graças ao Event Loop.
-
-```
-┌─────────────────────────────────────┐
-│           CALL STACK                │  ← executa código síncrono
-└─────────────────────────────────────┘
-          ↕ Event Loop verifica
-┌─────────────────────────────────────┐
-│        MICROTASK QUEUE              │  ← Promises (.then/.catch)  ← PRIORIDADE MAIOR
-└─────────────────────────────────────┘
-┌─────────────────────────────────────┐
-│           TASK QUEUE                │  ← setTimeout, setInterval, eventos I/O
-└─────────────────────────────────────┘
-┌─────────────────────────────────────┐
-│           WEB APIS                  │  ← fetch, setTimeout, DOM events
-│  (gerenciadas pelo navegador)       │
-└─────────────────────────────────────┘
-```
+## 1. Promises e Async/Await
 
 ```javascript
-console.log('1 – síncrono')
-setTimeout(() => console.log('2 – setTimeout (Task)'), 0)
-Promise.resolve()
-  .then(() => console.log('3 – Promise.then (Microtask)'))
-  .then(() => console.log('4 – Promise.then 2 (Microtask)'))
-console.log('5 – síncrono')
-// Saída: 1 → 5 → 3 → 4 → 2
+// Callback antigo (evite!)
+function buscarDados(callback) {
+  setTimeout(() => callback({ nome: 'João' }), 1000)
+}
+
+// Promise
+function buscarDados() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve({ nome: 'João' }), 1000)
+  })
+}
+buscarDados().then(data => console.log(data))
+
+// Async/await (melhor!)
+async function teste() {
+  const data = await buscarDados()
+  console.log(data)
+}
 ```
 
 ---
 
-## 2. Callbacks
+## 2. Fetch API
+
+```javascript
+// GET
+const response = await fetch('https://api.example.com/users')
+const data = await response.json()
+
+// POST
+const response = await fetch('https://api.example.com/users', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ nome: 'João', email: 'joao@example.com' })
+})
+
+// Tratamento de erro
+try {
+  const response = await fetch(url)
+  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  const data = await response.json()
+  console.log(data)
+} catch (erro) {
+  console.error('Erro:', erro.message)
+}
+```
+
+---
+
+## 3. JSON
+
+```javascript
+// String → Objeto
+const obj = JSON.parse('{"nome":"João"}')
+
+// Objeto → String
+const json = JSON.stringify({ nome: 'João' })
+```
+
+Próximo: fazer as práticas!
 
 ```javascript
 // Convenção: primeiro parâmetro é o erro (error-first callback)

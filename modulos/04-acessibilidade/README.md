@@ -1,53 +1,49 @@
-# Módulo 04 – Acessibilidade Web (a11y)
+# Módulo 04 – Acessibilidade Web
 
-## Objetivos
+## O que você vai aprender
 
-Ao final deste módulo você será capaz de:
-
-- Compreender o que é acessibilidade web e por que ela é fundamental
-- Conhecer as diretrizes WCAG 2.1/2.2 e seus níveis de conformidade
-- Usar atributos ARIA corretamente
-- Implementar navegação por teclado
-- Garantir contraste de cores adequado
-- Testar acessibilidade com ferramentas reais
+- O que é acessibilidade (a11y)
+- ARIA attributes
+- Navegação por teclado
+- Contraste de cores
+- Testar com ferramentas
 
 ---
 
-## 1. O que é Acessibilidade Web?
+## 1. Por que Acessibilidade?
 
-Acessibilidade web (abreviada como **a11y** – "a" + 11 letras + "y") significa que **todos os usuários**, independentemente de suas capacidades físicas, cognitivas ou tecnológicas, podem perceber, entender, navegar e interagir com sites e aplicações web.
+Torna o site usável para:
 
-### 1.1 Quem se beneficia?
-
-- Pessoas com **deficiência visual** (usando leitores de tela como NVDA, JAWS, VoiceOver)
-- Pessoas com **deficiência auditiva** (precisam de legendas em vídeos)
-- Pessoas com **deficiência motora** (navegam apenas com teclado ou dispositivos de entrada alternativos)
-- Pessoas com **deficiências cognitivas** (TDAH, dislexia – se beneficiam de layout claro e linguagem simples)
-- Usuários com **conexão lenta** (alt text quando imagem não carrega)
-- Usuários em **ambientes adversos** (sol forte, mão ocupada)
-- **Robôs de busca** (SEO se beneficia das mesmas práticas de acessibilidade)
-
-> 🌍 Segundo a OMS, mais de 1 bilhão de pessoas no mundo têm alguma deficiência.
-
-### 1.2 Base Legal (Brasil)
-
-- **Lei Brasileira de Inclusão (LBI / Lei nº 13.146/2015)** – Art. 63: sites de empresas e órgãos governamentais devem ser acessíveis.
-- **Decreto nº 5.296/2004** – Exige acessibilidade em serviços públicos digitais.
-- **e-MAG** (Modelo de Acessibilidade em Governo Eletrônico) – padrão para sites governamentais.
+- Pessoas com deficiência visual (leitores de tela)
+- Pessoas com deficiência auditiva (legendas)
+- Pessoas com deficiência motora (navegação por teclado)
+- Robôs de busca (SEO melhora também!)
 
 ---
 
-## 2. WCAG – Web Content Accessibility Guidelines
+## 2. Prá ticas Essenciais
 
-O WCAG é o padrão internacional de acessibilidade publicado pelo W3C. A versão atual é **WCAG 2.2** (2023).
+```html
+<!-- Sempre use alt em imagens -->
+<img src="foto.jpg" alt="Descrição da imagem">
 
-### 2.1 Os 4 Princípios (POUR)
+<!-- Role e aria-label para elementos customizados -->
+<div role="button" aria-label="Abrir menu" onclick="..."></div>
 
-| Princípio | Descrição |
-|-----------|-----------|
-| **P**erceptível | Informações e UI devem ser apresentáveis a todos os sentidos |
-| **O**perável | UI e navegação devem ser operáveis por todos |
-| **C**ompreensível | Informação e operação da UI devem ser compreensíveis |
+<!-- Títulos em ordem -->
+<h1>Título da Página</h1>
+<h2>Seção</h2>
+<h3>Subsecção</h3>
+
+<!-- Labels conectados com inputs -->
+<label for="email">Email:</label>
+<input id="email" type="email">
+
+<!-- Texto com contraste suficiente -->
+<!-- Mínimo: 4.5:1 para texto normal -->
+```
+
+Próximo: fazer as práticas!
 | **R**obusta | Conteúdo deve ser interpretável por tecnologias assistivas |
 
 ### 2.2 Níveis de Conformidade
@@ -61,6 +57,7 @@ O WCAG é o padrão internacional de acessibilidade publicado pelo W3C. A versã
 ### 2.3 Critérios Essenciais (Nível AA)
 
 **1.1.1 – Conteúdo não textual (A)**
+
 ```html
 <!-- ✅ Correto -->
 <img src="grafico.png" alt="Gráfico de vendas mostrando crescimento de 23% em 2024">
@@ -73,6 +70,7 @@ O WCAG é o padrão internacional de acessibilidade publicado pelo W3C. A versã
 ```
 
 **1.3.1 – Informação e relações (A)**
+
 ```html
 <!-- ✅ Use estrutura semântica -->
 <table>
@@ -84,13 +82,16 @@ O WCAG é o padrão internacional de acessibilidade publicado pelo W3C. A versã
 ```
 
 **1.4.3 – Contraste mínimo (AA)**
+
 - Texto normal: proporção mínima **4.5:1**
 - Texto grande (≥18pt / ≥14pt negrito): proporção mínima **3:1**
 
 **2.1.1 – Teclado (A)**
+
 - Toda funcionalidade deve ser acessível via teclado
 
 **2.4.7 – Foco visível (AA)**
+
 ```css
 /* ✅ Nunca remova o outline sem alternativa */
 :focus {
@@ -103,6 +104,7 @@ O WCAG é o padrão internacional de acessibilidade publicado pelo W3C. A versã
 ```
 
 **3.1.1 – Idioma da página (A)**
+
 ```html
 <html lang="pt-BR">
 ```
@@ -373,6 +375,7 @@ function armadilhaDeFoco(event, modal) {
 ## 8. Contraste de Cores
 
 Ferramentas para verificar contraste:
+
 - [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
 - [Colour Contrast Analyser (app)](https://www.tpgi.com/color-contrast-checker/)
 - DevTools do Chrome (Elements > Accessibility)
@@ -419,6 +422,7 @@ body { background: white; color: #0057b8; }
 ### 9.2 Teste com teclado
 
 Navegue pelo site **apenas com o teclado**:
+
 - `Tab` – próximo elemento focável
 - `Shift+Tab` – elemento anterior
 - `Enter` / `Space` – ativar links e botões
