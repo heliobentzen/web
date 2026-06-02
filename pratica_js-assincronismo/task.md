@@ -9,7 +9,7 @@ As duas versões funcionam, mas foram construídas com níveis diferentes de org
 ## Tarefas
 
 1. Execute os dois projetos e registre o comportamento de cada um.
-2. Compare a organização do código entre `projeto-a` e `projeto-b`.
+2. Compare a organização do código entre [projeto-a](projeto-a) e [projeto-b](projeto-b).
 3. Identifique trechos com baixa coesão, alto acoplamento ou responsabilidades misturadas.
 4. Analise como cada versão trata:
    - eventos

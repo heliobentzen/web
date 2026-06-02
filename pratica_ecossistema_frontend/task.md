@@ -6,7 +6,7 @@ Uma equipe começou um catálogo de cursos em JavaScript puro, mas agora precisa
 
 ## Tarefas
 
-1. Execute `projeto-a` e `projeto-b`.
+1. Execute [projeto-a](projeto-a) e [projeto-b](projeto-b).
 2. Compare a estrutura de pastas e os pontos de entrada.
 3. Identifique o papel de `package.json`, `npm` e `Vite` no segundo projeto.
 4. Explique as vantagens e os custos de adotar uma ferramenta de build.

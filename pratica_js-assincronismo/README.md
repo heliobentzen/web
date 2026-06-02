@@ -10,8 +10,8 @@ O foco é comparar uma implementação mais direta com uma versão mais modular,
 
 O objetivo é comparar duas abordagens:
 
-- `projeto-a`: versão concentrada em um único arquivo JavaScript, com manipulação direta de DOM e fluxo assíncrono básico.
-- `projeto-b`: versão modularizada, com separação de responsabilidades, estados de carregamento e tratamento de erro mais explícito.
+- [projeto-a](projeto-a): versão concentrada em um único arquivo JavaScript, com manipulação direta de DOM e fluxo assíncrono básico.
+- [projeto-b](projeto-b): versão modularizada, com separação de responsabilidades, estados de carregamento e tratamento de erro mais explícito.
 
 ## Objetivos de Aprendizagem
 
@@ -45,11 +45,11 @@ pratica_js-assincronismo/
 
 ### Projeto A
 
-Abra `projeto-a/index.html` no navegador.
+Abra [projeto-a/index.html](projeto-a/index.html) no navegador.
 
 ### Projeto B
 
-Abra `projeto-b/index.html` no navegador.
+Abra [projeto-b/index.html](projeto-b/index.html) no navegador.
 
 ## Entrega Sugerida
 

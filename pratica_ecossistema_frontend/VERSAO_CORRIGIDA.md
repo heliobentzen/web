@@ -10,4 +10,4 @@ Uma solução mais sólida neste contexto deve:
 - separar assets, dados e renderização
 - preparar a base para futuras bibliotecas e frameworks
 
-O `projeto-b` representa essa direção.
+O [projeto-b](projeto-b) representa essa direção.

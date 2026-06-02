@@ -10,4 +10,4 @@ Uma solução mais consistente para esta atividade deve apresentar:
 - nomes consistentes para eventos, seletores e estado
 - possibilidade de reaproveitar partes do código sem depender da página inteira
 
-O `projeto-b` representa a direção estrutural mais próxima dessa abordagem.
+O [projeto-b](projeto-b) representa a direção estrutural mais próxima dessa abordagem.

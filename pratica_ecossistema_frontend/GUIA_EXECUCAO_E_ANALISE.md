@@ -2,11 +2,11 @@
 
 ## Etapa 1
 
-Abra o `projeto-a` no navegador e identifique como os módulos são carregados.
+Abra [projeto-a](projeto-a) no navegador e identifique como os módulos são carregados.
 
 ## Etapa 2
 
-No `projeto-b`, instale as dependências e execute o servidor de desenvolvimento.
+No [projeto-b](projeto-b), instale as dependências e execute o servidor de desenvolvimento.
 
 ## Etapa 3
 

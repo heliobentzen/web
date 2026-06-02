@@ -43,7 +43,7 @@ pratica_ecossistema_frontend/
 
 ### Projeto A
 
-Abra `projeto-a/index.html` no navegador.
+Abra [projeto-a/index.html](projeto-a/index.html) no navegador.
 
 ### Projeto B
 
@@ -55,6 +55,6 @@ npm run dev
 
 ## Foco Didático
 
-O `projeto-a` serve como ponto de partida simples. O `projeto-b` mostra a transição para uma base mais próxima do fluxo de desenvolvimento atual.
+O [projeto-a](projeto-a) serve como ponto de partida simples. O [projeto-b](projeto-b) mostra a transição para uma base mais próxima do fluxo de desenvolvimento atual.
 
 Ao final, a turma deve reconhecer os custos e benefícios dessa transição e identificar quando ela vale a pena.
