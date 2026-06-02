@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projeto A - Lista de Tarefas</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <main class="container">
+        <h1>Projeto A - Tarefas do Usuário</h1>
+        <p>Versão compacta com DOM e fetch no mesmo arquivo.</p>
+
+        <form id="search-form" class="panel">
+            <label for="user-id">ID do usuário</label>
+            <input id="user-id" name="userId" type="number" min="1" max="10" value="1" />
+            <button type="submit">Carregar tarefas</button>
+        </form>
+
+        <p id="status" aria-live="polite"></p>
+        <ul id="task-list" class="task-list"></ul>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

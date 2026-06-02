@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prática 02 – JavaScript Intermediário</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #0d6efd;
+        }
+
+        h2 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+
+        code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9em;
+        }
+
+        button {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.25rem;
+        }
+
+        button:hover {
+            background: #0b5ed7;
+        }
+
+        #output {
+            background: #1e1e1e;
+            color: #4ec9b0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            min-height: 60px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        input {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        ul {
+            margin-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Prática 02 – JavaScript Intermediário</h1>
+        <p>Trabalhe com arrays, objetos, e manipulação de DOM avançada.</p>
+
+        <section>
+            <h2>Exercício 1: Arrays e Métodos</h2>
+            <button onclick="exemploArrays()">Executar Exemplo</button>
+
+            <h3 style="margin-top: 1rem;">Código:</h3>
+            <pre><code>const numeros = [1, 2, 3, 4, 5]
+
+// map: transformar cada elemento
+const dobrados = numeros.map(n => n * 2)
+console.log(dobrados) // [2, 4, 6, 8, 10]
+
+// filter: manter apenas alguns elementos
+const pares = numeros.filter(n => n % 2 === 0)
+console.log(pares) // [2, 4]
+
+// reduce: combinar em um valor
+const soma = numeros.reduce((acc, n) => acc + n, 0)
+console.log(soma) // 15
+
+// find: encontrar primeiro elemento
+const primeiro3 = numeros.find(n => n > 3)
+console.log(primeiro3) // 4</code></pre>
+
+            <p style="margin-top: 1rem;">Abra o DevTools (F12) → Console para ver os resultados.</p>
+        </section>
+
+        <section>
+            <h2>Exercício 2: Objetos e Desestruturação</h2>
+            <button onclick="exemploObjetos()">Executar Exemplo</button>
+
+            <pre><code>const usuario = { nome: 'João', idade: 30, email: 'joao@example.com' }
+
+// Acessar propriedades
+console.log(usuario.nome)     // "João"
+console.log(usuario['idade'])  // 30
+
+// Desestruturação
+const { nome, idade } = usuario
+console.log(nome, idade)  // "João" 30
+
+// Spread operator
+const novoUsuario = { ...usuario, cidade: 'São Paulo' }
+console.log(novoUsuario)
+// { nome: 'João', idade: 30, email: '...', cidade: 'São Paulo' }</code></pre>
+        </section>
+
+        <section>
+            <h2>Exercício 3: Lista TODO Interativa</h2>
+
+            <input id="novasTarefa" type="text" placeholder="Digite uma nova tarefa">
+            <button onclick="adicionarTarefa()">Adicionar</button>
+            <button onclick="limparTarefas()">Limpar Tudo</button>
+
+            <ul id="listaTarefas" style="margin-top: 1rem;"></ul>
+
+            <h3 style="margin-top: 1.5rem;">Código:</h3>
+            <pre><code>let tarefas = []
+
+function adicionarTarefa() {
+  const input = document.getElementById('novasTarefa')
+  const tarefa = input.value.trim()
+  
+  if (tarefa === '') return
+  
+  tarefas.push({ id: Date.now(), texto: tarefa, concluida: false })
+  input.value = ''
+  renderizarTarefas()
+}
+
+function renderizarTarefas() {
+  const lista = document.getElementById('listaTarefas')
+  lista.innerHTML = tarefas.map(t => `
+    &lt;li&gt;${t.texto}&lt;/li&gt;
+  `).join('')
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>Exercício 4: Event Delegation</h2>
+            <p>Clique nos botões abaixo - observe como event delegation funciona:</p>
+
+            <button onclick="demonstrarEventDelegation()">Adicionar Botão Dinâmico</button>
+            <div id="botoesDinamicos" style="margin-top: 1rem;"></div>
+
+            <h3 style="margin-top: 1.5rem;">Por que Event Delegation?</h3>
+            <ul>
+                <li>Menos listeners (1 ao invés de N)</li>
+                <li>Elementos criados dinamicamente funcionam automaticamente</li>
+                <li>Melhor performance em listas grandes</li>
+            </ul>
+
+            <pre><code>// Ao invés de adicionar listener em cada botão:
+// botao1.addEventListener('click', ...)
+// botao2.addEventListener('click', ...)
+
+// Adicione um único listener no container:
+container.addEventListener('click', (e) => {
+  if (e.target.classList.contains('botao-dinamico')) {
+    console.log('Botão clicado:', e.target.textContent)
+  }
+})</code></pre>
+        </section>
+
+        <section>
+            <h2>Exercício 5: Validação de Formulário</h2>
+
+            <form onsubmit="validarFormulario(event)">
+                <label for="email2">Email:</label>
+                <input id="email2" type="email" name="email" required>
+
+                <label for="senha">Senha (mín. 8 caracteres):</label>
+                <input id="senha" type="password" name="senha" required>
+
+                <button type="submit">Validar</button>
+            </form>
+
+            <div id="feedback" style="margin-top: 1rem;"></div>
+
+            <h3 style="margin-top: 1.5rem;">Validação com JavaScript:</h3>
+            <pre><code>function validarEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return regex.test(email)
+}
+
+function validarSenha(senha) {
+  return senha.length >= 8
+}</code></pre>
+        </section>
+
+        <div id="output" style="margin-top: 2rem; display: none;"></div>
+    </div>
+
+    <script>
+        // Exercício 1
+        function exemploArrays() {
+            const numeros = [1, 2, 3, 4, 5]
+            const dobrados = numeros.map(n => n * 2)
+            const pares = numeros.filter(n => n % 2 === 0)
+            const soma = numeros.reduce((acc, n) => acc + n, 0)
+
+            console.log('Array original:', numeros)
+            console.log('Dobrados:', dobrados)
+            console.log('Pares:', pares)
+            console.log('Soma:', soma)
+            alert('Veja o console (F12) para os resultados!')
+        }
+
+        // Exercício 2
+        function exemploObjetos() {
+            const usuario = { nome: 'João', idade: 30, email: 'joao@example.com' }
+            const { nome, idade } = usuario
+            const novoUsuario = { ...usuario, cidade: 'São Paulo' }
+
+            console.log('Usuário original:', usuario)
+            console.log('Desestruturação:', { nome, idade })
+            console.log('Com spread:', novoUsuario)
+            alert('Veja o console (F12) para os resultados!')
+        }
+
+        // Exercício 3
+        let tarefas = []
+
+        function adicionarTarefa() {
+            const input = document.getElementById('novasTarefa')
+            const tarefa = input.value.trim()
+
+            if (tarefa === '') {
+                alert('Digite uma tarefa!')
+                return
+            }
+
+            tarefas.push({ id: Date.now(), texto: tarefa, concluida: false })
+            input.value = ''
+            renderizarTarefas()
+        }
+
+        function renderizarTarefas() {
+            const lista = document.getElementById('listaTarefas')
+            lista.innerHTML = tarefas.map((t, i) => `
+        <li style="padding: 0.5rem; background: #f0f0f0; border-radius: 4px; margin: 0.25rem 0;">
+          ${t.texto}
+          <button onclick="removerTarefa(${i})" style="float: right; background: #dc3545;">✕</button>
+        </li>
+      `).join('')
+        }
+
+        function removerTarefa(index) {
+            tarefas.splice(index, 1)
+            renderizarTarefas()
+        }
+
+        function limparTarefas() {
+            tarefas = []
+            renderizarTarefas()
+        }
+
+        // Exercício 4
+        let botaoDinamico = 0
+
+        function demonstrarEventDelegation() {
+            const container = document.getElementById('botoesDinamicos')
+            const botao = document.createElement('button')
+            botao.textContent = `Botão ${++botaoDinamico}`
+            botao.onclick = function () { alert('Clicou em: ' + this.textContent) }
+            container.appendChild(botao)
+        }
+
+        // Exercício 5
+        function validarFormulario(event) {
+            event.preventDefault()
+
+            const email = document.getElementById('email2').value
+            const senha = document.getElementById('senha').value
+            const feedback = document.getElementById('feedback')
+
+            const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+            const senhaValida = senha.length >= 8
+
+            if (emailValido && senhaValida) {
+                feedback.innerHTML = '<div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 4px;">✓ Formulário validado com sucesso!</div>'
+            } else {
+                const erros = []
+                if (!emailValido) erros.push('Email inválido')
+                if (!senhaValida) erros.push('Senha muito curta')
+                feedback.innerHTML = '<div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 4px;">✗ ' + erros.join(', ') + '</div>'
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prática 02 – Flexbox Intermediário | CSS Moderno</title>
+    <style>
+        :root {
+            --azul: #0d6efd;
+            --verde: #198754;
+            --fundo: #f8f9fa;
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui;
+            background: var(--fundo);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+        }
+
+        h1 {
+            color: var(--azul);
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--azul);
+        }
+
+        h2 {
+            color: var(--azul);
+            margin-bottom: 1rem;
+        }
+
+        .demo {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .item {
+            background: var(--azul);
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Exercício 1: Flex Container Básico */
+        .flex-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .flex-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .flex-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* Exercício 2: Justify-content e Align-items */
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .flex-around {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Exercício 3: Flex Grow/Shrink */
+        .flex-grow-demo {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .grow-1 {
+            flex: 1;
+            background: #0d6efd;
+            color: white;
+            padding: 1rem;
+        }
+
+        .grow-2 {
+            flex: 2;
+            background: #198754;
+            color: white;
+            padding: 1rem;
+        }
+
+        .grow-3 {
+            flex: 3;
+            background: #fd7e14;
+            color: white;
+            padding: 1rem;
+        }
+
+        /* Exercício 4: Card Layout */
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .card {
+            flex: 1 1 calc(33.333% - 1rem);
+            min-width: 200px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: var(--azul);
+            color: white;
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        /* Exercício 5: Navigation */
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--azul);
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            background: var(--azul);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0b5ed7;
+        }
+
+        code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Prática 02 – Flexbox Intermediário</h1>
+        <p>Explore layouts flexíveis e responsivos com Flexbox.</p>
+
+        <!-- Exercício 1 -->
+        <section>
+            <h2>Exercício 1: Direção e Wrap</h2>
+            <p><code>flex-direction: row</code> e <code>flex-wrap: wrap</code></p>
+
+            <h3>Row (padrão):</h3>
+            <div class="demo">
+                <div class="flex-row">
+                    <div class="item">Item 1</div>
+                    <div class="item">Item 2</div>
+                    <div class="item">Item 3</div>
+                </div>
+            </div>
+
+            <h3>Column:</h3>
+            <div class="demo">
+                <div class="flex-column">
+                    <div class="item">Item 1</div>
+                    <div class="item">Item 2</div>
+                    <div class="item">Item 3</div>
+                </div>
+            </div>
+
+            <h3>Wrap (itens quebram para linha seguinte):</h3>
+            <div class="demo">
+                <div class="flex-wrap">
+                    <div class="item" style="width: 200px;">Item 1</div>
+                    <div class="item" style="width: 200px;">Item 2</div>
+                    <div class="item" style="width: 200px;">Item 3</div>
+                    <div class="item" style="width: 200px;">Item 4</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercício 2 -->
+        <section>
+            <h2>Exercício 2: Alinhamento (justify-content e align-items)</h2>
+
+            <h3>justify-content: center (horizontal):</h3>
+            <div class="demo">
+                <div class="flex-center" style="height: 100px;">
+                    <div class="item">Centro</div>
+                </div>
+            </div>
+
+            <h3>justify-content: space-between:</h3>
+            <div class="demo">
+                <div class="flex-between">
+                    <div class="item">Esquerda</div>
+                    <div class="item">Direita</div>
+                </div>
+            </div>
+
+            <h3>justify-content: space-around:</h3>
+            <div class="demo">
+                <div class="flex-around">
+                    <div class="item">A</div>
+                    <div class="item">B</div>
+                    <div class="item">C</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercício 3 -->
+        <section>
+            <h2>Exercício 3: Flex Grow (proporcional)</h2>
+            <p><code>flex: 1, flex: 2, flex: 3</code> – distribuem espaço proporcionalmente</p>
+
+            <div class="demo">
+                <div class="flex-grow-demo">
+                    <div class="grow-1">flex: 1</div>
+                    <div class="grow-2">flex: 2 (2x maior)</div>
+                    <div class="grow-3">flex: 3 (3x maior)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercício 4 -->
+        <section>
+            <h2>Exercício 4: Card Layout Responsivo</h2>
+            <p>Cards que se adaptam ao tamanho da tela:</p>
+
+            <div class="demo">
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-header">Card 1</div>
+                        <div class="card-body">Conteúdo do card 1. Redimensione a janela!</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Card 2</div>
+                        <div class="card-body">Conteúdo do card 2. Os cards se reorganizam.</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Card 3</div>
+                        <div class="card-body">Conteúdo do card 3. Experimente em mobile!</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercício 5 -->
+        <section>
+            <h2>Exercício 5: Navigation Bar</h2>
+
+            <div class="demo">
+                <nav>
+                    <strong>Logo</strong>
+                    <a href="#">Home</a>
+                    <a href="#">Sobre</a>
+                    <a href="#">Serviços</a>
+                    <div style="flex: 1;"></div> <!-- espaçador -->
+                    <button>Login</button>
+                </nav>
+            </div>
+
+            <h3>Código:</h3>
+            <pre><code>&lt;nav style="display: flex; gap: 2rem; align-items: center;"&gt;
+  &lt;strong&gt;Logo&lt;/strong&gt;
+  &lt;a href="#"&gt;Home&lt;/a&gt;
+  &lt;div style="flex: 1;"&gt;&lt;/div&gt; &lt;!-- espaçador --&gt;
+  &lt;button&gt;Login&lt;/button&gt;
+&lt;/nav&gt;</code></pre>
+        </section>
+
+        <section>
+            <h2>Resumo de Propriedades Flexbox</h2>
+            <pre><code>/* Container */
+display: flex;
+flex-direction: row | column;
+flex-wrap: wrap;
+justify-content: center | space-between | space-around;
+align-items: center;
+gap: 1rem;
+
+/* Item */
+flex: 1;           /* cresce */
+flex: 0 0 200px;   /* largura fixa */
+flex-grow: 2;      /* cresce 2x mais */
+flex-shrink: 0;    /* não encolhe */
+order: 2;          /* ordem visual */</code></pre>
+        </section>
+    </div>
+</body>
+
+</html>

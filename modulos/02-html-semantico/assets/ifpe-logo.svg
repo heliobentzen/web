@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 280" role="img" aria-label="IFPE">
+    <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0f7a3f" />
+            <stop offset="100%" stop-color="#0b5f31" />
+        </linearGradient>
+    </defs>
+    <rect width="920" height="280" fill="none" />
+
+    <g transform="translate(30,30)">
+        <rect x="0" y="0" width="54" height="54" rx="8" fill="url(#g)" />
+        <rect x="66" y="0" width="54" height="54" rx="8" fill="#df2b2f" />
+        <rect x="0" y="66" width="54" height="54" rx="8" fill="url(#g)" />
+        <rect x="66" y="66" width="54" height="54" rx="8" fill="url(#g)" />
+        <rect x="0" y="132" width="54" height="54" rx="8" fill="url(#g)" />
+        <rect x="66" y="132" width="54" height="54" rx="8" fill="url(#g)" />
+    </g>
+
+    <g transform="translate(200,44)">
+        <text x="0" y="95" font-size="104" font-family="Segoe UI, Arial, sans-serif"
+            font-weight="800" fill="#0b5f31">IFPE</text>
+        <text x="2" y="150" font-size="34" font-family="Segoe UI, Arial, sans-serif"
+            font-weight="600" fill="#2b6b46">Instituto Federal de Pernambuco</text>
+    </g>
+</svg>

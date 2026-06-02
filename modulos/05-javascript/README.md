@@ -1,619 +1,360 @@
 # Módulo 05 – JavaScript Fundamentals
 
-## O que você vai aprender
+## Prática Integrada Relacionada
 
-- Variáveis: const, let
-- Arrays e objetos
-- Selecionando e mudando DOM
-- Eventos: click, submit
-- Promises e fetch (async)
+- [Prática Integrada - Módulos 05 e 06](../../pratica_js-assincronismo/README.md)
+
+## Objetivo do Módulo
+
+Dominar os blocos centrais do JavaScript usado no navegador: variáveis, funções, tipos, strings, arrays, objetos, DOM, eventos e leitura de dados. Cada tópico abaixo traz um exemplo que pode ser executado no console do navegador ou em um arquivo HTML simples.
+
+## Como Praticar
+
+1. Abra o DevTools do navegador e use a aba Console para testar os exemplos de JavaScript puro.
+2. Quando o exemplo envolver DOM, salve o trecho em um arquivo `.html` e abra a página no navegador.
+3. Execute um tópico por vez e altere os valores para observar o resultado.
 
 ---
 
-## 1. Variáveis
+## 1. Variáveis e Mutabilidade
+
+Use `const` por padrão. Troque para `let` apenas quando a variável realmente precisar ser reatribuída.
 
 ```javascript
-const nome = 'João'        // use const (não reatribua)
-let idade = 30             // use let (pode reatribuir)
+const nome = 'João'
+let idade = 30
 
-const pessoa = {}          // objeto muda internamente, ok!
-pessoa.nome = 'Maria'      // referência não muda
+idade = 31
+
+const pessoa = { nome: 'Maria' }
+pessoa.nome = 'Ana'
+
+console.log(nome)
+console.log(idade)
+console.log(pessoa)
 ```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Troque `idade` para `const` e observe o erro ao reatribuir.
+- Adicione novas propriedades em `pessoa` e veja que o objeto continua sendo o mesmo.
 
 ---
 
-## 2. Arrays e Objetos
+## 2. Funções e Parâmetros
+
+Funções podem ser declaradas de formas diferentes. O importante é escolher uma forma consistente para o contexto do projeto.
 
 ```javascript
-// Array
-const numeros = [1, 2, 3]
-numeros.push(4)            // [1, 2, 3, 4]
-
-// Objeto
-const usuario = { nome: 'João', idade: 30 }
-usuario.email = 'joao@example.com'
-
-// Desestruturação
-const { nome, idade } = usuario
-const [primeiro, segundo] = numeros
-```
-
----
-
-## 3. DOM
-
-function criarContador() {
-  let count = 0
-  return {
-    incrementar: () => ++count,
-    decrementar: () => --count,
-    valor: () => count,
-  }
-}
-const contador = criarContador()
-contador.incrementar()  // 1
-contador.incrementar()  // 2
-contador.valor()        // 2
-// A variável `count` persiste na closure mesmo após `criarContador` retornar
-
-```
-
----
-
-## 2. Funções
-
-```javascript
-// ── Declaração (hoisted) ──
 function saudacao(nome) {
   return `Olá, ${nome}!`
 }
 
-// ── Expressão (não hoisted) ──
-const cumprimento = function(nome) {
+const cumprimento = function (nome) {
   return `Bom dia, ${nome}!`
 }
 
-// ── Arrow Function ──
-const dobrar = (n) => n * 2
-const somar = (a, b) => a + b
-const criarObjeto = (nome) => ({ nome, ativo: true })  // parênteses necessários para objeto literal
+const dobrar = (numero) => numero * 2
 
-// ── Parâmetros padrão ──
 function conectar(host = 'localhost', porta = 3000) {
   return `${host}:${porta}`
 }
-conectar()           // 'localhost:3000'
-conectar('api.io')   // 'api.io:3000'
 
-// ── Rest parameters ──
-function somar(...numeros) {
-  return numeros.reduce((acc, n) => acc + n, 0)
-}
-somar(1, 2, 3, 4, 5)  // 15
-
-// ── Spread operator ──
-const arr1 = [1, 2, 3]
-const arr2 = [4, 5, 6]
-const combinado = [...arr1, ...arr2]   // [1, 2, 3, 4, 5, 6]
-
-const obj1 = { a: 1, b: 2 }
-const obj2 = { c: 3, d: 4 }
-const fusao = { ...obj1, ...obj2 }     // { a: 1, b: 2, c: 3, d: 4 }
-
-// ── IIFE (Immediately Invoked Function Expression) ──
-;(function() {
-  const privado = 'não vaza para o escopo global'
-})()
+console.log(saudacao('Ana'))
+console.log(cumprimento('Bruno'))
+console.log(dobrar(4))
+console.log(conectar())
 ```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Passe valores diferentes para `conectar`.
+- Crie uma função com `...rest` para somar qualquer quantidade de números.
 
 ---
 
-## 3. Tipos de Dados
+## 3. Tipos de Dados e Conversões
+
+JavaScript faz conversões implícitas em alguns casos. Por isso, é importante saber quando o valor está sendo tratado como número, string ou booleano.
 
 ```javascript
-// Primitivos (imutáveis)
-typeof 42           // 'number'
-typeof 3.14         // 'number'
-typeof NaN          // 'number' (curiosidade!)
-typeof 'texto'      // 'string'
-typeof true         // 'boolean'
-typeof undefined    // 'undefined'
-typeof null         // 'object' (bug histórico!)
-typeof Symbol()     // 'symbol'
-typeof 9007199254740991n // 'bigint'
+console.log(typeof 42)
+console.log(typeof 'texto')
+console.log(typeof true)
+console.log(typeof [])
 
-// Referência (mutáveis)
-typeof {}           // 'object'
-typeof []           // 'object' (array é objeto!)
-typeof function(){} // 'function'
+console.log(Number('42'))
+console.log(Number('abc'))
+console.log(String(42))
+console.log(Boolean(0))
+console.log(Boolean('qualquer texto'))
 
-// Verificação de array (correto)
-Array.isArray([])   // true
-
-// Conversão de tipos
-Number('42')        // 42
-Number('')          // 0
-Number(null)        // 0
-Number(undefined)   // NaN
-Number(true)        // 1
-Number('abc')       // NaN
-
-String(42)          // '42'
-Boolean(0)          // false
-Boolean('')         // false
-Boolean(null)       // false
-Boolean(undefined)  // false
-Boolean(NaN)        // false
-Boolean({})         // true (qualquer objeto é truthy)
-Boolean([])         // true
-
-// Igualdade: SEMPRE use === (não ==)
-0 == ''        // true  (coerção)
-0 === ''       // false (correto)
-null == undefined  // true  (exceção aceitável)
-NaN === NaN    // false (NaN nunca é igual a si mesmo)
-Number.isNaN(NaN) // true (forma correta de checar)
+console.log(0 == '')
+console.log(0 === '')
+console.log(Number.isNaN(Number('abc')))
 ```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Compare `==` e `===` com valores diferentes.
+- Teste `Number('')`, `Number(null)` e `Number(undefined)`.
 
 ---
 
-## 4. Strings
+## 4. Strings e Texto
+
+Strings são muito usadas para montar mensagens, validar entradas e renderizar conteúdo.
 
 ```javascript
 const nome = 'Maria'
 const sobrenome = 'Silva'
 
-// Template literals (prefira sempre)
 const mensagem = `Olá, ${nome} ${sobrenome}!`
-const multilinea = `
-  Linha 1
-  Linha 2
-  Linha 3
-`
+console.log(mensagem)
 
-// Métodos importantes
-'Olá Mundo'.toUpperCase()      // 'OLÁ MUNDO'
-'Olá Mundo'.toLowerCase()      // 'olá mundo'
-'  espaços  '.trim()           // 'espaços'
-'  espaços  '.trimStart()      // 'espaços  '
-'  espaços  '.trimEnd()        // '  espaços'
-'a,b,c'.split(',')             // ['a', 'b', 'c']
-['a', 'b', 'c'].join(' - ')    // 'a - b - c'
-'Olá Mundo'.includes('Mundo')  // true
-'Olá Mundo'.startsWith('Olá')  // true
-'Olá Mundo'.endsWith('Mundo')  // true
-'Olá Mundo'.indexOf('Mundo')   // 4
-'ha'.repeat(3)                  // 'hahaha'
-'5'.padStart(3, '0')            // '005'
-'5'.padEnd(3, '-')              // '5--'
-'Olá Mundo'.slice(4, 9)        // 'Mundo'
-'Olá Mundo'.replace('Mundo', 'Web') // 'Olá Web'
-'a,b,a'.replaceAll('a', 'X')   // 'X,b,X'
-
-// Regular Expressions (básico)
-/\d+/.test('abc123')           // true
-'abc123'.match(/\d+/)          // ['123', index:3, ...]
-'a1b2c3'.replace(/\d/g, '#')   // 'a#b#c#'
+const texto = '  desenvolvimento web  '
+console.log(texto.trim())
+console.log(texto.toUpperCase())
+console.log(texto.includes('web'))
+console.log('A,B,C'.split(','))
+console.log(['A', 'B', 'C'].join(' - '))
 ```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Troque o conteúdo de `texto` e observe os métodos mudarem o resultado.
+- Monte uma mensagem com quebras de linha usando template literal.
 
 ---
 
 ## 5. Arrays
 
+Arrays guardam listas ordenadas de valores. Eles podem ser mutados ou transformados em novos arrays.
+
 ```javascript
 const frutas = ['maçã', 'banana', 'laranja']
 
-// ── Acesso ──
-frutas[0]           // 'maçã'
-frutas.at(-1)       // 'laranja' (último elemento)
-frutas.length       // 3
+console.log(frutas[0])
+console.log(frutas.at(-1))
 
-// ── Mutação (modificam o array original) ──
-frutas.push('uva')            // adiciona ao final, retorna novo length
-frutas.pop()                  // remove do final, retorna o elemento
-frutas.unshift('morango')     // adiciona ao início
-frutas.shift()                // remove do início
-frutas.splice(1, 1)           // remove 1 elemento a partir do índice 1
-frutas.splice(1, 0, 'kiwi')   // insere 'kiwi' no índice 1
-frutas.sort()                 // ordena in-place (lexicográfico)
-frutas.sort((a, b) => a.localeCompare(b, 'pt-BR'))  // ordena com locale
-frutas.reverse()              // inverte in-place
+frutas.push('uva')
+console.log(frutas)
 
-// ── Não-mutação (retornam novo array) ──
-const numeros = [3, 1, 4, 1, 5, 9, 2, 6]
+const frutasEmMaiusculo = frutas.map((fruta) => fruta.toUpperCase())
+const frutasComA = frutas.filter((fruta) => fruta.includes('a'))
+const quantidadeLetras = frutas.reduce((total, fruta) => total + fruta.length, 0)
 
-numeros.slice(1, 4)           // [1, 4, 1] – subarray
-numeros.concat([10, 11])      // [...numeros, 10, 11]
-[...numeros].sort((a, b) => a - b)  // cópia ordenada (sem mutar)
-
-// ── Iteração ──
-numeros.forEach(n => console.log(n))
-
-const dobrados = numeros.map(n => n * 2)           // [6, 2, 8, 2, ...]
-const pares    = numeros.filter(n => n % 2 === 0)  // [4, 2, 6]
-const soma     = numeros.reduce((acc, n) => acc + n, 0)  // 31
-const primeiro = numeros.find(n => n > 5)          // 9
-const indice   = numeros.findIndex(n => n > 5)     // 5
-const todos    = numeros.every(n => n > 0)          // true
-const algum    = numeros.some(n => n > 8)           // true
-const achatado = [[1,2],[3,4]].flat()              // [1,2,3,4]
-const mapeado  = [[1,2],[3,4]].flatMap(x => x.map(n => n * 2))  // [2,4,6,8]
-
-// ── Desestruturação de array ──
-const [primeiro2, segundo, ...resto] = numeros
-// primeiro2 = 3, segundo = 1, resto = [4,1,5,9,2,6]
-
-// ── Array de objetos ──
-const produtos = [
-  { id: 1, nome: 'Notebook', preco: 3500, categoria: 'Tech' },
-  { id: 2, nome: 'Mouse', preco: 80, categoria: 'Tech' },
-  { id: 3, nome: 'Cadeira', preco: 800, categoria: 'Móveis' },
-]
-
-// Ordenar por preço
-produtos.sort((a, b) => a.preco - b.preco)
-
-// Filtrar por categoria
-const tech = produtos.filter(p => p.categoria === 'Tech')
-
-// Mapear apenas nomes
-const nomes = produtos.map(p => p.nome)
-
-// Reduzir a um objeto { id -> produto }
-const porId = produtos.reduce((acc, p) => {
-  acc[p.id] = p
-  return acc
-}, {})
+console.log(frutasEmMaiusculo)
+console.log(frutasComA)
+console.log(quantidadeLetras)
 ```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Substitua `map` por `forEach` e observe a diferença de retorno.
+- Use `sort`, `find` e `every` em um novo array.
 
 ---
 
-## 6. Objetos
+## 6. Objetos e Desestruturação
+
+Objetos organizam dados por chave. A desestruturação facilita a leitura e reduz repetição.
 
 ```javascript
-// ── Criação ──
-const pessoa = {
-  nome: 'Carlos',
+const usuario = {
+  nome: 'João',
   idade: 30,
-  endereco: {
-    cidade: 'São Paulo',
-    estado: 'SP',
-  },
-  saudar() {
-    return `Olá, meu nome é ${this.nome}`
-  }
+  cidade: 'Recife',
 }
 
-// ── Acesso ──
-pessoa.nome              // 'Carlos' (dot notation)
-pessoa['nome']           // 'Carlos' (bracket notation)
-pessoa['endereco']['cidade']  // 'São Paulo'
+const { nome, idade } = usuario
+console.log(nome, idade)
 
-// ── Desestruturação ──
-const { nome, idade, endereco: { cidade } } = pessoa
-const { nome: apelido = 'Desconhecido' } = pessoa  // renomear e valor padrão
+usuario.email = 'joao@example.com'
+console.log(usuario)
 
-// ── Shorthand ──
-const x = 10, y = 20
-const ponto = { x, y }  // equivale a { x: x, y: y }
-
-// ── Computed property names ──
-const chave = 'status'
-const config = { [chave]: 'ativo' }  // { status: 'ativo' }
-
-// ── Métodos de Object ──
-Object.keys(pessoa)     // ['nome', 'idade', 'endereco', 'saudar']
-Object.values(pessoa)   // ['Carlos', 30, {...}, f]
-Object.entries(pessoa)  // [['nome','Carlos'], ['idade',30], ...]
-
-// Copiar propriedades
-const copia = { ...pessoa }          // shallow copy
-const mesclado = Object.assign({}, pessoa, { ativo: true })
-
-// Congelar objeto (imutável)
-const CONSTANTE = Object.freeze({ PI: 3.14159 })
-
-// Verificar se propriedade existe
-'nome' in pessoa                     // true
-pessoa.hasOwnProperty('nome')        // true
-Object.hasOwn(pessoa, 'nome')        // true (moderno, preferir)
-
-// Iterar sobre entradas
-for (const [chave, valor] of Object.entries(pessoa)) {
-  if (typeof valor !== 'function') {
-    console.log(`${chave}: ${valor}`)
-  }
+const endereco = {
+  rua: 'Avenida Central',
+  numero: 100,
 }
+
+const perfil = { ...usuario, endereco }
+console.log(perfil)
 ```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Crie uma função que receba um objeto e retorne apenas uma parte dele.
+- Aplique desestruturação em um array de objetos.
 
 ---
 
-## 7. Map e Set
+## 7. DOM: Ler e Atualizar a Página
+
+O DOM é a representação da página dentro do JavaScript. Com ele você encontra elementos, lê valores e altera o conteúdo exibido.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM</title>
+  </head>
+  <body>
+    <h1 id="titulo">Olá</h1>
+    <button id="botao">Trocar texto</button>
+
+    <script>
+      const titulo = document.querySelector('#titulo')
+      const botao = document.querySelector('#botao')
+
+      botao.addEventListener('click', () => {
+        titulo.textContent = 'Texto alterado pelo JavaScript'
+      })
+    </script>
+  </body>
+</html>
+```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Troque `textContent` por `innerHTML` e compare o comportamento.
+- Adicione outro botão para voltar o texto original.
+
+---
+
+## 8. Eventos de Usuário
+
+Eventos permitem responder a ações como clique, envio de formulário e digitação.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventos</title>
+  </head>
+  <body>
+    <form id="formulario">
+      <input id="nome" type="text" placeholder="Digite seu nome" />
+      <button type="submit">Enviar</button>
+    </form>
+    <p id="resultado"></p>
+
+    <script>
+      const formulario = document.querySelector('#formulario')
+      const nome = document.querySelector('#nome')
+      const resultado = document.querySelector('#resultado')
+
+      formulario.addEventListener('submit', (event) => {
+        event.preventDefault()
+        resultado.textContent = `Olá, ${nome.value}!`
+      })
+    </script>
+  </body>
+</html>
+```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Remova o `preventDefault()` e veja o que acontece no envio.
+- Adicione validação para impedir envio com campo vazio.
+
+---
+
+## 9. JSON
+
+JSON é o formato mais comum para troca de dados entre front-end e API.
 
 ```javascript
-// ── Map: chave-valor, qualquer tipo como chave ──
-const mapa = new Map()
-mapa.set('nome', 'Alice')
-mapa.set(42, 'número como chave')
-mapa.set({ id: 1 }, 'objeto como chave')
+const texto = '{"nome":"João","idade":30}'
+const objeto = JSON.parse(texto)
 
-mapa.get('nome')        // 'Alice'
-mapa.has('nome')        // true
-mapa.size               // 3
-mapa.delete('nome')
-mapa.clear()
+console.log(objeto.nome)
 
-// Iterar
-for (const [chave, valor] of mapa) {
-  console.log(chave, valor)
-}
-
-// Map vs Objeto:
-// Map: chaves de qualquer tipo, preserva ordem de inserção, melhor performance em inserções/remoções frequentes
-// Objeto: chaves strings/Symbol, acesso por propriedade (dot notation), melhor para dados estruturados
-
-// ── Set: coleção de valores únicos ──
-const set = new Set([1, 2, 3, 2, 1])  // {1, 2, 3}
-set.add(4)
-set.has(2)  // true
-set.size    // 4
-set.delete(1)
-
-// Remover duplicatas de array
-const semDuplicatas = [...new Set([1, 2, 2, 3, 3, 4])]  // [1, 2, 3, 4]
+const convertido = JSON.stringify({ ativo: true, tags: ['js', 'web'] })
+console.log(convertido)
 ```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Altere o JSON de entrada e veja quando o parse falha.
+- Converta um array de objetos para JSON e depois volte para objeto.
 
 ---
 
-## 8. JSON
+## 10. Assincronismo: Promises e `async/await`
 
-JSON (JavaScript Object Notation) é o formato padrão para troca de dados na web.
+Quando uma operação depende de tempo de rede, resposta de API ou espera, o código precisa lidar com assincronismo.
 
 ```javascript
-// ── Regras do JSON ──
-// Strings com aspas DUPLAS
-// Sem comentários
-// Sem vírgula no final (trailing comma)
-// Chaves são sempre strings (com aspas)
-// Valores: string, number, boolean, null, array, object
+function carregarDados() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('Dados carregados')
+    }, 1000)
+  })
+}
 
-// Exemplo de JSON válido:
-const jsonString = `{
-  "usuario": {
-    "id": 1,
-    "nome": "Maria Silva",
-    "email": "maria@example.com",
-    "ativo": true,
-    "pontuacao": 98.5,
-    "tags": ["admin", "editor"],
-    "perfil": null
+carregarDados().then((mensagem) => console.log(mensagem))
+
+async function executar() {
+  const mensagem = await carregarDados()
+  console.log(mensagem)
+}
+
+executar()
+```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Troque o tempo do `setTimeout` e observe a ordem de execução.
+- Crie um segundo `Promise` e combine os resultados.
+
+---
+
+## 11. Fetch e Consumo de API
+
+Use `fetch` para consultar dados externos e renderizá-los na interface.
+
+```javascript
+async function buscarUsuarios() {
+  const resposta = await fetch('https://jsonplaceholder.typicode.com/users')
+
+  if (!resposta.ok) {
+    throw new Error(`HTTP ${resposta.status}`)
   }
-}`
 
-// ── Parsing: string JSON → objeto JS ──
-const dados = JSON.parse(jsonString)
-dados.usuario.nome         // 'Maria Silva'
-dados.usuario.tags[0]      // 'admin'
-
-// ── Serialização: objeto JS → string JSON ──
-const objeto = { nome: 'João', idade: 25, ativo: true }
-const json = JSON.stringify(objeto)
-// '{"nome":"João","idade":25,"ativo":true}'
-
-// Com formatação legível:
-JSON.stringify(objeto, null, 2)
-// {
-//   "nome": "João",
-//   "idade": 25,
-//   "ativo": true
-// }
-
-// Filtrar propriedades:
-JSON.stringify(objeto, ['nome', 'ativo'])  // '{"nome":"João","ativo":true}'
-
-// Replacer para transformar:
-JSON.stringify(objeto, (chave, valor) => {
-  if (typeof valor === 'number') return valor * 2
-  return valor
-})
-
-// ── O que JSON.stringify ignora ──
-const comIgnorados = {
-  nome: 'Teste',
-  funcao: () => 'sou ignorada',   // funções são ignoradas
-  indefinido: undefined,           // undefined é ignorado
-  simbolo: Symbol('x'),           // symbols são ignorados
-}
-JSON.stringify(comIgnorados)  // '{"nome":"Teste"}'
-
-// ── Clone profundo via JSON (limitado) ──
-const original = { a: 1, b: { c: 2 } }
-const clone = JSON.parse(JSON.stringify(original))
-// Não copia: funções, undefined, Date (vira string), Map, Set, etc.
-
-// ── structuredClone (moderno, mais completo) ──
-const cloneModerno = structuredClone(original)
-```
-
----
-
-## 9. Manipulação do DOM
-
-```javascript
-// ── Seleção ──
-const titulo = document.querySelector('h1')
-const botoes = document.querySelectorAll('button')
-const form   = document.getElementById('meu-form')
-
-// ── Leitura ──
-titulo.textContent          // texto puro
-titulo.innerHTML            // HTML interno
-titulo.getAttribute('class')
-titulo.dataset.id           // data-id="123"
-window.getComputedStyle(titulo).color  // estilo computado
-
-// ── Modificação ──
-titulo.textContent = 'Novo título'
-titulo.innerHTML = '<em>Novo</em> título'
-titulo.setAttribute('data-id', '42')
-titulo.classList.add('ativo')
-titulo.classList.remove('ativo')
-titulo.classList.toggle('ativo')
-titulo.classList.replace('ativo', 'inativo')
-
-// Estilo inline (prefira classes CSS)
-titulo.style.color = 'red'
-titulo.style.setProperty('--cor', 'blue')  // variável CSS
-
-// ── Criação e inserção ──
-const novo = document.createElement('p')
-novo.textContent = 'Parágrafo criado via JS'
-novo.classList.add('destaque')
-
-document.body.appendChild(novo)                    // no final do body
-document.body.prepend(novo)                        // no início do body
-titulo.insertAdjacentElement('afterend', novo)     // após o título
-titulo.insertAdjacentHTML('beforebegin', '<hr>')   // antes do título
-
-// ── Remoção ──
-novo.remove()
-titulo.removeChild(novo)  // alternativa legada
-
-// ── Navegação na árvore ──
-titulo.parentElement
-titulo.children           // HTMLCollection de filhos
-titulo.firstElementChild
-titulo.lastElementChild
-titulo.nextElementSibling
-titulo.previousElementSibling
-titulo.closest('section') // sobe procurando um ancestor que combine
-
-// ── Fragment (performance: uma única operação no DOM) ──
-const fragment = document.createDocumentFragment()
-for (let i = 0; i < 100; i++) {
-  const li = document.createElement('li')
-  li.textContent = `Item ${i + 1}`
-  fragment.appendChild(li)
-}
-document.querySelector('ul').appendChild(fragment)  // uma inserção no DOM
-```
-
----
-
-## 10. Eventos
-
-```javascript
-// ── addEventListener ──
-const btn = document.querySelector('#meu-botao')
-
-function manipularClique(event) {
-  console.log('Tipo:', event.type)
-  console.log('Target:', event.target)
-  console.log('CurrentTarget:', event.currentTarget)
-  console.log('Coordenadas:', event.clientX, event.clientY)
+  const usuarios = await resposta.json()
+  console.log(usuarios)
 }
 
-btn.addEventListener('click', manipularClique)
-btn.removeEventListener('click', manipularClique)
-
-// Opções do addEventListener
-btn.addEventListener('click', fn, {
-  once: true,      // dispara apenas uma vez
-  passive: true,   // nunca chama preventDefault (melhor performance em scroll)
-  capture: true,   // captura na fase de descida
-})
-
-// ── Tipos de eventos ──
-// Mouse
-element.addEventListener('click', fn)
-element.addEventListener('dblclick', fn)
-element.addEventListener('mousedown', fn)
-element.addEventListener('mouseup', fn)
-element.addEventListener('mousemove', fn)
-element.addEventListener('mouseenter', fn)   // não borbulha
-element.addEventListener('mouseleave', fn)   // não borbulha
-element.addEventListener('mouseover', fn)    // borbulha
-element.addEventListener('mouseout', fn)     // borbulha
-element.addEventListener('contextmenu', fn)  // botão direito
-
-// Teclado
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') { /* Enter */ }
-  if (e.key === 'Escape') { /* Esc */ }
-  if (e.ctrlKey && e.key === 's') { /* Ctrl+S */ }
-  if (e.key === 'ArrowLeft') { /* Seta esquerda */ }
-})
-document.addEventListener('keyup', fn)
-document.addEventListener('keypress', fn)   // deprecated, usar keydown
-
-// Formulários
-form.addEventListener('submit', (e) => e.preventDefault())
-input.addEventListener('change', fn)   // quando perde foco com mudança
-input.addEventListener('input', fn)    // cada digitação
-input.addEventListener('focus', fn)
-input.addEventListener('blur', fn)
-
-// Janela / Documento
-window.addEventListener('load', fn)          // página totalmente carregada
-document.addEventListener('DOMContentLoaded', fn)  // DOM pronto (preferível)
-window.addEventListener('resize', fn)
-window.addEventListener('scroll', fn)
-window.addEventListener('hashchange', fn)
-window.addEventListener('online', fn)
-window.addEventListener('offline', fn)
-
-// ── Event Delegation ──
-// Em vez de adicionar listener em cada elemento filho,
-// adiciona no pai e verifica o target:
-document.querySelector('#lista').addEventListener('click', (e) => {
-  const item = e.target.closest('li')   // sobe até o <li>
-  if (!item) return
-
-  if (e.target.matches('.btn-excluir')) {
-    item.remove()
-  } else if (e.target.matches('.btn-editar')) {
-    item.contentEditable = 'true'
-    item.focus()
-  }
-})
-
-// ── Propagação de eventos ──
-// Captura (de cima para baixo) → Target → Borbulhamento (de baixo para cima)
-
-child.addEventListener('click', (e) => {
-  e.stopPropagation()   // impede borbulhamento para elementos pai
-  e.preventDefault()    // cancela comportamento padrão (ex: submit, link)
-})
-
-// ── Custom Events ──
-const eventoCustom = new CustomEvent('pedido:criado', {
-  detail: { id: 42, produto: 'Notebook' },
-  bubbles: true,
-})
-document.dispatchEvent(eventoCustom)
-
-document.addEventListener('pedido:criado', (e) => {
-  console.log('Pedido criado:', e.detail)
-})
+buscarUsuarios().catch((erro) => console.error(erro.message))
 ```
 
----
+### Tente Executar
 
-## Práticas
-
-| # | Arquivo | Descrição |
-|---|---------|-----------|
-| 01 | [Escopo e Closures](praticas/01-escopo-closures.js) | Variáveis, escopo, hoisting, closures |
-| 02 | [Arrays e Objetos](praticas/02-arrays-objetos.js) | Métodos, desestruturação, Map, Set |
-| 03 | [JSON](praticas/03-json.js) | Parsing, serialização e manipulação de JSON |
-| 04 | [DOM e Eventos](praticas/04-dom-eventos.html) | Manipulação do DOM e gerenciamento de eventos |
+- Troque a URL por outra rota pública da mesma API.
+- Adicione `try/catch` e exiba uma mensagem amigável no console.
 
 ---
 
-## Referências
+## 12. Mini Exercício Integrado
 
-- [JavaScript – MDN Web Docs](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
-- [ECMAScript 2024 – tc39.es](https://tc39.es/ecma262/)
-- [JavaScript.info](https://javascript.info/)
-- [Eloquent JavaScript (livro gratuito)](https://eloquentjavascript.net/)
-- [You Don't Know JS (livro gratuito)](https://github.com/getify/You-Dont-Know-JS)
+Monte uma tela com um formulário, um botão e uma lista. Quando o usuário enviar o formulário, mostre uma mensagem na tela e atualize a lista com base em um array de dados.
+
+### Roteiro
+
+1. Crie um arquivo HTML com um campo de texto e uma lista vazia.
+2. Use `querySelector` para capturar os elementos.
+3. Escute o evento `submit`.
+4. Leia o valor digitado.
+5. Atualize a interface com `textContent` e `innerHTML`.
+
+---
+
+## Próximo Passo
+
+Depois de dominar os tópicos acima, siga para o [Módulo 06](../06-assincronismo/README.md) para aprofundar o consumo de APIs e o tratamento de operações assíncronas.

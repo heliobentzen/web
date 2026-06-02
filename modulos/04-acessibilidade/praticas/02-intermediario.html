@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prática 02 – Acessibilidade Intermediária</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui;
+            background: #f5f5f5;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #0d6efd;
+        }
+
+        h2 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+
+        code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        /* Exemplo de contraste */
+        .bom-contraste {
+            background: #1a1a2e;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+
+        .mau-contraste {
+            background: #f0f0f0;
+            color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.25rem;
+        }
+
+        button:hover {
+            background: #0b5ed7;
+        }
+
+        button:focus {
+            outline: 3px solid #0d6efd;
+            outline-offset: 2px;
+        }
+
+        input,
+        select {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 5px #0d6efd;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+
+        .aviso {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .ok {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        /* Navegação por teclado - pular para conteúdo principal */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #0d6efd;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#principal" class="skip-link">Pular para conteúdo principal (Enter)</a>
+
+    <div class="container">
+        <h1>Prática 02 – Acessibilidade Intermediária</h1>
+        <p>Implementar práticas acessíveis em formulários e navegação.</p>
+
+        <section id="principal">
+            <h2>Exercício 1: Navegação por Teclado</h2>
+            <p>Pressione <strong>Tab</strong> para navegar entre os botões abaixo:</p>
+
+            <button onclick="alert('Botão 1 clicado')">Botão 1</button>
+            <button onclick="alert('Botão 2 clicado')">Botão 2</button>
+            <button onclick="alert('Botão 3 clicado')">Botão 3</button>
+
+            <p style="margin-top: 1rem; color: #666;">Todos os botões são focáveis com Tab.</p>
+        </section>
+
+        <section>
+            <h2>Exercício 2: Contraste de Cores</h2>
+
+            <h3 style="margin-top: 0;">✓ Bom Contraste (7:1 - WCAG AAA):</h3>
+            <div class="bom-contraste">
+                Texto branco sobre fundo escuro. Muito legível!
+            </div>
+
+            <h3>✗ Mau Contraste (1.2:1 - Falha WCAG):</h3>
+            <div class="mau-contraste">
+                Texto claro sobre fundo claro. Muito difícil de ler!
+            </div>
+
+            <p class="aviso">
+                ⚠️ Verifique contraste em: <a href="https://webaim.org/resources/contrastchecker/"
+                    target="_blank">WebAIM Contrast Checker</a>
+            </p>
+        </section>
+
+        <section>
+            <h2>Exercício 3: Formulário Acessível</h2>
+
+            <form onsubmit="validar(event)">
+                <label for="nome">Nome Completo:</label>
+                <input id="nome" type="text" name="nome" required aria-required="true" aria-describedby="nome-help">
+                <small id="nome-help">Máximo 50 caracteres</small>
+
+                <label for="email">Email:</label>
+                <input id="email" type="email" name="email" required aria-required="true">
+
+                <label for="opcao">Qual é sua área de interesse?</label>
+                <select id="opcao" name="opcao" required aria-required="true">
+                    <option value="">-- Selecione uma opção --</option>
+                    <option value="web">Design Web</option>
+                    <option value="dev">Desenvolvimento</option>
+                    <option value="mobile">Aplicativos Mobile</option>
+                </select>
+
+                <fieldset style="margin-top: 1.5rem; border: 1px solid #ccc; padding: 1rem; border-radius: 4px;">
+                    <legend>Qual é seu nível de experiência?</legend>
+
+                    <input type="radio" id="nivel-iniciante" name="nivel" value="iniciante">
+                    <label for="nivel-iniciante">Iniciante</label>
+
+                    <input type="radio" id="nivel-intermediario" name="nivel" value="intermediario">
+                    <label for="nivel-intermediario">Intermediário</label>
+
+                    <input type="radio" id="nivel-avancado" name="nivel" value="avancado">
+                    <label for="nivel-avancado">Avançado</label>
+                </fieldset>
+
+                <button type="submit">Enviar Formulário</button>
+                <div id="resultado"></div>
+            </form>
+        </section>
+
+        <section>
+            <h2>Exercício 4: ARIA Attributes</h2>
+
+            <h3>aria-label (etiqueta invisível):</h3>
+            <pre><code>&lt;button aria-label="Fechar menu"&gt;✕&lt;/button&gt;</code></pre>
+
+            <h3>aria-describedby (descreve um elemento):</h3>
+            <pre><code>&lt;input id="idade" aria-describedby="idade-help"&gt;
+&lt;small id="idade-help"&gt;Deve ter 18 anos ou mais&lt;/small&gt;</code></pre>
+
+            <h3>aria-required (indica campo obrigatório):</h3>
+            <pre><code>&lt;input aria-required="true"&gt;</code></pre>
+
+            <h3>role (define papel de um elemento):</h3>
+            <pre><code>&lt;div role="alert"&gt;Erro ao salvar&lt;/div&gt;
+&lt;div role="button" tabindex="0"&gt;Clicável&lt;/div&gt;</code></pre>
+
+            <p class="ok">✓ ARIA deve complementar HTML semântico, não substituir.</p>
+        </section>
+
+        <section>
+            <h2>Exercício 5: Heading Hierarquia</h2>
+
+            <p><strong>Correto:</strong> H1 → H2 → H3 (ordem lógica)</p>
+            <pre><code>&lt;h1&gt;Título da Página&lt;/h1&gt;
+&lt;h2&gt;Seção Principal&lt;/h2&gt;
+  &lt;h3&gt;Subseção&lt;/h3&gt;
+&lt;h2&gt;Outra Seção&lt;/h2&gt;</code></pre>
+
+            <p><strong>Evite:</strong> H1 → H4 (pulando níveis)</p>
+            <pre><code>&lt;h1&gt;Título da Página&lt;/h1&gt;
+&lt;h4&gt;Subseção (ERRADO - pulou H2 e H3)&lt;/h4&gt;</code></pre>
+
+            <p class="aviso">
+                💡 Use DevTools (F12) → "Inspect" → "Accessibility" para ver a hierarquia de headings
+            </p>
+        </section>
+
+        <section>
+            <h2>Dicas para Testes</h2>
+            <ul style="margin-left: 2rem;">
+                <li><strong>Navegação por teclado:</strong> Pressione Tab para navegar</li>
+                <li><strong>Leitor de tela:</strong> Use NVDA (Windows) ou VoiceOver (Mac)</li>
+                <li><strong>DevTools:</strong> F12 → Accessibility tree</li>
+                <li><strong>Ferramentas online:</strong> Lighthouse, WAVE, axe DevTools</li>
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        function validar(event) {
+            event.preventDefault()
+            const nome = document.getElementById('nome').value
+            const email = document.getElementById('email').value
+            const resultado = document.getElementById('resultado')
+            resultado.innerHTML = `<div class="ok">✓ Formulário validado! Bem-vindo, ${nome}!</div>`
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+:root {
+    color-scheme: light;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #ecfeff;
+    color: #0f172a;
+}
+
+.container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px;
+}
+
+.panel {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #bae6fd;
+    border-radius: 12px;
+}
+
+input,
+button {
+    padding: 10px 12px;
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: 0;
+    border-radius: 8px;
+    background: #0369a1;
+    color: #ffffff;
+}
+
+.task-list {
+    padding: 0;
+    list-style: none;
+}
+
+.task-list li {
+    margin-top: 12px;
+    padding: 14px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #bae6fd;
+}
+
+.task-meta {
+    margin-top: 6px;
+    font-size: 0.95rem;
+}
+
+.done {
+    color: #166534;
+}
+
+.pending {
+    color: #92400e;
+}

@@ -1,15 +1,123 @@
-# Módulo 02 – HTML Semântico
+---
+marp: true
+theme: default
+size: 16:9
+paginate: true
+style: |
+  section {
+    font-size: 32px;
+    line-height: 1.28;
+    background: radial-gradient(circle at top right, #e9f7ef 0%, #ffffff 55%, #f4fbf7 100%);
+    color: #1f2937;
+  }
+  h1, h2, h3 {
+    color: #0b5f31;
+  }
+  h1 {
+    font-size: 1.9em;
+  }
+  h2 {
+    font-size: 1.25em;
+  }
+  code {
+    font-size: 0.95em;
+  }
+  pre {
+    font-size: 0.82em;
+    line-height: 1.25;
+  }
+  table {
+    font-size: 0.82em;
+  }
+  li {
+    margin: 0.25em 0;
+  }
+  .card {
+    background: #ffffff;
+    border: 2px solid #b7e4c7;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin: 8px 0;
+    box-shadow: 0 6px 16px rgba(11, 95, 49, 0.1);
+  }
+  .pill {
+    display: inline-block;
+    margin: 4px 6px 4px 0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid #95d5b2;
+    background: #ecfdf3;
+    color: #166534;
+    font-size: 0.8em;
+  }
+  .kpi {
+    border-left: 6px solid #0b5f31;
+    background: #ffffff;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin: 8px 0;
+  }
+  .prof {
+    color: #14532d;
+    font-size: 0.95em;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+  .ok {
+    color: #0f766e;
+    font-weight: 700;
+  }
+  .warn {
+    color: #b45309;
+    font-weight: 700;
+  }
+  .bad {
+    color: #b91c1c;
+    font-weight: 700;
+  }
+---
 
-## O que você vai aprender
+# Módulo 02
 
-- Estrutura básica HTML
-- Elementos semânticos corretos
-- Metadados importantes
-- Formulários acessíveis
+# HTML Semântico
+
+![bg right:30% w:370](assets/ifpe-logo.svg)
+
+<div class="card">
+Curso ADS • versão visual • com práticas evolutivas
+</div>
+
+<div class="prof">
+Prof. Hélio Bentzen
+</div>
 
 ---
 
-## 1. Estrutura Básica
+## Objetivos da Aula
+
+- Estruturar páginas HTML de forma profissional
+- Usar semântica para acessibilidade e SEO
+- Aplicar os principais elementos HTML com critério
+- Construir formulário e metadados prontos para produção
+
+---
+
+## Roteiro Visual
+
+```text
+1) Fundação HTML
+2) Semântica de layout
+3) Conteúdo textual
+4) Links, listas, mídia e tabelas
+5) Prática 1 (estrutura semântica)
+6) Formulários e validação
+7) SEO e Open Graph
+8) Prática 2 (página completa)
+```
+
+---
+
+## Fundação HTML: Estrutura Base
 
 ```html
 <!DOCTYPE html>
@@ -18,542 +126,393 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Título da Página</title>
-  <meta name="description" content="Descrição curta da página">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="description" content="Resumo curto da página">
 </head>
 <body>
-  <!-- Seu conteúdo aqui -->
-  <script src="app.js" defer></script>
+  <main>Conteúdo principal</main>
 </body>
 </html>
 ```
 
+<span class="pill">DOCTYPE</span><span class="pill">lang</span><span class="pill">meta charset</span><span class="pill">viewport</span><span class="pill">title</span>
+
 ---
 
-## 2. Elementos Semânticos
+## Exemplo Gradual 1: Página Semântica
 
-## 2. Elementos Semânticos de Layout
-
-HTML5 introduziu elementos que descrevem o **significado** do conteúdo, não apenas sua aparência:
+### Passo 1: Estrutura mínima
 
 ```html
-<body>
-
-  <header>
-    <!-- Cabeçalho do site ou de uma seção -->
-    <nav aria-label="Navegação principal">
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/sobre">Sobre</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main>
-    <!-- Conteúdo principal – ÚNICO por página -->
-
-    <article>
-      <!-- Conteúdo independente e redistribuível (post, notícia, card) -->
-      <header>
-        <h1>Título do Artigo</h1>
-        <time datetime="2024-01-15">15 de janeiro de 2024</time>
-      </header>
-      <p>Conteúdo do artigo...</p>
-      <footer>
-        <p>Autor: <address>João Silva</address></p>
-      </footer>
-    </article>
-
-    <section>
-      <!-- Seção temática com título próprio -->
-      <h2>Seção de Exemplos</h2>
-      <p>Conteúdo relacionado...</p>
-    </section>
-
-  </main>
-
-  <aside>
-    <!-- Conteúdo complementar: sidebar, publicidade, links relacionados -->
-    <h2>Artigos Relacionados</h2>
-  </aside>
-
-  <footer>
-    <!-- Rodapé do site -->
-    <p>&copy; 2024 Meu Site. Todos os direitos reservados.</p>
-  </footer>
-
-</body>
+<header>Meu site</header>
+<main><h1>Início</h1></main>
+<footer>Rodapé</footer>
 ```
 
-### Guia de Uso: `<article>` vs `<section>` vs `<div>`
+---
+
+### Passo 2: Navegação e seção
+
+```html
+<header><nav><a href="/">Home</a></nav></header>
+<main><section><h2>Destaques</h2></section></main>
+```
+
+---
+
+### Passo 3: Conteúdo completo
+
+```html
+<main>
+  <article><h2>Notícia</h2><p>Conteúdo...</p></article>
+  <aside>Links relacionados</aside>
+</main>
+```
+
+---
+
+## Mapa Mental: Como o HTML Vira Página
+
+```text
+Usuário abre URL
+      ↓
+Navegador lê HTML
+      ↓
+Semântica ajuda: tela + leitor + SEO
+      ↓
+Página mais clara e fácil de manter
+```
+
+---
+
+## Semântica de Layout
+
+<div class="card">
+header • nav • main • section • article • aside • footer
+</div>
+
+```html
+<header>Topo</header>
+<nav>Menu</nav>
+<main>
+  <article>Post independente</article>
+  <section>Bloco temático</section>
+</main>
+<footer>Rodapé</footer>
+```
+
+---
+
+## Mapa Visual de Layout
+
+```text
+┌───────────────────────────────┐
+│ header                        │
+├───────────────┬───────────────┤
+│ nav           │ main          │
+│               │ ├─ article    │
+│               │ └─ section    │
+├───────────────┴───────────────┤
+│ footer                        │
+└───────────────────────────────┘
+```
+
+---
+
+## article x section x div
 
 | Elemento | Quando usar |
-|----------|-------------|
-| `<article>` | Conteúdo que faz sentido sozinho (post de blog, notícia, comentário, card de produto) |
-| `<section>` | Agrupamento temático que precisa de um `<h2>`–`<h6>` associado |
-| `<div>` | Agrupamento puramente visual, sem significado semântico |
+|---|---|
+| `article` | Conteúdo independente (post, card, notícia) |
+| `section` | Agrupamento temático com título |
+| `div` | Bloco sem significado semântico |
 
-> **Regra prática:** Prefira elementos semânticos. Use `<div>` e `<span>` apenas quando nenhum elemento semântico se encaixa.
+<div class="card">
+Regra prática: tente article/section antes de div.
+</div>
 
 ---
 
-## 3. Hierarquia de Títulos (Headings)
-
-Os títulos (`<h1>` a `<h6>`) criam o **outline** do documento e são cruciais para acessibilidade (leitores de tela) e SEO:
+## Headings (h1-h6) sem Erro
 
 ```html
-<h1>Nome do Site ou Título Principal da Página</h1>
-  <h2>Seção Principal</h2>
+<h1>Título principal</h1>
+  <h2>Seção</h2>
     <h3>Subseção</h3>
-      <h4>Tópico Específico</h4>
-  <h2>Outra Seção Principal</h2>
-    <h3>Outra Subseção</h3>
 ```
 
-**Regras:**
-
-- Apenas **um `<h1>` por página** (embora HTML5 permita mais, é melhor prática)
-- Não pule níveis (de `<h2>` para `<h4>` sem `<h3>`)
-- Escolha headings pelo significado hierárquico, **não** pelo tamanho visual (use CSS para o visual)
+- Use ordem lógica
+- Evite pular de `h2` para `h4`
+- O visual do tamanho é CSS, não hierarquia
 
 ---
 
-## 4. Elementos de Texto Semânticos
+## Elementos de Texto Importantes
 
 ```html
-<!-- Ênfase e importância -->
-<p>Este é um <strong>elemento crítico</strong> e este é <em>enfatizado</em>.</p>
-
-<!-- Citações -->
-<blockquote cite="https://www.w3.org/">
-  <p>A web é para todos.</p>
-  <footer>— <cite>Tim Berners-Lee</cite></footer>
-</blockquote>
-
-<p>Como disse <q cite="https://example.com">alguém importante</q>.</p>
-
-<!-- Código -->
-<p>Use a função <code>querySelector()</code> para selecionar elementos.</p>
-<pre><code>
-const el = document.querySelector('.minha-classe')
-</code></pre>
-
-<!-- Abreviações -->
-<p>O <abbr title="Hyper Text Markup Language">HTML</abbr> é a linguagem da web.</p>
-
-<!-- Dados e tempo -->
-<p>Publicado em <time datetime="2024-01-15T10:30:00">15 de janeiro de 2024</time>.</p>
-
-<!-- Definições -->
-<p><dfn>Semântica</dfn> é o estudo do significado nas linguagens.</p>
-
-<!-- Texto marcado/destacado -->
-<p>Encontramos <mark>3 resultados</mark> para sua busca.</p>
-
-<!-- Texto deletado e inserido (histórico de revisões) -->
-<p>O preço era <del>R$ 100,00</del> e agora é <ins>R$ 75,00</ins>.</p>
-
-<!-- Subíndice e sobrescrito -->
-<p>H<sub>2</sub>O e E=mc<sup>2</sup></p>
-
-<!-- Texto pequeno (avisos legais, copyright) -->
-<small>&copy; 2024 Todos os direitos reservados.</small>
+<p><strong>Importante</strong> e <em>ênfase</em>.</p>
+<blockquote><p>Citação longa.</p></blockquote>
+<q>Citação curta</q>
+<abbr title="HyperText Markup Language">HTML</abbr>
+<time datetime="2026-04-23">23/04/2026</time>
+<code>document.querySelector()</code>
 ```
 
 ---
 
-## 5. Listas
+## Listas e Navegação
 
 ```html
-<!-- Lista não ordenada -->
-<ul>
-  <li>Item A</li>
-  <li>Item B</li>
-  <li>Item C</li>
-</ul>
+<ul><li>Item</li></ul>
+<ol><li>Passo 1</li><li>Passo 2</li></ol>
 
-<!-- Lista ordenada -->
-<ol>
-  <li>Primeiro passo</li>
-  <li>Segundo passo</li>
-  <li>Terceiro passo</li>
-</ol>
-
-<!-- Lista de definições (glossário) -->
-<dl>
-  <dt>HTML</dt>
-  <dd>HyperText Markup Language – linguagem de marcação da web</dd>
-
-  <dt>CSS</dt>
-  <dd>Cascading Style Sheets – linguagem de estilos</dd>
-
-  <dt>JavaScript</dt>
-  <dd>Linguagem de programação para web</dd>
-</dl>
-```
-
----
-
-## 6. Links e Navegação
-
-```html
-<!-- Link básico -->
-<a href="https://example.com">Texto do link</a>
-
-<!-- Link em nova aba (sempre inclua rel para segurança) -->
-<a href="https://example.com" target="_blank" rel="noopener noreferrer">
-  Abrir em nova aba
-</a>
-
-<!-- Link para email -->
-<a href="mailto:contato@example.com">Enviar email</a>
-
-<!-- Link para telefone (mobile) -->
-<a href="tel:+5511999999999">+55 (11) 99999-9999</a>
-
-<!-- Link para âncora na mesma página -->
-<a href="#secao-contato">Ir para Contato</a>
-
-<!-- Link de download -->
-<a href="/arquivos/curriculo.pdf" download="curriculo-joao.pdf">
-  Baixar Currículo (PDF)
-</a>
-
-<!-- Navegação semântica -->
-<nav aria-label="Paginação">
-  <a href="/pagina/1" aria-label="Página anterior">&laquo; Anterior</a>
-  <a href="/pagina/3" aria-label="Próxima página">Próxima &raquo;</a>
+<nav aria-label="Navegação principal">
+  <a href="/">Home</a>
+  <a href="/contato">Contato</a>
 </nav>
 ```
 
+<div class="kpi">
+Use `nav` quando os links forem de navegação estrutural.
+</div>
+
 ---
 
-## 7. Imagens e Mídias
-
-### 7.1 Imagens
+## Imagens e Mídia
 
 ```html
-<!-- Imagem básica: src e alt são OBRIGATÓRIOS -->
-<img src="foto-produto.jpg" alt="Camiseta azul tamanho M">
+<img src="produto.jpg" alt="Tênis preto modelo X" width="640" height="360">
 
-<!-- Imagem decorativa: alt vazio (não descritivo) -->
-<img src="divider.png" alt="">
-
-<!-- Figure com legenda -->
 <figure>
-  <img src="grafico-vendas.png" alt="Gráfico de vendas do 1º trimestre 2024">
-  <figcaption>Crescimento de 23% nas vendas comparado ao mesmo período do ano anterior.</figcaption>
+  <img src="grafico.png" alt="Vendas em alta no Q2">
+  <figcaption>Resumo do resultado trimestral.</figcaption>
 </figure>
 
-<!-- Imagem responsiva com srcset (diferentes resoluções) -->
-<img
-  src="hero-800.jpg"
-  srcset="hero-400.jpg 400w, hero-800.jpg 800w, hero-1600.jpg 1600w"
-  sizes="(max-width: 600px) 400px, (max-width: 1200px) 800px, 1600px"
-  alt="Banner principal do site"
-  loading="lazy"
-  width="800"
-  height="450"
->
-
-<!-- Picture: diferentes imagens para diferentes condições -->
-<picture>
-  <!-- WebP para navegadores modernos -->
-  <source srcset="hero.webp" type="image/webp">
-  <!-- AVIF para navegadores que suportam -->
-  <source srcset="hero.avif" type="image/avif">
-  <!-- Fallback JPEG -->
-  <img src="hero.jpg" alt="Imagem principal">
-</picture>
-```
-
-**Boas práticas de imagem:**
-
-- Sempre inclua `alt` (descritivo para imagens informativas, vazio `alt=""` para decorativas)
-- Defina `width` e `height` para evitar layout shift (CLS)
-- Use `loading="lazy"` para imagens abaixo do fold
-- Prefira formatos modernos: WebP ou AVIF (menor tamanho, mesma qualidade)
-
-### 7.2 Vídeo
-
-```html
-<video
-  controls
-  width="800"
-  poster="thumbnail.jpg"
-  preload="metadata"
->
-  <source src="video.webm" type="video/webm">
-  <source src="video.mp4" type="video/mp4">
-  <track kind="subtitles" src="legendas-pt.vtt" srclang="pt" label="Português">
-  <p>Seu navegador não suporta vídeo HTML5. <a href="video.mp4">Baixe o vídeo</a>.</p>
-</video>
-```
-
-### 7.3 Áudio
-
-```html
-<audio controls preload="metadata">
-  <source src="podcast.ogg" type="audio/ogg">
-  <source src="podcast.mp3" type="audio/mpeg">
-  <p>Seu navegador não suporta áudio HTML5.</p>
-</audio>
+<video controls><source src="video.mp4" type="video/mp4"></video>
 ```
 
 ---
 
-## 8. Tabelas
+## Tabelas: Só para Dados
 
 ```html
 <table>
-  <caption>Vendas por Região – 2024</caption>
-  <thead>
-    <tr>
-      <th scope="col">Região</th>
-      <th scope="col">Q1</th>
-      <th scope="col">Q2</th>
-      <th scope="col">Total</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">Sudeste</th>
-      <td>R$ 120k</td>
-      <td>R$ 145k</td>
-      <td>R$ 265k</td>
-    </tr>
-    <tr>
-      <th scope="row">Sul</th>
-      <td>R$ 80k</td>
-      <td>R$ 95k</td>
-      <td>R$ 175k</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <th scope="row">Total</th>
-      <td>R$ 200k</td>
-      <td>R$ 240k</td>
-      <td>R$ 440k</td>
-    </tr>
-  </tfoot>
+  <caption>Vendas por região</caption>
+  <thead><tr><th>Região</th><th>Total</th></tr></thead>
+  <tbody><tr><th scope="row">Sul</th><td>R$ 175k</td></tr></tbody>
 </table>
 ```
 
-> 💡 Use tabelas **apenas para dados tabulares**. Nunca para layout de página.
+<div class="card">
+Tabela não é para layout visual de página.
+</div>
 
 ---
 
-## 9. Formulários
+## Prática 1 (Evolutiva): Estrutura Semântica
+
+### Entrega
+
+1. Página com `header`, `nav`, `main`, `section`, `article`, `footer`
+2. Hierarquia correta de headings
+3. 1 imagem com `alt` informativo
+4. 1 lista ordenada e 1 não ordenada
+
+### Critério de sucesso
+
+- Sem uso de `div` para tudo
+- Estrutura legível no inspector
+
+---
+
+## Formulário Acessível (Base)
 
 ```html
-<form action="/contato" method="post" novalidate>
+<form>
+  <label for="nome">Nome</label>
+  <input id="nome" type="text" required>
 
-  <!-- Agrupamento de campos relacionados -->
-  <fieldset>
-    <legend>Dados Pessoais</legend>
+  <label for="email">Email</label>
+  <input id="email" type="email" required>
 
-    <div>
-      <label for="nome">Nome completo *</label>
-      <input
-        type="text"
-        id="nome"
-        name="nome"
-        required
-        autocomplete="name"
-        placeholder="Ex: Maria Silva"
-        minlength="3"
-      >
-    </div>
-
-    <div>
-      <label for="email">E-mail *</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        required
-        autocomplete="email"
-        placeholder="exemplo@dominio.com"
-      >
-    </div>
-
-    <div>
-      <label for="telefone">Telefone</label>
-      <input
-        type="tel"
-        id="telefone"
-        name="telefone"
-        autocomplete="tel"
-        pattern="[0-9]{10,11}"
-        placeholder="11999999999"
-      >
-    </div>
-
-    <div>
-      <label for="data-nascimento">Data de nascimento</label>
-      <input type="date" id="data-nascimento" name="data_nascimento">
-    </div>
-  </fieldset>
-
-  <fieldset>
-    <legend>Mensagem</legend>
-
-    <div>
-      <label for="assunto">Assunto *</label>
-      <select id="assunto" name="assunto" required>
-        <option value="">Selecione...</option>
-        <option value="suporte">Suporte técnico</option>
-        <option value="vendas">Vendas</option>
-        <option value="outro">Outro</option>
-      </select>
-    </div>
-
-    <div>
-      <label for="mensagem">Mensagem *</label>
-      <textarea
-        id="mensagem"
-        name="mensagem"
-        required
-        rows="5"
-        minlength="20"
-        maxlength="1000"
-        placeholder="Descreva sua mensagem..."
-      ></textarea>
-    </div>
-
-    <!-- Radio buttons -->
-    <fieldset>
-      <legend>Como prefere ser contactado?</legend>
-      <label>
-        <input type="radio" name="contato_preferido" value="email" checked>
-        E-mail
-      </label>
-      <label>
-        <input type="radio" name="contato_preferido" value="telefone">
-        Telefone
-      </label>
-    </fieldset>
-
-    <!-- Checkbox -->
-    <label>
-      <input type="checkbox" name="newsletter" value="1">
-      Quero receber novidades por e-mail
-    </label>
-
-  </fieldset>
-
-  <button type="submit">Enviar mensagem</button>
-  <button type="reset">Limpar formulário</button>
-
+  <button type="submit">Enviar</button>
 </form>
 ```
 
-**Tipos de input importantes:**
+---
 
-| `type` | Uso |
-|--------|-----|
-| `text` | Texto genérico |
-| `email` | E-mail (valida formato) |
-| `password` | Senha (oculta caracteres) |
-| `number` | Números |
-| `tel` | Telefone |
-| `url` | URL |
-| `date` | Data |
-| `time` | Hora |
-| `datetime-local` | Data e hora |
-| `search` | Campo de busca |
-| `range` | Slider numérico |
-| `color` | Seletor de cor |
-| `file` | Upload de arquivo |
-| `checkbox` | Caixa de seleção |
-| `radio` | Seleção exclusiva |
-| `hidden` | Campo oculto |
+## Exemplo Gradual 2: Formulário
+
+### Nível 1: Campos básicos
+
+```html
+<label for="nome">Nome</label>
+<input id="nome" type="text" required>
+```
 
 ---
 
-## 10. SEO com HTML
-
-### 10.1 Metadados Essenciais
+### Nível 2: Tipos corretos
 
 ```html
-<head>
-  <title>Título da Página – Nome do Site</title>
-  <!-- 50–60 caracteres ideais; inclua a palavra-chave principal -->
-
-  <meta name="description" content="Descrição atrativa da página com 150-160 caracteres que aparece nos resultados de busca.">
-
-  <link rel="canonical" href="https://example.com/pagina-atual">
-  <!-- Indica a URL preferida para evitar conteúdo duplicado -->
-
-  <meta name="robots" content="index, follow">
-  <!-- index = pode indexar | follow = pode seguir links -->
-</head>
+<label for="email">Email</label>
+<input id="email" type="email" required>
+<input id="telefone" type="tel">
 ```
 
-### 10.2 Open Graph (Facebook, LinkedIn, WhatsApp)
+---
+
+### Nível 3: Estrutura profissional
 
 ```html
-<head>
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://example.com/pagina">
-  <meta property="og:title" content="Título ao compartilhar nas redes sociais">
-  <meta property="og:description" content="Descrição ao compartilhar nas redes sociais.">
-  <meta property="og:image" content="https://example.com/og-image.jpg">
-  <!-- Imagem: mínimo 1200×630px, proporção 1.91:1 -->
-  <meta property="og:locale" content="pt_BR">
-
-  <!-- Twitter/X Cards -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@meusite">
-  <meta name="twitter:title" content="Título ao compartilhar no Twitter">
-  <meta name="twitter:description" content="Descrição ao compartilhar no Twitter.">
-  <meta name="twitter:image" content="https://example.com/twitter-image.jpg">
-</head>
+<fieldset>
+  <legend>Contato</legend>
+  <select id="assunto"></select>
+  <textarea id="mensagem"></textarea>
+</fieldset>
 ```
 
-### 10.3 Dados Estruturados (JSON-LD / Schema.org)
+---
 
-Ajuda o Google a entender o conteúdo e exibir *rich results*:
+## Agrupando Campos com fieldset
+
+```html
+<fieldset>
+  <legend>Dados Pessoais</legend>
+  <label for="telefone">Telefone</label>
+  <input id="telefone" type="tel">
+</fieldset>
+```
+
+<div class="card">
+Melhora leitura para usuários e leitores de tela.
+</div>
+
+---
+
+## Inputs Mais Comuns (Parte 1)
+
+| Tipo | Uso |
+|---|---|
+| `text` | Texto geral |
+| `email` | Email com validação |
+| `tel` | Telefone |
+| `date` | Data |
+| `password` | Senha |
+| `number` | Quantidade |
+
+---
+
+## Inputs Mais Comuns (Parte 2)
+
+| Tipo | Uso |
+|---|---|
+| `checkbox` | Múltipla escolha |
+| `radio` | Escolha única |
+| `file` | Upload |
+| `url` | Endereço web |
+| `search` | Busca |
+| `range` | Slider numérico |
+
+---
+
+## SEO: Metatags Essenciais
+
+```html
+<title>Título da Página - Site</title>
+<meta name="description" content="Resumo de 150-160 caracteres.">
+<link rel="canonical" href="https://site.com/pagina">
+<meta name="robots" content="index, follow">
+```
+
+---
+
+## SEO Social: Open Graph
+
+```html
+<meta property="og:title" content="Título social">
+<meta property="og:description" content="Descrição social">
+<meta property="og:image" content="https://site.com/og.jpg">
+<meta property="og:type" content="website">
+```
+
+<div class="card">
+Imagem recomendada: 1200 x 630 px.
+</div>
+
+---
+
+## Dados Estruturados (JSON-LD)
 
 ```html
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Título do Artigo",
-  "description": "Descrição do artigo",
-  "author": {
-    "@type": "Person",
-    "name": "João Silva"
-  },
-  "datePublished": "2024-01-15",
-  "image": "https://example.com/imagem-artigo.jpg"
+  "headline": "Guia de HTML Semântico",
+  "author": { "@type": "Person", "name": "Seu Nome" }
 }
 </script>
 ```
 
-Outros tipos comuns: `Organization`, `Product`, `FAQPage`, `BreadcrumbList`, `LocalBusiness`.
+---
+
+## Checklist de Qualidade HTML
+
+- [ ] Um `h1` principal por página
+- [ ] `label` conectado em todos os campos
+- [ ] `alt` em imagens informativas
+- [ ] `title` e `description` preenchidos
+- [ ] Estrutura semântica clara (`main`, `article`, `section`)
 
 ---
 
-## Práticas
+## Bom x Ruim (Visual)
 
-| # | Arquivo | Descrição |
-|---|---------|-----------|
-| 01 | [Estrutura Semântica Básica](praticas/01-estrutura-basica.html) | Página completa usando elementos semânticos |
-| 02 | [Formulário Completo](praticas/02-formulario-completo.html) | Formulário com todos os tipos de input e validação |
-| 03 | [SEO e Metatags](praticas/03-seo-metatags.html) | Página com metadados completos para SEO |
+| Situação | Bom | Ruim |
+|---|---|---|
+| Imagem | <span class="ok">`alt="Pessoa estudando HTML"`</span> | <span class="bad">`alt=""`</span> |
+| Campo | <span class="ok">`label + id`</span> | <span class="bad">placeholder sem label</span> |
+| Headings | <span class="ok">h1 → h2 → h3</span> | <span class="bad">h1 → h4</span> |
 
 ---
 
-## Referências
+## Prática 2 (Evolutiva): Página Completa
 
-- [HTML Living Standard – WHATWG](https://html.spec.whatwg.org/)
-- [HTML – MDN Web Docs](https://developer.mozilla.org/pt-BR/docs/Web/HTML)
-- [HTML Semântico – web.dev](https://web.dev/learn/html/semantic-html/)
-- [Google Search Central – Metadados](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)
-- [Open Graph Protocol](https://ogp.me/)
-- [Schema.org](https://schema.org/)
-- [Testador de Dados Estruturados do Google](https://search.google.com/structured-data/testing-tool)
+### Missão
+
+Criar uma página de contato com:
+
+1. Layout semântico completo
+2. Formulário com `fieldset`, `legend`, `text`, `email`, `tel`, `select`, `textarea`
+3. Metatags (`title`, `description`, `canonical`, `robots`)
+4. Open Graph básico
+
+### Bônus
+
+- Adicionar JSON-LD tipo `Organization`
+- Validar no DevTools e Lighthouse
+
+---
+
+## Práticas do Módulo
+
+- `praticas/01-estrutura-basica.html`
+- `praticas/02-formulario-completo.html`
+- `praticas/03-seo-metatags.html`
+- `praticas/02-intermediario.html`
+
+<div class="kpi">
+Fluxo recomendado: prática 1 → teoria de formulário/SEO → prática 2.
+</div>
+
+---
+
+## Fechamento
+
+<div class="card">
+HTML semântico = código mais claro, acessível e com melhor performance em busca.
+</div>
+
+### Próxima aula
+
+CSS moderno: Flexbox, Grid e responsividade.

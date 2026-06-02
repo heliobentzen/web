@@ -1,245 +1,330 @@
 # Módulo 06 – Assincronismo e Fetch
 
-## O que você vai aprender
+## Prática Integrada Relacionada
 
-- Promises e async/await
-- Fetch API para requisições HTTP
-- Tratamento de erros
-- JSON parse/stringify
+- [Prática Integrada - Módulos 05 e 06](../../pratica_js-assincronismo/README.md)
 
----
+## Objetivo do Módulo
 
-## 1. Promises e Async/Await
+Aprender a lidar com operações que não acontecem de forma imediata no navegador, como requisições HTTP, leitura de dados externos e espera por resultados. O foco é entender Promises, `async/await`, `fetch`, tratamento de erros e padrões úteis para aplicações reais.
 
-```javascript
-// Callback antigo (evite!)
-function buscarDados(callback) {
-  setTimeout(() => callback({ nome: 'João' }), 1000)
-}
+## Como Praticar
 
-// Promise
-function buscarDados() {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => resolve({ nome: 'João' }), 1000)
-  })
-}
-buscarDados().then(data => console.log(data))
-
-// Async/await (melhor!)
-async function teste() {
-  const data = await buscarDados()
-  console.log(data)
-}
-```
+1. Execute os exemplos no console do navegador ou em um arquivo HTML simples.
+2. Quando o trecho envolver API, comece com a versão mais simples e depois adicione tratamento de erro.
+3. Compare o comportamento do código com e sem `await` para entender o fluxo assíncrono.
 
 ---
 
-## 2. Fetch API
+## 1. O que é Assincronismo
+
+Assincronismo é a forma de lidar com tarefas que demoram para terminar sem travar a interface do usuário.
 
 ```javascript
-// GET
-const response = await fetch('https://api.example.com/users')
-const data = await response.json()
+console.log('A')
 
-// POST
-const response = await fetch('https://api.example.com/users', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ nome: 'João', email: 'joao@example.com' })
-})
+setTimeout(() => {
+  console.log('B')
+}, 1000)
 
-// Tratamento de erro
-try {
-  const response = await fetch(url)
-  if (!response.ok) throw new Error(`HTTP ${response.status}`)
-  const data = await response.json()
-  console.log(data)
-} catch (erro) {
-  console.error('Erro:', erro.message)
-}
+console.log('C')
 ```
+
+Observe que `A` aparece imediatamente, `C` aparece antes de `B` e o navegador continua responsivo enquanto espera o `setTimeout`.
 
 ---
 
-## 3. JSON
+## 2. Callback
+
+Callbacks são funções recebidas por outra função e executadas depois. Esse padrão é útil, mas pode ficar difícil de ler quando há muitas etapas.
 
 ```javascript
-// String → Objeto
-const obj = JSON.parse('{"nome":"João"}')
-
-// Objeto → String
-const json = JSON.stringify({ nome: 'João' })
-```
-
-Próximo: fazer as práticas!
-
-```javascript
-// Convenção: primeiro parâmetro é o erro (error-first callback)
-function buscarUsuario(id, callback) {
+function carregarUsuario(callback) {
   setTimeout(() => {
-    if (id <= 0) {
-      callback(new Error('ID inválido'), null)
-      return
-    }
-    callback(null, { id, nome: `Usuário ${id}` })
-  }, 500)
+    callback({ nome: 'João', ativo: true })
+  }, 1000)
 }
 
-buscarUsuario(1, (erro, usuario) => {
-  if (erro) { console.error('Erro:', erro.message); return }
-  console.log('Usuário:', usuario)
+carregarUsuario((usuario) => {
+  console.log(usuario)
 })
 ```
 
+Rode este trecho no seu ambiente antes de seguir. Altere o objeto retornado e veja a mudança na saída. Depois, crie uma segunda função que receba o resultado e o exiba em outro formato.
+
 ---
 
-## 3. Promises
+## 3. Promise
+
+Promise representa um valor que ainda será resolvido ou rejeitado no futuro.
 
 ```javascript
-function buscarUsuario(id) {
+function carregarUsuario(id) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (id <= 0) reject(new Error('ID inválido'))
-      else resolve({ id, nome: `Usuário ${id}` })
-    }, 500)
+      if (id <= 0) {
+        reject(new Error('ID inválido'))
+        return
+      }
+
+      resolve({ id, nome: `Usuário ${id}` })
+    }, 1000)
   })
 }
 
-buscarUsuario(1)
-  .then(usuario => { console.log(usuario); return usuario.id })
-  .then(id => console.log('ID:', id))
-  .catch(erro => console.error('Erro:', erro.message))
-  .finally(() => console.log('Sempre executa'))
-
-// Promise.all – aguarda TODAS
-const [a, b] = await Promise.all([fetch('/api/a').then(r => r.json()), fetch('/api/b').then(r => r.json())])
-
-// Promise.allSettled – nunca rejeita
-const resultados = await Promise.allSettled([fetch('/a'), fetch('/b')])
-
-// Promise.race – retorna a PRIMEIRA
-const dados = await Promise.race([fetch('/api/dados'), timeoutPromise])
-
-// Promise.any – retorna a PRIMEIRA com sucesso
-const rapido = await Promise.any([fetch('/cdn1'), fetch('/cdn2'), fetch('/cdn3')])
+carregarUsuario(1)
+  .then((usuario) => console.log(usuario))
+  .catch((erro) => console.error(erro.message))
 ```
+
+Rode este trecho no seu ambiente antes de seguir. Chame `carregarUsuario(0)` e observe o `catch`. Em seguida, encadeie um novo `then` para transformar o objeto retornado.
 
 ---
 
-## 4. async / await
+## 4. `async/await`
+
+`async/await` deixa o código assíncrono mais próximo da leitura linear.
 
 ```javascript
-async function carregarDados(id) {
+async function mostrarUsuario() {
   try {
-    const usuario = await buscarUsuario(id)
-    const pedidos = await buscarPedidos(usuario.id)
-    return { usuario, pedidos }
+    const usuario = await carregarUsuario(2)
+    console.log(usuario)
   } catch (erro) {
     console.error('Erro:', erro.message)
-    throw erro
-  } finally {
-    esconderLoading()
   }
 }
 
-// Paralelo com async/await
-async function carregarPainel() {
-  // ✅ Paralelo (rápido)
-  const [usuario, pedidos, config] = await Promise.all([
-    buscarUsuario(1),
-    buscarPedidos(1),
-    buscarConfig(),
-  ])
-}
+mostrarUsuario()
 ```
+
+Rode este trecho no seu ambiente antes de seguir. Troque o `id` passado para `carregarUsuario` e compare a leitura deste bloco com a versão usando `then`.
 
 ---
 
-## 5. Fetch API
+## 5. Promises em Paralelo
+
+Quando operações independentes podem ser feitas ao mesmo tempo, `Promise.all` reduz o tempo total de espera.
 
 ```javascript
-// GET
-const usuarios = await fetch('https://jsonplaceholder.typicode.com/users')
-  .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
-
-// POST
-const novo = await fetch('https://jsonplaceholder.typicode.com/posts', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-  body: JSON.stringify({ title: 'Novo Post', body: 'Conteúdo', userId: 1 }),
-}).then(r => r.json())
-
-// AbortController – cancelar requisição
-async function buscarComTimeout(url, ms = 5000) {
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), ms)
-  try {
-    const res = await fetch(url, { signal: controller.signal })
-    clearTimeout(timer)
-    return res.json()
-  } catch (e) {
-    if (e.name === 'AbortError') throw new Error('Timeout!')
-    throw e
-  }
+function buscarPerfil() {
+  return Promise.resolve({ nome: 'Ana' })
 }
+
+function buscarPedidos() {
+  return Promise.resolve(['pedido 1', 'pedido 2'])
+}
+
+async function carregarPainel() {
+  const [perfil, pedidos] = await Promise.all([
+    buscarPerfil(),
+    buscarPedidos(),
+  ])
+
+  console.log(perfil)
+  console.log(pedidos)
+}
+
+carregarPainel()
 ```
+
+Rode este trecho no seu ambiente antes de seguir. Adicione uma terceira Promise ao array e teste `Promise.allSettled` para comparar o comportamento quando uma das Promises falha.
 
 ---
 
-## 6. Padrões Avançados
+## 6. Fetch API
 
-### Cliente HTTP Reutilizável
+`fetch` é a API padrão do navegador para fazer requisições HTTP.
+
+```javascript
+async function listarUsuarios() {
+  const resposta = await fetch('https://jsonplaceholder.typicode.com/users')
+
+  if (!resposta.ok) {
+    throw new Error(`HTTP ${resposta.status}`)
+  }
+
+  const usuarios = await resposta.json()
+  console.log(usuarios)
+}
+
+listarUsuarios().catch((erro) => console.error(erro.message))
+```
+
+Rode este trecho no seu ambiente antes de seguir. Troque a URL por outra rota pública da mesma API e abra a aba Network do DevTools para observar a requisição.
+
+---
+
+## 7. Enviando Dados com `fetch`
+
+Além de ler dados, você também pode enviar informações para uma API.
+
+```javascript
+async function criarPost() {
+  const resposta = await fetch('https://jsonplaceholder.typicode.com/posts', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: 'Novo Post',
+      body: 'Conteúdo de teste',
+      userId: 1,
+    }),
+  })
+
+  const post = await resposta.json()
+  console.log(post)
+}
+
+criarPost().catch((erro) => console.error(erro.message))
+```
+
+Rode este trecho no seu ambiente antes de seguir. Altere os campos do corpo da requisição e compare o envio com `GET` e `POST`.
+
+---
+
+## 8. Tratamento de Erros
+
+Operações assíncronas precisam de uma resposta clara quando algo falha.
+
+```javascript
+async function carregarComTratamento(url) {
+  try {
+    const resposta = await fetch(url)
+
+    if (!resposta.ok) {
+      throw new Error(`HTTP ${resposta.status}`)
+    }
+
+    return await resposta.json()
+  } catch (erro) {
+    console.error('Falha na requisição:', erro.message)
+    return []
+  }
+}
+
+carregarComTratamento('https://jsonplaceholder.typicode.com/users')
+```
+
+Rode este trecho no seu ambiente antes de seguir. Passe uma URL inválida e observe o `catch`; depois, troque o retorno padrão para um objeto com mensagem de erro.
+
+---
+
+## 9. Cancelamento com `AbortController`
+
+Em alguns casos, a requisição precisa ser interrompida antes de terminar.
+
+```javascript
+async function buscarComTimeout(url, ms = 3000) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), ms)
+
+  try {
+    const resposta = await fetch(url, { signal: controller.signal })
+    return await resposta.json()
+  } catch (erro) {
+    if (erro.name === 'AbortError') {
+      throw new Error('Tempo esgotado')
+    }
+
+    throw erro
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+buscarComTimeout('https://jsonplaceholder.typicode.com/users', 1)
+  .catch((erro) => console.error(erro.message))
+```
+
+Rode este trecho no seu ambiente antes de seguir. Aumente o tempo limite para ver a diferença e use uma URL lenta ou incorreta para simular falha.
+
+---
+
+## 10. JSON e APIs
+
+JSON é o formato mais comum de troca de dados entre front-end e back-end.
+
+```javascript
+const texto = '{"nome":"João","idade":30}'
+const objeto = JSON.parse(texto)
+
+console.log(objeto.nome)
+
+const convertido = JSON.stringify({ ativo: true, tags: ['js', 'api'] })
+console.log(convertido)
+```
+
+Rode este trecho no seu ambiente antes de seguir. Altere a string JSON e observe quando o parse falha; depois, converta um array de objetos para JSON e volte para objeto.
+
+---
+
+## 11. Cliente HTTP Reutilizável
+
+Quando a aplicação faz várias requisições, vale centralizar a lógica de acesso à API.
 
 ```javascript
 class ApiCliente {
-  #baseUrl; #headers
+  #baseUrl
 
-  constructor(baseUrl, token = null) {
+  constructor(baseUrl) {
     this.#baseUrl = baseUrl.replace(/\/$/, '')
-    this.#headers = { 'Content-Type': 'application/json', ...(token && { Authorization: `Bearer ${token}` }) }
   }
 
-  async #req(method, path, body) {
-    const res = await fetch(`${this.#baseUrl}${path}`, {
-      method, headers: this.#headers,
-      ...(body && { body: JSON.stringify(body) }),
-    })
-    if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status })
-    return res.status === 204 ? null : res.json()
-  }
+  async get(path) {
+    const resposta = await fetch(`${this.#baseUrl}${path}`)
 
-  get    = (p)    => this.#req('GET',    p)
-  post   = (p, b) => this.#req('POST',   p, b)
-  put    = (p, b) => this.#req('PUT',    p, b)
-  patch  = (p, b) => this.#req('PATCH',  p, b)
-  delete = (p)    => this.#req('DELETE', p)
-}
-```
-
-### Retry com Backoff Exponencial
-
-```javascript
-async function comRetry(fn, { tentativas = 3, delayBase = 1000 } = {}) {
-  let ultimoErro
-  for (let i = 0; i < tentativas; i++) {
-    try { return await fn() }
-    catch (e) {
-      ultimoErro = e
-      if (i < tentativas - 1) {
-        await new Promise(r => setTimeout(r, delayBase * 2 ** i + Math.random() * 500))
-      }
+    if (!resposta.ok) {
+      throw new Error(`HTTP ${resposta.status}`)
     }
+
+    return resposta.json()
   }
-  throw ultimoErro
 }
+
+const cliente = new ApiCliente('https://jsonplaceholder.typicode.com')
+cliente.get('/users').then((dados) => console.log(dados))
 ```
+
+Rode este trecho no seu ambiente antes de seguir. Adicione métodos `post` e `delete` e teste com outra API pública.
 
 ---
 
-## 7. Códigos de Status HTTP
+## 12. Retry Simples
+
+Às vezes uma requisição falha por instabilidade temporária. Uma estratégia de retry pode ajudar.
+
+```javascript
+async function comRetry(fn, tentativas = 3) {
+  let ultimoErro
+
+  for (let i = 0; i < tentativas; i++) {
+    try {
+      return await fn()
+    } catch (erro) {
+      ultimoErro = erro
+    }
+  }
+
+  throw ultimoErro
+}
+
+comRetry(() => fetch('https://jsonplaceholder.typicode.com/users').then((r) => r.json()))
+  .then((dados) => console.log(dados))
+  .catch((erro) => console.error(erro.message))
+```
+
+Rode este trecho no seu ambiente antes de seguir. Reduza o número de tentativas e compare o resultado; depois, troque a função por uma chamada que falhe de propósito.
+
+---
+
+## 13. Códigos de Status HTTP
+
+Os códigos HTTP ajudam a identificar o resultado de uma requisição.
 
 | Código | Significado |
-|--------|-------------|
+| --- | --- |
 | 200 | OK |
 | 201 | Created |
 | 204 | No Content |
@@ -252,22 +337,25 @@ async function comRetry(fn, { tentativas = 3, delayBase = 1000 } = {}) {
 | 500 | Internal Server Error |
 | 503 | Service Unavailable |
 
----
-
-## Práticas
-
-| # | Arquivo | Descrição |
-|---|---------|-----------|
-| 01 | [Promises e async/await](praticas/01-promises-async.js) | Exercícios com Promises |
-| 02 | [Fetch API](praticas/02-fetch-api.html) | Consumo de APIs REST interativo |
+Rode este trecho no seu ambiente antes de seguir. Relacione cada código com uma situação real de API e identifique quais deles pedem ação do usuário e quais indicam falha do servidor.
 
 ---
 
-## Referências
+## 14. Mini Exercício Integrado
 
-- [Fetch API – MDN](https://developer.mozilla.org/pt-BR/docs/Web/API/Fetch_API)
-- [Promise – MDN](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise)
-- [async/await – MDN](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/async_function)
-- [Event Loop (In the Loop) – Jake Archibald](https://www.youtube.com/watch?v=cCOL7MC4Pl0)
-- [JavaScript.info – Promises](https://javascript.info/promise-basics)
-- [JSONPlaceholder – API de testes](https://jsonplaceholder.typicode.com/)
+Monte uma tela com um formulário, um status e uma lista. Ao submeter, faça uma chamada `fetch`, exiba o estado de carregamento, trate erro e renderize os resultados.
+
+### Roteiro
+
+1. Crie um arquivo HTML com formulário e lista vazia.
+2. Capture os elementos com `querySelector`.
+3. Use `submit` com `preventDefault()`.
+4. Mostre uma mensagem de carregamento.
+5. Faça a requisição com `fetch`.
+6. Atualize a interface com os dados ou com uma mensagem de erro.
+
+---
+
+## Próximo Passo
+
+Depois de dominar os tópicos acima, siga para a [Prática Integrada - Módulos 05 e 06](../../pratica_js-assincronismo/README.md) para aplicar esses conceitos em uma atividade comparativa de duas versões de aplicação.

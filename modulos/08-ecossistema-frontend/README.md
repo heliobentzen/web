@@ -1,515 +1,293 @@
-# Módulo 08 – Ecossistema Front-End e Bundlers (Vite)
+# Módulo 08 – Ecossistema Front-End
 
-## Objetivos
+## Prática Integrada Relacionada
 
-Ao final deste módulo você será capaz de:
+- [Prática Integrada - Módulo 08](../../pratica_ecossistema_frontend/README.md)
 
-- Compreender o ecossistema JavaScript moderno
-- Entender o papel de Node.js, NPM e gerenciadores de pacotes
-- Configurar e usar o Vite como bundler/dev server
-- Entender o que é bundling, tree-shaking e code splitting
-- Configurar um projeto front-end moderno do zero
-- Entender módulos ES e as diferenças para CommonJS
+## Objetivo do Módulo
+
+Entender como organizar e executar projetos front-end modernos com Node.js, npm, `package.json`, módulos ES e Vite. A ideia é sair do arquivo HTML isolado e avançar para uma base com scripts, dependências e estrutura preparada para crescer.
+
+## Como Praticar
+
+1. Execute cada comando sugerido no terminal.
+2. Abra os exemplos de módulo ES no navegador quando o trecho for puro JavaScript.
+3. Observe a diferença entre rodar um arquivo diretamente e rodar um projeto preparado com Vite.
 
 ---
 
-## 1. Node.js e NPM
+## 1. Node.js e npm
 
-**Node.js** é um runtime JavaScript baseado no motor V8 do Chrome que permite executar JavaScript fora do navegador. É a base do ecossistema de ferramentas front-end.
-
-**NPM** (Node Package Manager) é o gerenciador de pacotes padrão do Node.js.
+Node.js permite executar JavaScript fora do navegador. O npm gerencia pacotes, scripts e dependências do projeto.
 
 ```bash
-# Verificar versões
-node --version    # v20.x.x
-npm --version     # 10.x.x
-
-# Usar NVM para gerenciar versões do Node
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-nvm install 20    # instala Node 20 LTS
-nvm use 20        # usar Node 20
-nvm alias default 20  # definir como padrão
+node --version
+npm --version
 ```
 
-### Gerenciadores de Pacotes Alternativos
+Rode este trecho no seu ambiente antes de avançar.
 
-| Gerenciador | Comando | Destaque |
-|-------------|---------|---------|
-| npm | `npm install` | Padrão, incluído com Node.js |
-| **pnpm** | `pnpm install` | Rápido, eficiente em disco (recomendado!) |
-| yarn | `yarn install` | Popular, alternativa madura |
-| bun | `bun install` | Extremamente rápido (runtime + bundler) |
+- Confirme se o Node está instalado.
+- Compare a versão local com a versão recomendada pelo projeto.
 
 ---
 
-## 2. package.json
+## 2. Estrutura Básica de Projeto
 
-O arquivo `package.json` é o coração de qualquer projeto Node.js/front-end.
+Antes de usar ferramentas mais avançadas, é importante entender a estrutura mínima de um projeto front-end.
+
+```text
+meu-projeto/
+├── index.html
+├── styles.css
+└── main.js
+```
+
+### Exemplo Executável
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projeto Simples</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1 id="titulo">Projeto simples</h1>
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
+```
+
+```javascript
+const titulo = document.querySelector('#titulo')
+titulo.textContent = 'JavaScript rodando no navegador'
+```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Crie os três arquivos acima e abra o HTML no navegador.
+- Altere o texto no JS e recarregue a página.
+
+---
+
+## 3. `package.json`
+
+O `package.json` descreve o projeto, as dependências e os scripts que podem ser executados com `npm run`.
 
 ```json
 {
   "name": "meu-projeto",
   "version": "1.0.0",
-  "description": "Projeto de exemplo",
   "type": "module",
   "scripts": {
-    "dev":     "vite",
-    "build":   "vite build",
-    "preview": "vite preview",
-    "lint":    "eslint src",
-    "format":  "prettier --write src",
-    "test":    "vitest"
-  },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "eslint": "^9.9.0",
-    "prettier": "^3.3.3",
-    "vite": "^5.4.2",
-    "vitest": "^2.0.5"
+    "vite": "^5.0.0"
   }
 }
 ```
 
-**Campos importantes:**
-- `"type": "module"` – usa ES Modules por padrão (`.js` = ESM)
-- `dependencies` – pacotes necessários em produção
-- `devDependencies` – pacotes apenas para desenvolvimento
-- `scripts` – comandos executáveis com `npm run`
+### Campos Importantes
 
-### Versionamento Semântico (SemVer)
+- `name` identifica o projeto.
+- `type: module` ativa ES Modules no Node e no front-end.
+- `scripts` cria atalhos para comandos frequentes.
+- `devDependencies` guarda pacotes usados apenas no desenvolvimento.
 
-```
-v2.4.1
-  │ │ └── Patch: correção de bugs (compatível)
-  │ └──── Minor: novas funcionalidades (compatível)
-  └────── Major: mudanças incompatíveis (breaking changes)
+Rode este trecho no seu ambiente antes de avançar.
 
-Prefixos no package.json:
-"react": "^18.3.1"   ← ^ permite updates de minor/patch (18.x.x)
-"react": "~18.3.1"   ← ~ permite apenas updates de patch (18.3.x)
-"react": "18.3.1"    ← sem prefixo = versão exata
-```
+- Crie um `package.json` mínimo com `npm init -y`.
+- Adicione um script e rode `npm run` para testá-lo.
 
 ---
 
-## 3. Módulos ES (ESM)
+## 4. Scripts com npm
+
+Scripts padronizam tarefas do projeto e evitam comandos longos repetidos.
+
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src"
+  }
+}
+```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Adicione um script de teste ou formatação.
+- Rode `npm run dev` e depois `npm run build`.
+
+---
+
+## 5. Módulos ES
+
+Módulos permitem separar código em arquivos menores, com importações e exportações explícitas.
 
 ```javascript
-// ── Exportação ──
+// matematica.js
+export function somar(a, b) {
+  return a + b
+}
 
-// Exportação nomeada
 export const PI = 3.14159
-export function calcularArea(r) { return PI * r ** 2 }
-export class Circulo { /* ... */ }
 
-// Exportação padrão (uma por arquivo)
-export default function principal() { /* ... */ }
+// app.js
+import { somar, PI } from './matematica.js'
 
-// Exportação combinada
-const velocidade = 299_792_458
-export { velocidade }
-export { velocidade as VELOCIDADE_LUZ }  // renomear ao exportar
-
-// ── Importação ──
-
-// Nomeadas
-import { PI, calcularArea } from './matematica.js'
-
-// Padrão
-import principal from './app.js'
-
-// Renomear ao importar
-import { calcularArea as area } from './matematica.js'
-
-// Tudo como namespace
-import * as Mat from './matematica.js'
-Mat.calcularArea(5)
-
-// Importação dinâmica (lazy loading)
-const modulo = await import('./pesado.js')
-// ou
-import('./pesado.js').then(m => m.iniciar())
-
-// Re-exportação (barrel exports)
-// index.js
-export { Button } from './Button.js'
-export { Input }  from './Input.js'
-export { Modal }  from './Modal.js'
-// Uso: import { Button, Input } from './components'
+console.log(somar(2, 3))
+console.log(PI)
 ```
 
-**ESM vs CommonJS:**
+Rode este trecho no seu ambiente antes de avançar.
 
-```javascript
-// ESM (moderno – use este!)
-import fs from 'node:fs'
-export const config = {}
-
-// CommonJS (Node.js legado)
-const fs = require('fs')
-module.exports = { config: {} }
-```
+- Crie os dois arquivos em uma pasta e abra com um HTML usando `type="module"`.
+- Altere o nome de uma exportação e veja o erro apontar o arquivo correto.
 
 ---
 
-## 4. Vite
+## 6. Importação Dinâmica
 
-**Vite** (pronuncia-se "vit", francês para "rápido") é um bundler/dev server moderno criado por Evan You (criador do Vue.js). É o padrão de facto para projetos React, Vue, Svelte e Vanilla JS modernos.
+Importação dinâmica carrega módulos sob demanda, o que ajuda a dividir o código em partes menores.
 
-### Por que Vite é rápido?
+```javascript
+async function carregarModulo() {
+  const modulo = await import('./utilitarios.js')
+  console.log(modulo)
+}
 
-```
-TRADICIONAL (Webpack):
-┌─────────────────────────────────────┐
-│  Analisa TODOS os módulos primeiro  │
-│  Transforma em um bundle grande     │
-│  Só então inicia o servidor         │
-│  → Startup lento em projetos grandes│
-└─────────────────────────────────────┘
-
-VITE:
-┌─────────────────────────────────────┐
-│  Serve arquivos sob demanda (ESM)   │
-│  Transpila apenas o que é pedido    │
-│  → Startup instantâneo!             │
-│  HMR (Hot Module Replacement) rápido│
-└─────────────────────────────────────┘
+carregarModulo()
 ```
 
-### 4.1 Criando um Projeto com Vite
+Rode este trecho no seu ambiente antes de avançar.
+
+- Crie `utilitarios.js` com uma exportação simples.
+- Veja quando o módulo só é carregado após a chamada da função.
+
+---
+
+## 7. Vite
+
+Vite fornece servidor de desenvolvimento, build otimizado e carregamento rápido para projetos modernos.
 
 ```bash
-# Criar projeto interativamente
 npm create vite@latest meu-projeto
-
-# Ou especificando template:
-npm create vite@latest meu-react-app -- --template react
-npm create vite@latest meu-vue-app   -- --template vue
-npm create vite@latest meu-vanilla   -- --template vanilla
-
-# Templates disponíveis:
-# vanilla, vanilla-ts
-# react, react-ts, react-swc, react-swc-ts
-# vue, vue-ts
-# svelte, svelte-ts
-# preact, preact-ts
-# lit, lit-ts
-
-# Instalar dependências e rodar
 cd meu-projeto
 npm install
-npm run dev     # → http://localhost:5173
-```
-
-### 4.2 Estrutura de Projeto Vite (React)
-
-```
-meu-projeto/
-├── public/              ← arquivos estáticos (não processados)
-│   └── favicon.svg
-├── src/                 ← código fonte
-│   ├── assets/          ← imagens, fontes, etc.
-│   │   └── logo.svg
-│   ├── components/      ← componentes reutilizáveis
-│   │   ├── Button.jsx
-│   │   └── Modal.jsx
-│   ├── pages/           ← páginas/rotas
-│   │   ├── Home.jsx
-│   │   └── About.jsx
-│   ├── App.jsx          ← componente raiz
-│   ├── App.css
-│   ├── main.jsx         ← ponto de entrada
-│   └── index.css        ← estilos globais
-├── index.html           ← template HTML (ponto de entrada do Vite)
-├── package.json
-├── vite.config.js       ← configuração do Vite
-└── .gitignore
-```
-
-### 4.3 Configuração do Vite (vite.config.js)
-
-```javascript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
-
-export default defineConfig({
-  plugins: [react()],
-
-  // Servidor de desenvolvimento
-  server: {
-    port: 3000,
-    open: true,  // abre navegador automaticamente
-    cors: true,
-    proxy: {
-      // Redirecionar /api para outro servidor (evitar CORS)
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
-
-  // Aliases (evitar ../../ no import)
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-      '@components': resolve(__dirname, './src/components'),
-    },
-  },
-
-  // Build de produção
-  build: {
-    outDir: 'dist',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        // Code splitting manual
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
-      },
-    },
-  },
-
-  // Variáveis de ambiente
-  // Acesso via: import.meta.env.VITE_API_URL
-  // Arquivo: .env, .env.development, .env.production
-})
-```
-
-### 4.4 Variáveis de Ambiente
-
-```bash
-# .env
-VITE_API_URL=http://localhost:8080/api
-VITE_APP_TITLE=Minha Aplicação
-
-# .env.production
-VITE_API_URL=https://api.meusite.com
-```
-
-```javascript
-// Acessar no código
-const apiUrl = import.meta.env.VITE_API_URL
-const isProd = import.meta.env.PROD     // boolean
-const isDev  = import.meta.env.DEV      // boolean
-const mode   = import.meta.env.MODE     // 'development' | 'production'
-const base   = import.meta.env.BASE_URL // '/'
-```
-
-> ⚠️ Apenas variáveis com prefixo `VITE_` são expostas ao código do navegador!
-
----
-
-## 5. Build e Otimizações
-
-```bash
-npm run build       # gera /dist com assets otimizados
-npm run preview     # serve o /dist localmente para testar
-
-# Analisar o bundle
-npm install -D rollup-plugin-visualizer
-# (adicionar ao vite.config.js)
-# → gera stats.html com gráfico do bundle
-```
-
-**O que o build faz:**
-- **Bundling**: une múltiplos arquivos em poucos
-- **Minificação**: remove espaços, encurta nomes (terser para JS, lightningcss para CSS)
-- **Tree-shaking**: remove código importado mas não usado
-- **Code splitting**: divide em chunks para lazy loading
-- **Asset hashing**: `styles.a1b2c3.css` (cache busting)
-- **Inlining**: arquivos pequenos inline como base64
-
----
-
-## 6. Ferramentas do Ecossistema
-
-### Linting e Formatação
-
-```bash
-# ESLint – encontra problemas no código
-npm install -D eslint @eslint/js
-npx eslint src/
-
-# Prettier – formata o código automaticamente
-npm install -D prettier
-echo '{}' > .prettierrc
-npx prettier --write src/
-
-# Integração ESLint + Prettier
-npm install -D eslint-config-prettier
-```
-
-### TypeScript
-
-```bash
-# Adicionar TypeScript a um projeto Vite existente
-npm install -D typescript @types/node
-
-# tsconfig.json já vem com o template typescript do Vite
-npm create vite@latest meu-projeto -- --template react-ts
-```
-
-### Testes
-
-```bash
-# Vitest – testes unitários (compatível com Vite)
-npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom
-
-# Playwright – testes end-to-end (E2E)
-npm install -D @playwright/test
-npx playwright install
-```
-
----
-
-## 7. Projeto Prático – Passo a Passo
-
-### 7.1 Criar um projeto Vite + React do zero
-
-```bash
-# 1. Criar projeto
-npm create vite@latest lista-tarefas -- --template react
-cd lista-tarefas
-
-# 2. Instalar dependências
-npm install
-
-# 3. Rodar em desenvolvimento
 npm run dev
+npm run build
 ```
 
-### 7.2 Estrutura do projeto Lista de Tarefas
+### Por que Vite ajuda?
+
+- Inicia rápido em projetos pequenos e grandes.
+- Usa ES Modules durante o desenvolvimento.
+- Gera build otimizado para produção.
+- Facilita a transição para frameworks como React, Vue e Svelte.
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Crie um projeto novo com o template `vanilla`.
+- Compare o que muda entre abrir um HTML direto e rodar `npm run dev`.
+
+---
+
+## 8. Estrutura de Projeto com Vite
+
+Uma base com Vite costuma separar ponto de entrada, código fonte e arquivos estáticos.
+
+```text
+meu-projeto/
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── main.js
+│   └── styles.css
+├── index.html
+├── package.json
+└── vite.config.js
+```
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Coloque uma imagem em `public/` e carregue-a no HTML.
+- Mova o CSS para `src/styles.css` e importe no arquivo principal.
+
+---
+
+## 9. Mini Exemplo com Vite
+
+Este fluxo mostra o ciclo básico de desenvolvimento moderno.
 
 ```javascript
-// src/main.jsx
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+// src/main.js
+import './styles.css'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const app = document.querySelector('#app')
+app.innerHTML = `
+  <section>
+    <h1>Olá, Vite</h1>
+    <p>Este conteúdo foi carregado por um módulo ES.</p>
+  </section>
+`
 ```
 
-```javascript
-// src/App.jsx
-import { useState } from 'react'
-import './App.css'
-
-export default function App() {
-  const [tarefas, setTarefas] = useState([
-    { id: 1, texto: 'Aprender HTML semântico', feita: true },
-    { id: 2, texto: 'Dominar CSS Grid e Flexbox', feita: false },
-    { id: 3, texto: 'Praticar JavaScript', feita: false },
-  ])
-  const [novaTarefa, setNovaTarefa] = useState('')
-
-  function adicionarTarefa(e) {
-    e.preventDefault()
-    if (!novaTarefa.trim()) return
-    setTarefas(prev => [...prev, {
-      id: Date.now(),
-      texto: novaTarefa.trim(),
-      feita: false,
-    }])
-    setNovaTarefa('')
-  }
-
-  function alternarTarefa(id) {
-    setTarefas(prev => prev.map(t =>
-      t.id === id ? { ...t, feita: !t.feita } : t
-    ))
-  }
-
-  function removerTarefa(id) {
-    setTarefas(prev => prev.filter(t => t.id !== id))
-  }
-
-  const pendentes  = tarefas.filter(t => !t.feita).length
-  const concluidas = tarefas.filter(t => t.feita).length
-
-  return (
-    <div className="app">
-      <h1>📝 Lista de Tarefas</h1>
-      <p>{pendentes} pendente(s) · {concluidas} concluída(s)</p>
-
-      <form onSubmit={adicionarTarefa}>
-        <input
-          type="text"
-          value={novaTarefa}
-          onChange={e => setNovaTarefa(e.target.value)}
-          placeholder="Nova tarefa..."
-          aria-label="Nova tarefa"
-        />
-        <button type="submit">Adicionar</button>
-      </form>
-
-      <ul>
-        {tarefas.map(tarefa => (
-          <li key={tarefa.id} className={tarefa.feita ? 'feita' : ''}>
-            <label>
-              <input
-                type="checkbox"
-                checked={tarefa.feita}
-                onChange={() => alternarTarefa(tarefa.id)}
-              />
-              {tarefa.texto}
-            </label>
-            <button
-              onClick={() => removerTarefa(tarefa.id)}
-              aria-label={`Remover "${tarefa.texto}"`}
-            >
-              ✕
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
+```html
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+  </html>
 ```
 
----
+Rode este trecho no seu ambiente antes de avançar.
 
-## 8. Comparativo de Bundlers
-
-| Ferramenta | Velocidade | Ecossistema | Config | Uso Ideal |
-|-----------|-----------|-------------|--------|-----------|
-| **Vite** | ⚡⚡⚡ | Grande | Mínima | Novos projetos (recomendado) |
-| **webpack** | ⚡ | Enorme | Complexa | Projetos legados, casos edge |
-| **esbuild** | ⚡⚡⚡⚡ | Médio | Simples | Build rápido, plugins custom |
-| **Parcel** | ⚡⚡ | Médio | Zero | Projetos simples, protótipos |
-| **Rollup** | ⚡⚡ | Grande | Moderada | Bibliotecas (usado pelo Vite) |
-| **Turbopack** | ⚡⚡⚡ | Crescendo | Moderada | Next.js |
+- Inicie o projeto com Vite e edite `src/main.js`.
+- Observe o recarregamento automático no navegador.
 
 ---
 
-## Práticas
+## 10. Versão com React ou Outro Framework
 
-| # | Arquivo | Descrição |
-|---|---------|-----------|
-| 01 | [guia-instalacao.md](praticas/01-guia-instalacao.md) | Guia passo a passo: Node.js + Vite + primeiro projeto |
-| 02 | [modulos-es.html](praticas/02-modulos-es.html) | Experimentar módulos ES nativamente no navegador |
+Depois que a estrutura com Vite estiver clara, é possível trocar o template para React, Vue ou outro framework sem mudar a lógica básica de desenvolvimento.
+
+Rode este trecho no seu ambiente antes de avançar.
+
+- Crie um projeto React com `npm create vite@latest meu-app -- --template react`.
+- Compare a diferença entre `main.js` e `main.jsx`.
 
 ---
 
-## Referências
+## 11. Mini Checklist de Aprendizado
 
-- [Vite – Documentação oficial](https://vitejs.dev/)
-- [NPM – npmjs.com](https://www.npmjs.com/)
-- [pnpm – pnpm.io](https://pnpm.io/)
-- [JavaScript Modules – MDN](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Modules)
-- [Node.js – nodejs.org](https://nodejs.org/)
-- [State of JS 2024](https://stateofjs.com/)
-- [Awesome Vite – github.com](https://github.com/vitejs/awesome-vite)
+Antes de avançar, confirme se você consegue:
+
+- explicar o que é Node.js
+- explicar para que serve o `package.json`
+- escrever e executar um script com npm
+- importar e exportar módulos ES
+- iniciar um projeto com Vite
+- identificar quando um projeto simples precisa evoluir para uma estrutura com tooling
+
+---
+
+## Próximo Passo
+
+Depois de dominar estes tópicos, siga para a [Prática Integrada - Módulo 08](../../pratica_ecossistema_frontend/README.md) para aplicar o conteúdo em uma comparação guiada entre uma base simples e uma base com Vite.

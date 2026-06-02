@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prática 02 – DOM Intermediário | Arquitetura Web</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #0d6efd;
+        }
+
+        h2 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        button {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.25rem;
+        }
+
+        button:hover {
+            background: #0b5ed7;
+        }
+
+        #output {
+            background: #1e1e1e;
+            color: #4ec9b0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            min-height: 60px;
+            overflow-y: auto;
+        }
+
+        .task {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Prática 02 – DOM Intermediário</h1>
+        <p>Manipule o DOM e entenda como JavaScript interage com a página.</p>
+
+        <section>
+            <h2>Exercício 1: Selecionando Elementos</h2>
+            <div class="task">
+                <p>Vá ao console (F12) e execute:</p>
+                <pre><code>// Encontre o h1
+document.querySelector('h1')
+
+// Encontre todos os buttons
+document.querySelectorAll('button')
+
+// Encontre pelo ID
+document.getElementById('output')
+
+// Encontre por classe
+document.getElementsByClassName('task')</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>Exercício 2: Modificando Conteúdo</h2>
+            <button onclick="modificarTexto()">Mudar Título</button>
+            <button onclick="adicionarParagrafo()">Adicionar Parágrafo</button>
+            <button onclick="removerUltimo()">Remover Último</button>
+            <div id="output"></div>
+        </section>
+
+        <section>
+            <h2>Exercício 3: Criando Elementos Dinamicamente</h2>
+            <button onclick="criarLista()">Criar Lista</button>
+            <button onclick="adicionarItem()">Adicionar Item</button>
+            <div id="lista"></div>
+        </section>
+
+        <section>
+            <h2>Exercício 4: Atributos</h2>
+            <input id="meuInput" type="text" placeholder="Digite algo">
+            <button onclick="lerAtributo()">Ler value</button>
+            <button onclick="mudarAtributo()">Mudar placeholder</button>
+            <button onclick="verificarClasse()">Tem classe 'ativo'?</button>
+            <div id="output2"></div>
+        </section>
+    </div>
+
+    <script>
+        let contador = 0
+
+        function modificarTexto() {
+            const h1 = document.querySelector('h1')
+            h1.textContent = 'Título modificado pelo JavaScript!'
+            log('✓ Título modificado')
+        }
+
+        function adicionarParagrafo() {
+            const novo = document.createElement('p')
+            novo.textContent = `Parágrafo adicionado em ${new Date().toLocaleTimeString()}`
+            document.getElementById('output').appendChild(novo)
+            log(`✓ Parágrafo ${++contador} adicionado`)
+        }
+
+        function removerUltimo() {
+            const p = document.querySelector('#output p:last-child')
+            if (p) {
+                p.remove()
+                log('✓ Parágrafo removido')
+            } else {
+                log('✗ Nenhum parágrafo para remover')
+            }
+        }
+
+        function criarLista() {
+            const ul = document.createElement('ul')
+            for (let i = 1; i <= 3; i++) {
+                const li = document.createElement('li')
+                li.textContent = `Item ${i}`
+                ul.appendChild(li)
+            }
+            document.getElementById('lista').innerHTML = ''
+            document.getElementById('lista').appendChild(ul)
+            log('✓ Lista criada com 3 itens')
+        }
+
+        function adicionarItem() {
+            const ul = document.querySelector('#lista ul')
+            if (ul) {
+                const li = document.createElement('li')
+                li.textContent = `Item novo (${new Date().toLocaleTimeString()})`
+                ul.appendChild(li)
+                log('✓ Item adicionado à lista')
+            }
+        }
+
+        function lerAtributo() {
+            const input = document.getElementById('meuInput')
+            const valor = input.value
+            log(`Valor: "${valor || '(vazio)'}"; Placeholder: "${input.placeholder}"`)
+        }
+
+        function mudarAtributo() {
+            const input = document.getElementById('meuInput')
+            input.setAttribute('placeholder', 'Novo placeholder!')
+            input.setAttribute('class', 'ativo')
+            log('✓ Atributos modificados')
+        }
+
+        function verificarClasse() {
+            const input = document.getElementById('meuInput')
+            const tem = input.classList.contains('ativo')
+            log(tem ? '✓ Tem classe "ativo"' : '✗ Não tem classe "ativo"')
+        }
+
+        function log(msg) {
+            const saida = document.getElementById('output2') || document.getElementById('output')
+            const p = document.createElement('p')
+            p.textContent = msg
+            saida.appendChild(p)
+            if (saida.children.length > 5) saida.removeChild(saida.firstChild)
+        }
+    </script>
+</body>
+
+</html>

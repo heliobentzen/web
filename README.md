@@ -32,3 +32,8 @@ Disciplina completa de Desenvolvimento Web com foco em práticas modernas de mer
 ## Como Navegar
 
 Cada módulo possui um `README.md` com o conteúdo teórico e uma pasta `praticas/` com exercícios práticos. Você pode seguir a ordem dos módulos ou acessar diretamente o conteúdo que desejar.
+
+## Práticas Integradas
+
+- [Prática Integrada - Módulos 05 e 06](pratica_js-assincronismo/README.md)
+- [Prática Integrada - Módulo 08](pratica_ecossistema_frontend/README.md)

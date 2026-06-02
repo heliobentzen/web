@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prática 02 – HTML Intermediário | HTML Semântico</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #0d6efd;
+        }
+
+        h2 {
+            color: #0d6efd;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        p {
+            line-height: 1.6;
+            margin: 0.5rem 0;
+            color: #555;
+        }
+
+        code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9em;
+        }
+
+        .exemplo {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        button {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0b5ed7;
+        }
+
+        form {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+
+        label {
+            display: block;
+            margin: 1rem 0 0.25rem;
+            font-weight: 600;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #0d6efd;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .sucesso {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Prática 02 – HTML Intermediário</h1>
+        <p>Estruture um formulário com HTML semântico e elementos acessíveis.</p>
+
+        <section>
+            <h2>Exercício 1: Formulário Bem Estruturado</h2>
+            <p>Preencha o formulário abaixo (observe como está bem organizado):</p>
+
+            <form onsubmit="validarFormulario(event)">
+                <fieldset>
+                    <legend>Dados Pessoais</legend>
+
+                    <label for="nome">Nome Completo:</label>
+                    <input id="nome" type="text" name="nome" required placeholder="Ex: João Silva">
+
+                    <label for="email">Email:</label>
+                    <input id="email" type="email" name="email" required placeholder="seu@email.com">
+
+                    <label for="data">Data de Nascimento:</label>
+                    <input id="data" type="date" name="data" required>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Preferências</legend>
+
+                    <label for="categoria">Categoria de Interesse:</label>
+                    <select id="categoria" name="categoria" required>
+                        <option value="">Selecione uma opção</option>
+                        <option value="web">Web Design</option>
+                        <option value="dev">Desenvolvimento</option>
+                        <option value="mobile">Mobile</option>
+                    </select>
+
+                    <label for="mensagem">Mensagem:</label>
+                    <textarea id="mensagem" name="mensagem" placeholder="Deixe sua mensagem aqui..."
+                        required></textarea>
+                </fieldset>
+
+                <button type="submit">Enviar</button>
+                <button type="reset">Limpar</button>
+            </form>
+
+            <div id="resultado"></div>
+        </section>
+
+        <section>
+            <h2>Exercício 2: Estrutura Semântica</h2>
+            <p>Observe a estrutura semântica da página:</p>
+
+            <div class="exemplo">
+                <header style="border-bottom: 2px solid #0d6efd; padding-bottom: 1rem; margin-bottom: 1rem;">
+                    <h3>&lt;header&gt; – Cabeçalho da Página</h3>
+                    <nav>
+                        <a href="#" style="margin-right: 1rem;">Home</a>
+                        <a href="#" style="margin-right: 1rem;">Sobre</a>
+                        <a href="#">Contato</a>
+                    </nav>
+                </header>
+
+                <main>
+                    <article style="background: #f0f7ff; padding: 1rem; border-radius: 4px; margin: 1rem 0;">
+                        <h3>&lt;article&gt; – Conteúdo Independente</h3>
+                        <p>Um artigo pode ser redistribuído ou reutilizado.</p>
+                    </article>
+
+                    <section style="background: #f0f7ff; padding: 1rem; border-radius: 4px; margin: 1rem 0;">
+                        <h3>&lt;section&gt; – Seção Temática</h3>
+                        <p>Agrupa conteúdo relacionado sob um tema.</p>
+                    </section>
+                </main>
+
+                <aside style="background: #fff3cd; padding: 1rem; border-radius: 4px; margin-top: 1rem;">
+                    <h3>&lt;aside&gt; – Conteúdo Complementar</h3>
+                    <p>Links relacionados, sidebar, publicidade.</p>
+                </aside>
+
+                <footer style="border-top: 2px solid #0d6efd; padding-top: 1rem; margin-top: 1rem;">
+                    <p>&copy; 2024 Meu Site. Todos os direitos reservados.</p>
+                </footer>
+            </div>
+        </section>
+
+        <section>
+            <h2>Exercício 3: Atributos Importantes</h2>
+
+            <h3>Atributo alt em imagens:</h3>
+            <pre><code>&lt;img src="foto.jpg" alt="Descrição clara da imagem"&gt;</code></pre>
+            <p><strong>Importante:</strong> Sempre descreva imagens para acessibilidade.</p>
+
+            <h3>Atributo for em labels:</h3>
+            <pre><code>&lt;label for="email"&gt;Email:&lt;/label&gt;
+&lt;input id="email" type="email"&gt;</code></pre>
+            <p><strong>Vantagem:</strong> Clicando no texto do label, o input recebe foco.</p>
+
+            <h3>Teste:</h3>
+            <label for="teste">Clique em mim:</label>
+            <input id="teste" type="checkbox"> Clique no texto do label acima!
+        </section>
+    </div>
+
+    <script>
+        function validarFormulario(event) {
+            event.preventDefault()
+
+            const nome = document.getElementById('nome').value
+            const email = document.getElementById('email').value
+            const categoria = document.getElementById('categoria').value
+
+            const resultado = document.getElementById('resultado')
+            resultado.innerHTML = `
+        <div class="sucesso">
+          ✓ Formulário validado com sucesso!<br>
+          <strong>Nome:</strong> ${nome}<br>
+          <strong>Email:</strong> ${email}<br>
+          <strong>Categoria:</strong> ${categoria}
+        </div>
+      `
+        }
+    </script>
+</body>
+
+</html>
