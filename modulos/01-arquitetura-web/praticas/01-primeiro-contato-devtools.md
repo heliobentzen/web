@@ -1,4 +1,4 @@
-# Prática 02 – Inspecionando o Navegador (Básico)
+# Prática 01 – Primeiro Contato com o DevTools
 
 Abra o DevTools com **F12** e explore:
 

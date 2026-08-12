@@ -1,4 +1,4 @@
-# Prática 01 – Inspecionando o Navegador
+# Prática 02 – Rede e Carregamento de Página
 
 **Módulo:** 01 – Arquitetura da Web  
 **Duração estimada:** 30 minutos  
