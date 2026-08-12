@@ -14,36 +14,39 @@ A forma recomendada é usar o **NVM** (Node Version Manager), que permite trocar
 ### Windows
 
 ```powershell
-# Opção 1: nvm-windows (https://github.com/coreybutler/nvm-windows)
+# nvm-windows: https://github.com/coreybutler/nvm-windows
 # Baixe e execute o instalador: nvm-setup.exe
 
-# Após instalar o nvm:
-nvm install 20.17.0
-nvm use 20.17.0
+# Após instalar o nvm, feche e reabra o terminal:
+nvm install lts
+nvm use lts
 ```
 
 ### macOS / Linux
 
 ```bash
-# Instalar nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+# Instalar o nvm (confira a versão atual do instalador em github.com/nvm-sh/nvm)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
 # Reiniciar o terminal ou executar:
 source ~/.bashrc  # ou ~/.zshrc no macOS com zsh
 
-# Instalar e usar Node 20 LTS
-nvm install 20
-nvm use 20
-nvm alias default 20
+# Instalar e usar a versão LTS atual
+nvm install --lts
+nvm use --lts
+nvm alias default 'lts/*'
 
 # Verificar
-node --version  # v20.x.x
-npm --version   # 10.x.x
+node --version  # v22.x.x ou superior
+npm --version
 ```
 
 ### Alternativa: Instalador Direto
 
 Baixe em [nodejs.org](https://nodejs.org/). Escolha a versão **LTS**.
+
+> ⚠️ O Node 18 encerrou o suporte em abril de 2025 e não é aceito pelas ferramentas
+> atuais. Se a sua máquina ainda tem essa versão, atualize antes de seguir.
 
 ---
 
@@ -54,7 +57,7 @@ Baixe em [nodejs.org](https://nodejs.org/). Escolha a versão **LTS**.
 npm install -g pnpm
 
 # Verificar
-pnpm --version  # 9.x.x
+pnpm --version
 ```
 
 ---

@@ -499,7 +499,7 @@ Criar uma página de contato com:
 - `praticas/01-estrutura-basica.html`
 - `praticas/02-formulario-completo.html`
 - `praticas/03-seo-metatags.html`
-- `praticas/02-intermediario.html`
+- `praticas/04-formulario-intermediario.html`
 
 <div class="kpi">
 Fluxo recomendado: prática 1 → teoria de formulário/SEO → prática 2.

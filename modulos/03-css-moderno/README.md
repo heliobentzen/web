@@ -596,13 +596,14 @@ você declara a intenção de prioridade.
 
 | # | Arquivo | Foco | Objetivos trabalhados |
 | --- | --- | --- | --- |
+| 00 | [Primeiros passos com CSS](praticas/00-primeiros-passos-css.html) | Seletores, box model, pseudo-classes | 1, 2 |
 | 01 | [Flexbox](praticas/01-flexbox.html) | Eixos, alinhamento, `gap` | 3 |
 | 02 | [Grid](praticas/02-grid.html) | Colunas, áreas nomeadas | 3 |
 | 03 | [Responsivo Mobile First](praticas/03-responsivo-mobile-first.html) | Breakpoints e fluidez | 4 |
 | 04 | [Variáveis CSS](praticas/04-variaveis-css.html) | Tokens e temas | 5 |
 | 05 | [Layout intermediário](praticas/05-layout-intermediario.html) | Página completa | 3, 4, 6 |
 
-Há também um [índice das práticas](praticas/index.html) para abrir no navegador.
+A prática 00 é o aquecimento: faça-a antes da leitura das seções 4 e 5.
 
 ---
 

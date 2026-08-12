@@ -1,4 +1,4 @@
-# Prática 02 – DevTools Intermediário
+# Prática 01 – DevTools Guiado
 
 Use DevTools para debugar e analisar uma página web real.
 

@@ -470,6 +470,7 @@ Movimento excessivo causa enjoo e crise vestibular em parte dos usuários. Isto 
 
 | # | Arquivo | Foco |
 |---|---|---|
+| 00 | `praticas/00-primeiros-passos-css.html` | Seletores e box model |
 | 01 | `praticas/01-flexbox.html` | Flexbox |
 | 02 | `praticas/02-grid.html` | Grid |
 | 03 | `praticas/03-responsivo-mobile-first.html` | Responsividade |

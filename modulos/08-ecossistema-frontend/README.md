@@ -1,136 +1,234 @@
-# Módulo 08 – Ecossistema Front-End
+# Módulo 08 — Ecossistema Front-End
 
-## Prática Integrada Relacionada
+> Até aqui você abriu arquivos com duplo clique. Agora entra o ferramental que sustenta um projeto real: módulos, dependências, servidor de desenvolvimento e build de produção.
 
-- [Prática Integrada - Módulo 08](../../pratica_ecossistema_frontend/README.md)
-
-## Objetivo do Módulo
-
-Entender como organizar e executar projetos front-end modernos com Node.js, npm, `package.json`, módulos ES e Vite. A ideia é sair do arquivo HTML isolado e avançar para uma base com scripts, dependências e estrutura preparada para crescer.
-
-## Como Praticar
-
-1. Execute cada comando sugerido no terminal.
-2. Abra os exemplos de módulo ES no navegador quando o trecho for puro JavaScript.
-3. Observe a diferença entre rodar um arquivo diretamente e rodar um projeto preparado com Vite.
+| | |
+| --- | --- |
+| **Carga horária** | 10 h (4 h expositivas + 6 h de prática) |
+| **Pré-requisito** | [Módulo 07 — DevTools](../07-devtools/README.md) |
+| **Prática integrada** | [Módulo 08 — Ecossistema Front-end](../../pratica_ecossistema_frontend/README.md) |
+| **Práticas** | [`praticas/`](praticas/) |
 
 ---
 
-## 1. Node.js e npm
+## Objetivos de aprendizagem
 
-Node.js permite executar JavaScript fora do navegador. O npm gerencia pacotes, scripts e dependências do projeto.
+Ao final deste módulo, você será capaz de:
+
+1. **Instalar** e gerenciar versões do Node.js com um gerenciador de versões.
+2. **Interpretar** o `package.json`, incluindo versionamento semântico e o papel do lockfile.
+3. **Organizar** código em módulos ES com importação e exportação.
+4. **Justificar** por que um projeto precisa de servidor de desenvolvimento e bundler.
+5. **Criar e executar** um projeto com Vite, do desenvolvimento ao build de produção.
+6. **Diagnosticar** os erros mais comuns de ambiente e dependências.
+
+---
+
+## Roteiro
+
+```text
+1. O problema que o ferramental resolve   ← motivação antes da ferramenta
+        ↓
+2. Node.js e npm
+        ↓
+3. package.json e dependências
+        ↓
+4. Módulos ES                  ← import / export
+        ↓
+5. Por que um servidor de desenvolvimento
+        ↓
+6. Vite: dev e build
+        ↓
+7. Estrutura de projeto
+        ↓
+8. Publicação
+        ↓
+9. Caminho para frameworks
+```
+
+---
+
+## 1. O problema que o ferramental resolve
+
+Nos módulos anteriores, abrir o HTML com duplo clique bastava. Isso deixa de funcionar
+quando o projeto cresce. Quatro problemas concretos aparecem:
+
+| Problema | Sintoma | O que resolve |
+| --- | --- | --- |
+| Um único arquivo JS gigante | Impossível de navegar e manter | Módulos ES |
+| Reutilizar código de terceiros | Copiar e colar arquivos manualmente | npm |
+| `file://` bloqueia recursos | `import` falha, CORS bloqueia `fetch`, Service Worker não roda | Servidor de desenvolvimento |
+| Muitos arquivos em produção | Site lento por excesso de requisições | Build (bundler) |
+
+Você já encontrou o terceiro no [Módulo 01](../01-arquitetura-web/README.md): recursos que
+exigem contexto seguro não funcionam em `file://`.
+
+> **Experimente:** crie dois arquivos, `soma.js` com `export function soma(a,b){return a+b}`
+> e um HTML com `<script type="module" src="soma.js">`. Abra com duplo clique. O console
+> mostra um erro de CORS. Esse é o problema que o servidor de desenvolvimento resolve.
+
+---
+
+## 2. Node.js e npm
+
+**Node.js** executa JavaScript fora do navegador. No front-end, ele não roda o seu site —
+ele roda as **ferramentas** que preparam o seu site: servidor de desenvolvimento, build,
+linter, testes.
+
+**npm** (*Node Package Manager*) vem junto e faz três coisas: instala pacotes, registra
+dependências e executa scripts.
+
+### 2.1 Versões
 
 ```bash
-node --version
+node --version    # v22.x.x ou superior
 npm --version
 ```
 
-Rode este trecho no seu ambiente antes de avançar.
+Use sempre uma versão **LTS** (*Long Term Support*) — são as de numeração par, com suporte
+estendido. Versões ímpares são experimentais e não devem ser usadas em projeto real.
 
-- Confirme se o Node está instalado.
-- Compare a versão local com a versão recomendada pelo projeto.
+O Node 18 chegou ao fim do suporte em abril de 2025; se a sua máquina ainda tem essa
+versão, atualize antes de continuar — as ferramentas atuais já não a aceitam.
+
+### 2.2 Instale com um gerenciador de versões
+
+Projetos diferentes exigem versões diferentes de Node. Um gerenciador permite alternar sem
+reinstalar:
+
+```bash
+# nvm (macOS/Linux) — no Windows, use nvm-windows
+nvm install --lts
+nvm use --lts
+nvm alias default lts/*
+```
+
+O passo a passo completo por sistema operacional está no
+[Guia de instalação](praticas/01-guia-instalacao.md).
+
+### 2.3 Gerenciadores de pacote
+
+| Gerenciador | Observação |
+| --- | --- |
+| **npm** | Já vem com o Node. É o que usaremos no curso. |
+| **pnpm** | Mais rápido e econômico em disco; compartilha pacotes entre projetos |
+| **yarn** | Ainda comum em projetos legados |
+
+Todos leem o mesmo `package.json`. **Não misture dois no mesmo projeto**: cada um gera seu
+próprio lockfile, e ter dois é fonte garantida de inconsistência.
 
 ---
 
-## 2. Estrutura Básica de Projeto
+## 3. `package.json` e dependências
 
-Antes de usar ferramentas mais avançadas, é importante entender a estrutura mínima de um projeto front-end.
-
-```text
-meu-projeto/
-├── index.html
-├── styles.css
-└── main.js
-```
-
-### Exemplo Executável
-
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Projeto Simples</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <h1 id="titulo">Projeto simples</h1>
-    <script type="module" src="main.js"></script>
-  </body>
-</html>
-```
-
-```javascript
-const titulo = document.querySelector('#titulo')
-titulo.textContent = 'JavaScript rodando no navegador'
-```
-
-Rode este trecho no seu ambiente antes de avançar.
-
-- Crie os três arquivos acima e abra o HTML no navegador.
-- Altere o texto no JS e recarregue a página.
-
----
-
-## 3. `package.json`
-
-O `package.json` descreve o projeto, as dependências e os scripts que podem ser executados com `npm run`.
+O `package.json` é a identidade do projeto. Crie com `npm init -y`.
 
 ```json
 {
   "name": "meu-projeto",
   "version": "1.0.0",
   "type": "module",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.0.0"
+    "vite": "^7.0.0"
   }
 }
 ```
 
-### Campos Importantes
+| Campo | Função |
+| --- | --- |
+| `name` | Identificador do projeto |
+| `type: "module"` | Ativa a sintaxe `import`/`export` nos arquivos `.js` |
+| `private: true` | Impede publicação acidental no npm |
+| `scripts` | Atalhos executáveis com `npm run` |
+| `dependencies` | Pacotes que vão para produção |
+| `devDependencies` | Pacotes usados só no desenvolvimento |
 
-- `name` identifica o projeto.
-- `type: module` ativa ES Modules no Node e no front-end.
-- `scripts` cria atalhos para comandos frequentes.
-- `devDependencies` guarda pacotes usados apenas no desenvolvimento.
+A distinção importa: o Vite é `devDependency` porque produz o build, mas não é enviado ao
+usuário. Uma biblioteca de gráficos usada na página é `dependency`.
 
-Rode este trecho no seu ambiente antes de avançar.
+### 3.1 Instalando
 
-- Crie um `package.json` mínimo com `npm init -y`.
-- Adicione um script e rode `npm run` para testá-lo.
+```bash
+npm install                   # instala tudo que está no package.json
+npm install vite --save-dev   # adiciona como dependência de desenvolvimento
+npm install chart.js          # adiciona como dependência de produção
+npm uninstall chart.js
+npm outdated                  # lista pacotes desatualizados
+npm audit                     # verifica vulnerabilidades conhecidas
+```
 
----
+### 3.2 Versionamento semântico
 
-## 4. Scripts com npm
+```text
+    ^7.2.14
+    │ │ │ └── patch — correção de bug, compatível
+    │ │ └──── minor — recurso novo, compatível
+    │ └────── major — mudança que quebra compatibilidade
+    └──────── faixa aceita na atualização
+```
 
-Scripts padronizam tarefas do projeto e evitam comandos longos repetidos.
+| Notação | Aceita | Uso |
+| --- | --- | --- |
+| `^7.2.14` | 7.x.x — minor e patch | Padrão recomendado |
+| `~7.2.14` | 7.2.x — só patch | Mais conservador |
+| `7.2.14` | Exatamente essa | Máximo controle |
+
+### 3.3 O lockfile
+
+O `package-lock.json` registra a versão **exata** de cada pacote e de cada dependência
+delas. É o que garante que sua máquina, a do colega e o servidor instalem exatamente a
+mesma coisa.
+
+**Sempre versione o lockfile no Git.** Nunca o edite à mão.
+
+```bash
+npm ci      # instala exatamente o lockfile — use em CI/CD e para reproduzir o ambiente
+```
+
+### 3.4 `node_modules` nunca vai para o Git
+
+```gitignore
+node_modules/
+dist/
+.env
+```
+
+A pasta `node_modules` costuma ter dezenas de milhares de arquivos e é integralmente
+reconstruível com `npm install`. Versioná-la torna o repositório inutilizável.
+
+### 3.5 Scripts
 
 ```json
 {
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint src"
+    "preview": "vite preview",
+    "lint": "eslint src",
+    "format": "prettier --write src"
   }
 }
 ```
 
-Rode este trecho no seu ambiente antes de avançar.
+```bash
+npm run dev
+npm run build
+```
 
-- Adicione um script de teste ou formatação.
-- Rode `npm run dev` e depois `npm run build`.
+Scripts documentam o projeto: quem clona o repositório descobre como rodá-lo sem
+perguntar a ninguém.
 
 ---
 
-## 5. Módulos ES
+## 4. Módulos ES
 
-Módulos permitem separar código em arquivos menores, com importações e exportações explícitas.
+Módulos permitem dividir o código em arquivos com fronteiras explícitas.
 
 ```javascript
 // matematica.js
@@ -140,154 +238,331 @@ export function somar(a, b) {
 
 export const PI = 3.14159
 
-// app.js
-import { somar, PI } from './matematica.js'
-
-console.log(somar(2, 3))
-console.log(PI)
+// exportação padrão: uma por arquivo
+export default function calcular(operacao, a, b) {
+  return operacao === 'soma' ? somar(a, b) : null
+}
 ```
-
-Rode este trecho no seu ambiente antes de avançar.
-
-- Crie os dois arquivos em uma pasta e abra com um HTML usando `type="module"`.
-- Altere o nome de uma exportação e veja o erro apontar o arquivo correto.
-
----
-
-## 6. Importação Dinâmica
-
-Importação dinâmica carrega módulos sob demanda, o que ajuda a dividir o código em partes menores.
 
 ```javascript
-async function carregarModulo() {
-  const modulo = await import('./utilitarios.js')
-  console.log(modulo)
-}
+// main.js
+import calcular, { somar, PI } from './matematica.js'
+import { somar as adicionar } from './matematica.js'   // renomeando
+import * as matematica from './matematica.js'          // tudo em um objeto
 
-carregarModulo()
+console.log(somar(2, 3))
+console.log(matematica.PI)
 ```
 
-Rode este trecho no seu ambiente antes de avançar.
+Regras que causam erro na primeira vez:
 
-- Crie `utilitarios.js` com uma exportação simples.
-- Veja quando o módulo só é carregado após a chamada da função.
+- **A extensão é obrigatória** no navegador: `'./matematica.js'`, não `'./matematica'`.
+  (O Vite resolve sem extensão, mas escrever completo evita surpresa.)
+- O caminho precisa começar com `./` ou `../`. Sem isso, o navegador procura um pacote npm.
+- Módulos são `defer` por padrão e executam em **modo estrito**.
+- Cada módulo é avaliado **uma única vez**, mesmo que importado em vários lugares.
+
+```html
+<script type="module" src="main.js"></script>
+```
+
+### 4.1 Importação dinâmica
+
+Carrega o módulo apenas quando necessário, reduzindo o peso inicial:
+
+```javascript
+botao.addEventListener('click', async () => {
+  const { gerarRelatorio } = await import('./relatorio.js')
+  gerarRelatorio()
+})
+```
+
+O código de `relatorio.js` só é baixado no primeiro clique. Isso é *code splitting*, e o
+Vite gera os arquivos separados automaticamente.
 
 ---
 
-## 7. Vite
+## 5. Por que um servidor de desenvolvimento
 
-Vite fornece servidor de desenvolvimento, build otimizado e carregamento rápido para projetos modernos.
+Abrir o arquivo direto (`file://`) impede:
+
+- `import` de módulos ES (bloqueado por CORS)
+- `fetch` de arquivos locais
+- Service Workers e APIs de contexto seguro
+- Recarregamento automático ao salvar
+
+Um servidor de desenvolvimento serve os arquivos por `http://localhost`, o que resolve
+todos esses pontos e ainda adiciona o **HMR** (*Hot Module Replacement*): ao salvar, apenas
+o módulo alterado é substituído na página, preservando o estado da aplicação. Você não
+perde o formulário preenchido a cada `Ctrl+S`.
+
+---
+
+## 6. Vite
+
+O **Vite** é a ferramenta padrão do front-end atual. Ele entrega duas coisas:
+
+- **Em desenvolvimento**: serve os arquivos como módulos ES nativos, sem empacotar. Por
+  isso inicia em menos de um segundo mesmo em projeto grande.
+- **Em produção**: gera um build otimizado — código minificado, dividido em partes,
+  com nomes versionados para cache.
+
+### 6.1 Criando um projeto
 
 ```bash
 npm create vite@latest meu-projeto
 cd meu-projeto
 npm install
 npm run dev
-npm run build
 ```
 
-### Por que Vite ajuda?
+O assistente pergunta o template. Comece por **Vanilla** — o objetivo aqui é entender a
+ferramenta, não aprender um framework.
 
-- Inicia rápido em projetos pequenos e grandes.
-- Usa ES Modules durante o desenvolvimento.
-- Gera build otimizado para produção.
-- Facilita a transição para frameworks como React, Vue e Svelte.
+```bash
+npm run dev       # servidor em http://localhost:5173
+npm run build     # gera a pasta dist/
+npm run preview   # serve o dist/ localmente, para conferir antes de publicar
+```
 
-Rode este trecho no seu ambiente antes de avançar.
+Sempre rode `npm run preview` antes de publicar: é a única forma de testar o resultado
+real do build. Coisas que funcionam em desenvolvimento podem quebrar em produção — caminho
+de imagem incorreto, variável de ambiente ausente, dependência que só existia em dev.
 
-- Crie um projeto novo com o template `vanilla`.
-- Compare o que muda entre abrir um HTML direto e rodar `npm run dev`.
+### 6.2 O que o build faz
+
+```text
+Desenvolvimento              Produção (dist/)
+──────────────────           ──────────────────────────
+main.js       12 kB    →     index-a3f9c1.js     4 kB
+estilos.css    8 kB    →     index-b7e2d4.css  2,5 kB
+utils.js       5 kB    →     (incluído no bundle)
+logo.svg              →     logo-c8d1a2.svg
+```
+
+- **Minificação** — remove espaços, comentários e encurta nomes internos
+- **Tree shaking** — descarta código exportado mas nunca importado
+- **Code splitting** — separa o que é carregado sob demanda
+- **Hash no nome** — `index-a3f9c1.js` permite cache eterno; mudou o conteúdo, muda o nome
+
+### 6.3 Configuração
+
+```javascript
+// vite.config.js
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  base: '/meu-projeto/',    // necessário ao publicar em subpasta (GitHub Pages)
+  server: {
+    port: 3000,
+    open: true,             // abre o navegador automaticamente
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,        // permite depurar o código de produção
+  },
+})
+```
+
+O `base` é a causa mais comum de "funciona local, quebra no GitHub Pages": sem ele, o
+build gera caminhos absolutos que não existem na subpasta.
+
+### 6.4 Variáveis de ambiente
+
+```bash
+# .env — este arquivo NÃO vai para o Git
+VITE_API_URL=https://api.exemplo.br
+```
+
+```javascript
+const url = import.meta.env.VITE_API_URL
+```
+
+Apenas variáveis com o prefixo `VITE_` chegam ao código do navegador. As demais ficam
+restritas ao processo de build.
+
+> ⚠️ **Tudo que chega ao navegador é público.** Qualquer pessoa lê o valor no
+> arquivo gerado. Nunca coloque senha de banco, chave privada ou segredo de API em uma
+> variável `VITE_` — essas informações pertencem ao back-end.
 
 ---
 
-## 8. Estrutura de Projeto com Vite
-
-Uma base com Vite costuma separar ponto de entrada, código fonte e arquivos estáticos.
+## 7. Estrutura de projeto
 
 ```text
 meu-projeto/
-├── public/
+├── public/              arquivos copiados sem processamento (favicon, robots.txt)
 ├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── main.js
-│   └── styles.css
-├── index.html
+│   ├── assets/          imagens e fontes processadas pelo build
+│   ├── componentes/     pedaços reutilizáveis de interface
+│   ├── servicos/        acesso a APIs (o api.js do Módulo 06)
+│   ├── estilos/         CSS
+│   └── main.js          ponto de entrada
+├── index.html           fica na RAIZ, não em src/
 ├── package.json
-└── vite.config.js
+├── vite.config.js
+└── .gitignore
 ```
 
-Rode este trecho no seu ambiente antes de avançar.
+Duas particularidades do Vite:
 
-- Coloque uma imagem em `public/` e carregue-a no HTML.
-- Mova o CSS para `src/styles.css` e importe no arquivo principal.
-
----
-
-## 9. Mini Exemplo com Vite
-
-Este fluxo mostra o ciclo básico de desenvolvimento moderno.
+- O `index.html` fica na **raiz** e é o ponto de entrada do build.
+- Arquivos em `public/` são copiados como estão; arquivos em `src/assets/` passam pelo
+  build e recebem hash no nome.
 
 ```javascript
 // src/main.js
-import './styles.css'
+import './estilos/global.css'          // CSS importado pelo JS: o Vite cuida do resto
+import { api } from './servicos/api.js'
 
 const app = document.querySelector('#app')
-app.innerHTML = `
-  <section>
-    <h1>Olá, Vite</h1>
-    <p>Este conteúdo foi carregado por um módulo ES.</p>
-  </section>
-`
+const usuarios = await api.listarUsuarios()
 ```
 
-```html
-<!-- index.html -->
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
-  </html>
+---
+
+## 8. Publicação
+
+O build gera arquivos estáticos, hospedáveis em qualquer serviço de arquivos estáticos.
+
+```bash
+npm run build     # gera dist/
+npm run preview   # confira antes de publicar
 ```
 
-Rode este trecho no seu ambiente antes de avançar.
+| Serviço | Como funciona |
+| --- | --- |
+| **GitHub Pages** | Gratuito; publica direto do repositório. Exige o `base` configurado |
+| **Netlify** | Conecta ao repositório e publica a cada push |
+| **Vercel** | Semelhante ao Netlify |
+| **Cloudflare Pages** | Semelhante, com CDN global |
 
-- Inicie o projeto com Vite e edite `src/main.js`.
-- Observe o recarregamento automático no navegador.
-
----
-
-## 10. Versão com React ou Outro Framework
-
-Depois que a estrutura com Vite estiver clara, é possível trocar o template para React, Vue ou outro framework sem mudar a lógica básica de desenvolvimento.
-
-Rode este trecho no seu ambiente antes de avançar.
-
-- Crie um projeto React com `npm create vite@latest meu-app -- --template react`.
-- Compare a diferença entre `main.js` e `main.jsx`.
+Nos três últimos, a configuração é: comando de build `npm run build`, diretório de saída
+`dist`.
 
 ---
 
-## 11. Mini Checklist de Aprendizado
+## 9. Caminho para frameworks
 
-Antes de avançar, confirme se você consegue:
+Com o ferramental compreendido, adotar um framework é trocar o template:
 
-- explicar o que é Node.js
-- explicar para que serve o `package.json`
-- escrever e executar um script com npm
-- importar e exportar módulos ES
-- iniciar um projeto com Vite
-- identificar quando um projeto simples precisa evoluir para uma estrutura com tooling
+```bash
+npm create vite@latest meu-app -- --template react
+npm create vite@latest meu-app -- --template vue
+npm create vite@latest meu-app -- --template svelte
+```
+
+O que muda: a forma de descrever a interface. O que **não** muda: `package.json`,
+`npm run dev`, módulos ES, build, `fetch`, CSS, semântica e acessibilidade — tudo o que
+você aprendeu nos módulos 01 a 07 continua valendo.
+
+| Framework | Característica |
+| --- | --- |
+| **React** | Maior participação de mercado e de vagas |
+| **Vue** | Curva de aprendizado mais suave |
+| **Svelte** | Compila para JavaScript puro; menos código em execução |
+| **Angular** | Estrutura completa e opinativa; comum em empresas grandes |
+
+Escolha um e aprofunde. Trocar depois é mais fácil do que parece — a base é a mesma.
 
 ---
 
-## Próximo Passo
+## Erros comuns
 
-Depois de dominar estes tópicos, siga para a [Prática Integrada - Módulo 08](../../pratica_ecossistema_frontend/README.md) para aplicar o conteúdo em uma comparação guiada entre uma base simples e uma base com Vite.
+| Sintoma | Causa | Correção |
+| --- | --- | --- |
+| `command not found: node` | Node não instalado ou fora do PATH | Reinstale pelo gerenciador de versões e reabra o terminal |
+| `Cannot use import statement outside a module` | Falta `type="module"` ou `"type": "module"` | Adicione um dos dois |
+| CORS ao usar `import` | Aberto via `file://` | Use `npm run dev` |
+| `Failed to resolve module specifier` | Faltou `./` no caminho | `'./util.js'`, não `'util.js'` |
+| `Module not found` após clonar | Faltou instalar | `npm install` |
+| Funciona local, quebra no GitHub Pages | `base` não configurado | Defina `base: '/nome-do-repo/'` |
+| Repositório gigante e lento | `node_modules` versionado | Adicione ao `.gitignore` e remova do índice |
+| Colegas com resultados diferentes | Lockfile não versionado | Versione o `package-lock.json` |
+| Variável de ambiente `undefined` | Falta o prefixo `VITE_` | Renomeie a variável |
+| `npm audit` acusa vulnerabilidades | Dependências desatualizadas | `npm audit fix`; avalie antes de usar `--force` |
+| Erro de engine ao instalar | Node abaixo do exigido | Atualize para a LTS atual |
+
+---
+
+## Checklist de autoavaliação
+
+- [ ] Instalar e alternar versões do Node com um gerenciador
+- [ ] Explicar a diferença entre `dependencies` e `devDependencies`
+- [ ] Ler `^7.2.14` e dizer quais atualizações são aceitas
+- [ ] Explicar para que serve o lockfile e por que versioná-lo
+- [ ] Explicar por que `node_modules` não vai para o Git
+- [ ] Criar e executar um script npm
+- [ ] Exportar e importar módulos ES, nomeados e padrão
+- [ ] Usar importação dinâmica e explicar o ganho
+- [ ] Justificar a necessidade de um servidor de desenvolvimento
+- [ ] Criar um projeto Vite, rodar dev, build e preview
+- [ ] Explicar o que a etapa de build faz com o código
+- [ ] Configurar `base` para publicação em subpasta
+- [ ] Explicar por que segredo não pode ir em variável `VITE_`
+
+---
+
+## Práticas
+
+| # | Arquivo | Foco | Objetivos trabalhados |
+| --- | --- | --- | --- |
+| 01 | [Guia de instalação](praticas/01-guia-instalacao.md) | Node, npm e primeiro projeto | 1 |
+| 02 | [Módulos ES](praticas/02-modulos-es.html) | `import` / `export` | 3 |
+
+Em seguida, faça a
+[Prática Integrada do Módulo 08](../../pratica_ecossistema_frontend/README.md), que compara
+lado a lado um projeto sem ferramental e um projeto com Vite.
+
+---
+
+## Exercícios
+
+### Nível 1 — Fixação
+
+1. Instale o Node LTS por um gerenciador de versões. Registre a saída de `node --version`,
+   `npm --version` e explique por que a versão LTS é a recomendada.
+2. Crie um projeto do zero com `npm init -y`, adicione o script `"ola": "echo Olá, ADS!"` e
+   execute-o. Depois adicione `"type": "module"` e explique o efeito.
+3. Interprete: `"vite": "^7.2.0"`, `"eslint": "~9.1.3"`, `"react": "18.3.1"`. Quais
+   atualizações cada uma aceita?
+
+### Nível 2 — Aplicação
+
+4. Divida um projeto de arquivo único em módulos: `formatadores.js`, `validadores.js`,
+   `api.js` e `main.js`. Cada módulo exporta apenas o necessário. Rode com `npm run dev` e
+   confirme no painel Network que o navegador carrega cada arquivo separadamente.
+5. Crie um projeto Vite com template Vanilla e reconstrua uma página feita no Módulo 05,
+   agora com estrutura em `src/`. Rode `npm run build` e compare o tamanho dos arquivos em
+   `dist/` com os originais. Registre os números.
+6. Publique o projeto do exercício 5 no GitHub Pages. Documente o que precisou ser
+   configurado e o que quebrou na primeira tentativa.
+
+### Nível 3 — Desafio
+
+7. **Carregamento sob demanda.** Construa uma aplicação com três telas, em que o módulo de
+   cada tela só é baixado quando o usuário a acessa, por importação dinâmica. Comprove no
+   painel Network que os arquivos chegam separadamente. Compare, com números, o peso
+   inicial contra a versão que importa tudo de uma vez.
+8. **Comparação fundamentada.** Pegue um projeto seu de módulo anterior e mantenha duas
+   versões: uma sem ferramental, aberta por `file://`, e outra com Vite. Compare com dados:
+   peso total transferido, número de requisições, tempo até o LCP (com throttling Slow 4G),
+   e o que cada versão permite ou impede em termos de organização de código. Escreva uma
+   conclusão de uma página respondendo: em que ponto o ferramental deixa de ser exagero e
+   passa a ser necessário?
+
+---
+
+## Referências
+
+- [Node.js — documentação](https://nodejs.org/pt/docs)
+- [Cronograma de versões do Node](https://github.com/nodejs/release#release-schedule)
+- [npm — documentação](https://docs.npmjs.com/)
+- [Versionamento semântico](https://semver.org/lang/pt-BR/)
+- [Vite — documentação](https://vite.dev/)
+- [Módulos JavaScript — MDN](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Modules)
+- [nvm](https://github.com/nvm-sh/nvm) · [nvm-windows](https://github.com/coreybutler/nvm-windows)
+
+---
+
+**Navegação:** [◀ Módulo 07](../07-devtools/README.md) · [Índice](../../README.md) · **Fim da trilha de módulos** — siga para as [práticas integradas](../../README.md#práticas-integradas)
